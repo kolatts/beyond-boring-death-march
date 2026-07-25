@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.claude/
+*.local
+.env
+api/bin/
+api/obj/
+api/local.settings.json
