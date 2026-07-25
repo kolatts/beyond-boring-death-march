@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "context-items.schema.json",
+  "title": "Context Canyon packing content (§7.3)",
+  "type": "object",
+  "required": ["capacity", "items", "strings"],
+  "additionalProperties": false,
+  "properties": {
+    "capacity": { "type": "integer", "minimum": 8, "maximum": 200 },
+    "items": {
+      "type": "array",
+      "minItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "size", "relevance", "blurb", "inspectText"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 30 },
+          "size": { "type": "integer", "minimum": 1, "maximum": 999 },
+          "relevance": {
+            "oneOf": [
+              { "type": "number", "minimum": 0, "maximum": 100 },
+              {
+                "type": "array",
+                "items": { "type": "number", "minimum": 0, "maximum": 100 },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            ]
+          },
+          "carriesRequirement": { "type": "boolean" },
+          "scout": {
+            "type": "object",
+            "required": ["name", "relevance", "blurb"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "maxLength": 30 },
+              "relevance": { "type": "number", "minimum": 0, "maximum": 100 },
+              "blurb": { "type": "string", "minLength": 1 }
+            }
+          },
+          "blurb": { "type": "string", "minLength": 1 },
+          "inspectText": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "strings": {
+      "type": "object",
+      "required": [
+        "intro",
+        "peekNotice",
+        "overflow",
+        "overflowNodeModules",
+        "compactNotice",
+        "compactRequirementLost",
+        "scoutDepart",
+        "scoutReturn",
+        "scoutFirst",
+        "markNotice",
+        "unmarkNotice",
+        "departRetrieval",
+        "wrongProblem",
+        "requirementLostOutcome",
+        "successPass",
+        "successTight",
+        "retryPrompt",
+        "requirementRestored",
+        "requirementBadge"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z]+$": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
