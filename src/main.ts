@@ -14,7 +14,7 @@ import { minigameSceneClasses } from './scenes/index';
  * nearest-neighbour and letterboxed to fit the window. Spec §13.
  * GAME_WIDTH/GAME_HEIGHT live in config.ts so scenes never import main.
  */
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: GAME_WIDTH,
@@ -35,4 +35,27 @@ new Phaser.Game({
     ScoreScene,
     ...minigameSceneClasses(),
   ],
+});
+
+/**
+ * Dev-only deep link: ?minigame=<mechanic>[&landmark=<id>] jumps straight
+ * into a registered minigame scene (fresh default run is created if none
+ * exists). For agents and playtests; harmless in production.
+ */
+game.events.once(Phaser.Core.Events.READY, () => {
+  const params = new URLSearchParams(window.location.search);
+  const mechanic = params.get('minigame');
+  if (!mechanic) return;
+  import('./scenes/index').then(({ MINIGAMES }) => {
+    const entry = MINIGAMES[mechanic];
+    if (!entry) return;
+    import('./systems/state').then(({ hasRun, actions }) => {
+      if (!hasRun()) actions.newRun('staff', []);
+      game.scene.getScenes(true).forEach((s) => game.scene.stop(s.scene.key));
+      game.scene.start(entry.sceneKey, {
+        landmarkId: params.get('landmark') ?? undefined,
+        mechanic,
+      });
+    });
+  });
 });
