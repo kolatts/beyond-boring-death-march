@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-builder.schema.json",
+  "title": "Loop Builder content (spec 7.2)",
+  "type": "object",
+  "required": ["blocks", "guided", "ridge", "tutorial", "run", "verdicts"],
+  "additionalProperties": false,
+  "properties": {
+    "blocks": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "sub", "desc"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "trigger",
+              "context",
+              "agent",
+              "tool_tests",
+              "observe",
+              "verifier_machine",
+              "verifier_subjective",
+              "stop_success",
+              "stop_cap",
+              "stop_budget",
+              "human_gate",
+              "escalate"
+            ]
+          },
+          "label": { "type": "string", "minLength": 1, "maxLength": 16 },
+          "sub": { "type": "string", "minLength": 1, "maxLength": 20 },
+          "desc": { "type": "string", "minLength": 1, "maxLength": 160 }
+        }
+      }
+    },
+    "guided": {
+      "type": "object",
+      "required": ["hint", "socketHints"],
+      "additionalProperties": false,
+      "properties": {
+        "hint": { "type": "string" },
+        "socketHints": {
+          "type": "object",
+          "required": ["observe", "stop_cap"],
+          "additionalProperties": false,
+          "properties": {
+            "observe": { "type": "string" },
+            "stop_cap": { "type": "string" }
+          }
+        }
+      }
+    },
+    "ridge": {
+      "type": "object",
+      "required": ["intro", "plate", "retreatDenied", "crossSuccess", "crossGated", "banked"],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string" },
+        "plate": { "type": "string" },
+        "retreatDenied": { "type": "string" },
+        "crossSuccess": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "crossGated": { "type": "string" },
+        "banked": { "type": "string" }
+      }
+    },
+    "tutorial": {
+      "type": "object",
+      "required": ["prompt", "fires", "ceremony", "loopIntro", "loopLines", "banner", "moral"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string" },
+        "fires": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        },
+        "ceremony": { "type": "string" },
+        "loopIntro": { "type": "string" },
+        "loopLines": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+        "banner": { "type": "string" },
+        "moral": { "type": "string" }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["start", "visitLines"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "type": "string" },
+        "visitLines": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "verdicts": {
+      "type": "object",
+      "required": [
+        "success",
+        "no_verifier",
+        "subjective_verifier",
+        "no_stop_cap",
+        "no_stop_budget",
+        "no_observe",
+        "human_gate_everywhere",
+        "incomplete"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "success": {
+          "type": "object",
+          "required": ["banner", "lines", "gateLine", "scoreLine"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "gateLine": { "type": "string" },
+            "scoreLine": { "type": "string" }
+          }
+        },
+        "no_verifier": {
+          "type": "object",
+          "required": ["banner", "cause", "checks", "lines"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "cause": { "type": "string" },
+            "checks": { "type": "array", "minItems": 5, "items": { "type": "string" } },
+            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+          }
+        },
+        "subjective_verifier": {
+          "type": "object",
+          "required": ["banner", "cause", "lines", "drain"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "cause": { "type": "string" },
+            "lines": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "drain": { "type": "string" }
+          }
+        },
+        "no_stop_cap": {
+          "type": "object",
+          "required": ["banner", "cause", "iterLine", "iterVariants", "watch", "escalated", "lines"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "cause": { "type": "string" },
+            "iterLine": { "type": "string" },
+            "iterVariants": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "watch": { "type": "string" },
+            "escalated": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "lines": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "no_stop_budget": {
+          "type": "object",
+          "required": ["banner", "cause", "lines", "invoice", "after"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "cause": { "type": "string" },
+            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "invoice": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "after": { "type": "string" }
+          }
+        },
+        "no_observe": {
+          "type": "object",
+          "required": ["banner", "cause", "lines"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "cause": { "type": "string" },
+            "lines": { "type": "array", "minItems": 4, "items": { "type": "string" } }
+          }
+        },
+        "human_gate_everywhere": {
+          "type": "object",
+          "required": ["banner", "lines"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "lines": { "type": "array", "minItems": 4, "items": { "type": "string" } }
+          }
+        },
+        "incomplete": {
+          "type": "object",
+          "required": ["banner", "missing"],
+          "additionalProperties": false,
+          "properties": {
+            "banner": { "type": "string" },
+            "missing": {
+              "type": "object",
+              "required": ["trigger", "context", "agent", "tool_tests", "stop_success"],
+              "additionalProperties": false,
+              "properties": {
+                "trigger": { "type": "string" },
+                "context": { "type": "string" },
+                "agent": { "type": "string" },
+                "tool_tests": { "type": "string" },
+                "stop_success": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

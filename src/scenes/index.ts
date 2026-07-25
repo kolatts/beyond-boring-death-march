@@ -13,6 +13,7 @@
  * Do not edit main.ts or LandmarkScene.ts.
  */
 import type Phaser from 'phaser';
+import { LoopBuilderScene } from './LoopBuilderScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -25,6 +26,9 @@ export interface MinigameEntry {
 /** mechanic key (from landmarks.json) -> scene to launch. */
 export const MINIGAMES: Record<string, MinigameEntry> = {
   // outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+  tutorial_one_shot: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
+  loop_builder_guided: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
+  loop_builder_verifier: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */
