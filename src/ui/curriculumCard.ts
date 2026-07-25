@@ -90,7 +90,12 @@ export function showCurriculumCard(id: string): Promise<void> {
         <button type="button" class="field-note-close">FILE THIS NOTE (Enter)</button>
       </div>`;
 
+    // Guard against the opening keypress closing the card: a card mounted
+    // during an Enter keydown can receive that same key's default
+    // button-activation (and the focused close button eats the keyup).
+    const openedAt = performance.now();
     const close = (): void => {
+      if (performance.now() - openedAt < 150) return;
       window.removeEventListener('keydown', onKey, true);
       root.remove();
       resolve();
@@ -112,7 +117,8 @@ export function showCurriculumCard(id: string): Promise<void> {
     });
 
     overlay.appendChild(root);
-    root.querySelector<HTMLButtonElement>('.field-note-close')?.focus();
+    // Focus one macrotask later so the mounting keypress can't activate it.
+    setTimeout(() => root.querySelector<HTMLButtonElement>('.field-note-close')?.focus(), 0);
   });
 }
 
