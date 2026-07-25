@@ -28,7 +28,7 @@
     "surprise": "SURPRISE DEADLINES: {met} MET / {missed} ESCALATED. THE STANDARDS BODY SENDS ITS REGARDS."
   },
   "loops": {
-    "intro": "Your journey is scored across Andrew Ng's three loops. The game is saying so plainly, once, because the joke is over and the lesson is not.",
+    "intro": "Your journey is scored across the three loops: the agentic loop, the developer loop, and the external loop. The game is saying so plainly, once, because the joke is over and the lesson is not.",
     "agentic": {
       "title": "1. THE AGENTIC CODING LOOP",
       "sub": "The loop the agent runs: act, observe, verify, stop. Scored on your best loop, your verifier, and the miles that traveled while you slept."
@@ -104,7 +104,7 @@
       "  DAY 120  — business deadline ({deadlineOutcome})",
       "  DAY {days}  — reached Production; retrospective convened itself",
       "",
-      "THREE-LOOP SCORING (Andrew Ng)",
+      "THREE-LOOP SCORING",
       "  AGENTIC CODING LOOP ....... {agentic}",
       "  DEVELOPER FEEDBACK LOOP ... {developer}",
       "  EXTERNAL FEEDBACK LOOP .... {external}",

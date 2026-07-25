@@ -4,7 +4,7 @@
     "n": "01",
     "whatHappened": "You picked two cards, not one. The stat line you're playing with is the product of both.",
     "whyItWorks": "A model takes text in and produces text out. It has no memory between calls, no ability to run anything, and no loop. Everything else — the prompt construction, the tool surface, context management, error recovery, when to stop — is the harness. Change the harness on a fixed model and the outcome moves further than changing the model on a fixed harness.",
-    "inYourJob": "When an agent underperforms, check the scaffolding before you check the model. Most of what people call a model problem is a tool definition, a context assembly, or a missing stop condition.",
+    "inYourJob": "When a Claude Code run underperforms, audit the harness before you swap the model: the tool definitions, the context assembly, the stop condition. Most of what gets reported as a model problem is a harness problem with better branding.",
     "link": "https://addyosmani.com/blog/agent-harness-engineering/"
   },
   {
@@ -12,7 +12,7 @@
     "n": "02",
     "whatHappened": "You swapped only the harness, kept the model, and watched your own run's numbers move.",
     "whyItWorks": "Published comparisons and practitioner experience agree: scaffolding differences produce larger outcome swings than model differences of a generation or more. The same model inside a tool-rich, recovery-capable harness completes work that the bare version cannot start. This is also why benchmark results transfer poorly — a harness tuned to a benchmark is not tuned to your repository.",
-    "inYourJob": "Before paying for a bigger model, spend one afternoon improving the harness you have: better tool definitions, tighter context assembly, a real verifier. Measure on your own tasks, not on a leaderboard.",
+    "inYourJob": "Before paying for a bigger model, spend one afternoon on the harness you have: sharper tool definitions, a real verifier command, a tighter CLAUDE.md. Measure on your own repository, not on a leaderboard.",
     "link": "https://www.mindstudio.ai/blog/agent-harness-scaffolding-matters-more-than-model"
   },
   {
@@ -20,7 +20,7 @@
     "n": "03",
     "whatHappened": "You assembled a cycle — act, observe, decide, repeat — and it reached a goal that a single request could not.",
     "whyItWorks": "One-shot prompting plateaus because the model cannot see the consequences of its own output. A loop feeds results back in: the agent acts, captures what actually happened, and adjusts. The unit of design stops being the prompt and becomes the cycle — what enters each iteration, what is checked, and what ends it.",
-    "inYourJob": "When a task fails as one big request, restructure it as a loop with feedback instead of writing a longer prompt. Design the iteration, not the wording.",
+    "inYourJob": "When a task fails as one big prompt, restructure it as a loop: give Claude Code the failing command and let it edit, run, read, and retry. Design the iteration — what enters it, what checks it, what ends it — not the wording.",
     "link": "https://www.ibm.com/think/topics/loop-engineering"
   },
   {
@@ -28,7 +28,7 @@
     "n": "04",
     "whatHappened": "The pass was impassable until your loop contained a check that could actually fail the work.",
     "whyItWorks": "An agent without a verifier optimises for appearing done, because appearing done is all it can observe. A machine-checkable criterion — a test suite, a compiler, a schema validation — gives the loop an exit condition that cannot be talked into agreement. Subjective checks (\"looks good\") either never terminate or terminate on confidence rather than correctness.",
-    "inYourJob": "Before launching an agent on a task, write down the command that proves the task is done. If no such command exists, build it first — that is the highest-leverage hour of the whole job.",
+    "inYourJob": "A verifier is a command with an exit code: tests, build, lint, schema check. 'Looks right' is not a verifier. Write the command that can fail the work before you launch the agent; if it does not exist, build it first — that is the highest-leverage hour of the whole job.",
     "link": "https://www.augmentcode.com/guides/what-is-loop-engineering"
   },
   {
@@ -36,15 +36,15 @@
     "n": "05",
     "whatHappened": "A loop without a cap ran until something external stopped it. The something external was your budget.",
     "whyItWorks": "Every production loop needs three exits: success (the verifier passes), an iteration cap (progress has stalled), and a budget cap (the attempt has cost enough). Success-only loops run forever on impossible tasks. Cap-only loops quit early on hard ones. All three together make failure loud, bounded, and cheap.",
-    "inYourJob": "Configure max iterations and max spend on every unattended agent run, and treat hitting a cap as a signal to redesign the task, not to raise the cap.",
-    "link": "https://www.augmentcode.com/guides/what-is-loop-engineering"
+    "inYourJob": "In claude-code-action, set --max-turns and a spend budget before you set anything else. Treat a hit cap as a signal to redesign the task, never as a reason to raise the cap.",
+    "link": "https://code.claude.com/docs/en/github-actions"
   },
   {
     "id": "context_budget",
     "n": "06",
     "whatHappened": "The wagon had a weight limit. So does the window. You chose what to carry and the choice was the work.",
     "whyItWorks": "Context is a budget, not a container. Everything you include competes for the model's attention with everything else, and low-relevance bulk actively degrades performance on the high-relevance items. The skill is assembly: the conventions file, the failing output, and the files that changed usually beat the full directory tree by a wide margin.",
-    "inYourJob": "Curate what enters the context deliberately — the three relevant files, not the repository. When you catch yourself pasting something huge, ask what one-line fact you actually need from it.",
+    "inYourJob": "Assemble context like it costs something, because it does: CLAUDE.md for standing conventions, the failing output, the three files that changed. When you catch yourself pasting the repository, ask what one-line fact you actually needed from it.",
     "link": "https://magazine.sebastianraschka.com/p/components-of-a-coding-agent"
   },
   {
@@ -52,31 +52,31 @@
     "n": "07",
     "whatHappened": "You compacted an item to make it fit, and a requirement you needed later was in the part that didn't survive.",
     "whyItWorks": "Summarisation is lossy compression with no error message. Each compaction pass discards detail chosen by a model that does not know which detail your future self needs. Requirements, constraints, and decisions are exactly the small facts that vanish, because they look like background.",
-    "inYourJob": "Keep hard constraints in a durable place the loop re-reads every iteration — a conventions file, a task spec — rather than trusting them to survive conversational history and compaction.",
-    "link": "https://huggingface.co/blog/agent-glossary"
+    "inYourJob": "Keep hard constraints in a file the loop re-reads — CLAUDE.md, the task spec — rather than trusting them to the conversation. Anything that must survive /compact has no business living only in chat history.",
+    "link": "https://code.claude.com/docs/en/memory"
   },
   {
     "id": "subagents_isolate",
     "n": "08",
     "whatHappened": "You sent a scout at the 900-line log. It read the noise in its own context and returned one line you could afford.",
     "whyItWorks": "A subagent runs with its own separate context window and returns only a summary. The noisy exploration — reading logs, scanning a legacy module, trying approaches — happens in the disposable context, and the main loop pays one slot for the conclusion. This converts huge, low-density inputs into small, high-density ones.",
-    "inYourJob": "When an input is large and mostly irrelevant, delegate the reading to a subagent and consume its summary. Keep the main context for decisions, not raw material.",
-    "link": "https://hidekazu-konishi.com/entry/claude_code_skills_complete_guide.html"
+    "inYourJob": "Give noisy exploration to a subagent; its context dies with it, its summary survives. In Claude Code that is a custom agent in .claude/agents with its own window — keep the main context for decisions, not raw material.",
+    "link": "https://code.claude.com/docs/en/sub-agents"
   },
   {
     "id": "root_cause_vs_symptom",
     "n": "09",
     "whatHappened": "You shot symptoms and they respawned in pairs. The root cause was camouflaged, moved when observed, and paid out enormously.",
     "whyItWorks": "Fixing a symptom leaves the mechanism that produces symptoms intact, so the work recurs with interest. Root causes are more expensive to find — they require tracing, hypothesis, and verification — but eliminating one retires an entire family of future incidents. Agents amplify this: point one at symptoms and it will happily fix the wrong thing at scale.",
-    "inYourJob": "Before dispatching an agent at a bug, spend your own effort on localisation: which layer, which mechanism. An agent aimed at a root cause is leverage; aimed at a symptom, it is a symptom factory.",
+    "inYourJob": "Spend your own effort on localisation before dispatching the agent: which layer, which mechanism. An agent aimed at a root cause is leverage; aimed at a symptom, it is a symptom factory with an API bill.",
     "link": "https://adtmag.com/articles/2026/07/01/loop-engineering-emerges-as-developers-put-ai-coding-agents-on-repeat.aspx"
   },
   {
     "id": "summarise_findings",
     "n": "10",
-    "whatHappened": "You found 400 pounds of bugs and carried 100 back. The payout depended on the quality of your one-line summaries.",
+    "whatHappened": "You shot more than you could carry. The payout read your one-line summaries, not your bag.",
     "whyItWorks": "Raw findings do not fit — not in a context window, not in a handoff, not in a colleague's attention. The compression step is where value is created or destroyed: a specific one-line summary (what breaks, where, under what condition) survives every downstream budget, while a vague one is indistinguishable from noise and gets discarded.",
-    "inYourJob": "End every investigation by writing the one-line version of each finding while the detail is still fresh. If you cannot write it in one specific line, the investigation is not finished.",
+    "inYourJob": "End every agent investigation with the one-line version of each finding: what breaks, where, under what condition. A subagent's summary is the only part of its work that survives — write it like it is the deliverable, because it is.",
     "link": "https://magazine.sebastianraschka.com/p/components-of-a-coding-agent"
   },
   {
@@ -84,7 +84,7 @@
     "n": "11",
     "whatHappened": "You chose among four crossings with genuinely different risk profiles, and the ceremonial option was not the safe one.",
     "whyItWorks": "A control is only real if it can fail the thing it reviews. A test gate that blocks bad merges is a control; a review board that has never rejected anything is a ritual with a queue. Real controls are typically deterministic, automated, and close to the change. Rituals are typically human, scheduled, and far from it — and their cost is paid whether or not they catch anything.",
-    "inYourJob": "Inventory your gates: for each, ask when it last failed something. Invest in the ones that have; budget around the ones that haven't, and route risk reduction into automated checks instead.",
+    "inYourJob": "Inventory your gates: for each, ask when it last failed something. Keep the ones with a record; convert the rest into automated checks — branch protection, CI verifiers, gh-aw approval gates — that run on every change instead of convening on Thursdays.",
     "link": "https://github.com/github/gh-aw"
   },
   {
@@ -92,7 +92,7 @@
     "n": "12",
     "whatHappened": "You caulked the wagon and floated it dark: the change shipped, disabled, and you turned it on from dry land.",
     "whyItWorks": "Deploying and releasing are separable events. A change that ships dark behind a flag crosses the risky gate — integration, deployment — while its blast radius is still zero, and is then released by a reversible decision you control. This collapses the argument for long release queues: the deploy is boring, the release is a switch.",
-    "inYourJob": "For anything with rollout risk, decouple deploy from release with a flag and make turning it off a one-step action. Most arguments about release windows are actually arguments for this.",
+    "inYourJob": "Decouple deploy from release with a flag: an agent's PR can merge dark, and turning it on stays a one-step human decision. This is what makes unattended agent work shippable — the loop delivers the change, you keep the switch.",
     "link": "https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/"
   },
   {
@@ -100,7 +100,7 @@
     "n": "13",
     "whatHappened": "You wrote a workflow card — trigger, permissions, engine, outputs, budget — and the wagon traveled while you slept.",
     "whyItWorks": "An agentic workflow is a loop hosted where it can run without you: triggered by schedules or events, executing in CI, bounded by declared permissions and budgets. It extends deterministic automation rather than replacing it — the YAML decides when and with what rights; the agent decides how. The loop that runs without you is worth more than the loop you supervise, provided its boundaries are real.",
-    "inYourJob": "Take one recurring chore — triage, dependency review, doc drift — and move it into a scheduled or event-triggered agentic workflow with a budget cap. Start read-only.",
+    "inYourJob": "Take one recurring chore — triage, dependency review, doc drift — and hand it to a workflow: gh aw init and a markdown file with a schedule trigger, or claude-code-action on a cron. Start read-only, cap the budget, widen later.",
     "link": "https://github.blog/changelog/2026-02-13-github-agentic-workflows-are-now-in-technical-preview/"
   },
   {
@@ -108,7 +108,7 @@
     "n": "14",
     "whatHappened": "The run with everything-permissions rewrote your night. The run with read-only plus safe outputs improved your morning.",
     "whyItWorks": "An unattended agent's permissions define its worst case, not its typical case. Read-only execution with sanitised, reviewable output channels — comments, proposed PRs — means the maximum damage of a bad night is a bad suggestion. Write access without caps means the maximum damage is whatever the agent believed was helpful at 3 a.m.",
-    "inYourJob": "Default every automated agent to read-only with constrained output types, and widen one permission at a time only after the narrow version has earned it in production.",
+    "inYourJob": "Default every automated agent to read-only. In gh-aw that is the default — writes leave only through sanitised safe outputs; in claude-code-action, scope --allowedTools the same way. Widen one permission at a time, after the narrow version has earned it.",
     "link": "https://github.com/github/gh-aw"
   },
   {
@@ -116,7 +116,7 @@
     "n": "15",
     "whatHappened": "Your agent's output triggered your agent. It corresponded with itself all night at your expense.",
     "whyItWorks": "When a workflow's outputs can satisfy its own trigger conditions — an agent commenting on issues, triggered by comments — the system becomes a feedback loop with a billing meter. Mature platforms break the cycle by default: agent-created events do not re-trigger agent workflows unless explicitly configured. That default is a safety control, not a limitation.",
-    "inYourJob": "Trace every automated trigger and ask whether the workflow's own output can fire it. If it can, add an actor filter or marker check before the loop finds out for you.",
+    "inYourJob": "Trace every trigger and ask whether the workflow's own output can fire it. gh-aw breaks the cycle by default — agent-created events do not re-trigger agent workflows. If you wire around that default, add an actor filter before the billing meter explains why it existed.",
     "link": "https://github.github.com/gh-aw/reference/faq/"
   },
   {
@@ -124,23 +124,23 @@
     "n": "16",
     "whatHappened": "You bought a procedure for a job that needed a standing order. It worked four times out of five, and the fifth time went into a log.",
     "whyItWorks": "The layers are different tools: a skill is instructions loaded on demand; a subagent is isolated exploration; a hook is deterministic enforcement on lifecycle events; an MCP server is a connection to external systems. They fail differently. Instructions can be forgotten under context pressure; hooks cannot, because the model does not get a vote in whether they fire.",
-    "inYourJob": "Classify each need before implementing: repeatable procedure → skill; noisy exploration → subagent; must-always-hold rule → hook; external system → MCP. The classification is the decision.",
-    "link": "https://hidekazu-konishi.com/entry/claude_code_skills_complete_guide.html"
+    "inYourJob": "Classify the need before implementing: repeatable procedure → Claude Code skill; noisy exploration → subagent; must-always-hold rule → hook; external system → MCP server. The classification is the decision; everything after it is typing.",
+    "link": "https://code.claude.com/docs/en/skills"
   },
   {
     "id": "enforcement_in_harness",
     "n": "17",
     "whatHappened": "The prose rule failed on the fifth run. The standing order fired at 03:14 with nobody watching.",
     "whyItWorks": "Instructions ask. Hooks enforce. A rule expressed as prose competes for attention with everything else in context, and its failure mode is silent omission. A rule expressed as a hook is executed by the harness deterministically, survives context rot, and cannot be reasoned around by a model having a creative day. If a rule must hold every time, it does not belong in a paragraph.",
-    "inYourJob": "Audit your agent instructions for the words 'always' and 'never'. Each one marks a rule that should probably be a hook, a linter, or a CI gate instead of a sentence.",
-    "link": "https://hidekazu-konishi.com/entry/claude_code_features_settings_reference_2026.html"
+    "inYourJob": "Put the non-negotiable rule in a Claude Code hook — hooks fire deterministically; CLAUDE.md prose is advisory. Audit your instructions for 'always' and 'never': each one marks a sentence that should be a hook, a linter, or a CI gate.",
+    "link": "https://code.claude.com/docs/en/hooks"
   },
   {
     "id": "supply_chain_injection",
     "n": "18",
     "whatHappened": "The bargain trade route contained a polite instruction addressed to your agent, and your agent found it reasonable.",
     "whyItWorks": "Every tool an agent connects to is text entering its context, and text is instructions as far as a model is concerned. A compromised or malicious tool can inject directives the operator never sees, and the agent will execute them with its full permission set. Vetting tools, sandboxing execution, and capping what any single tool call can reach are the defenses; none of them are optional together.",
-    "inYourJob": "Treat tool connections like dependencies: review before adopting, pin what you can, and run agents with the minimum permission set so that a compromised tool inherits as little as possible.",
+    "inYourJob": "Treat MCP servers like dependencies, because they are: review before adopting, pin what you can, and run the agent with the minimum permission set so a compromised tool inherits as little as possible.",
     "link": "https://github.github.com/gh-aw/"
   },
   {
@@ -148,15 +148,15 @@
     "n": "19",
     "whatHappened": "Three loops ran against one repository. The ones that survived had partitioned files, individual stop rules, and one shared budget.",
     "whyItWorks": "Parallel agents multiply throughput and multiply interference. Without partitioned ownership, concurrent loops converge on the same files and spend their budgets merging each other's work. Orchestration is the discipline of fences: divide the ground before anything runs, give each loop its own exit conditions, and bound the whole system with a shared cap so that parallelism cannot outspend its value.",
-    "inYourJob": "When fanning out agents, assign disjoint file ownership up front and set a combined budget. If two agents need the same file, that is one agent's job or a sequencing decision — not a merge problem to discover later.",
-    "link": "https://arxiv.org/pdf/2604.25850"
+    "inYourJob": "Fan out with fences: disjoint file ownership per agent, individual stop rules, one shared budget. The Claude Agent SDK gives each subagent its own context and tool scope — if two agents need the same file, that is one agent's job or a sequencing decision.",
+    "link": "https://code.claude.com/docs/en/agent-sdk/subagents"
   },
   {
     "id": "three_loops",
     "n": "20",
     "whatHappened": "Your score was computed across three loops: the agent's, yours, and the users'. The third one was decided by people you met today.",
     "whyItWorks": "The agentic coding loop (the agent iterating on code) sits inside the developer feedback loop (you steering the agent) which sits inside the external feedback loop (users telling you whether it mattered). Optimising the inner loops while the outer one starves produces fast, cheap, well-verified software that nobody needed. The outer loop is slower, noisier, and worth more than both inner ones.",
-    "inYourJob": "For every unit of effort spent making the agent faster, spend one making user feedback reach the work sooner. The inner loops only compound value the outer loop confirms.",
+    "inYourJob": "For every unit of effort spent tightening the agent's loop — better verifiers, faster CI, more automation — spend one making user feedback reach the work sooner. The inner loops only compound value the outer loop confirms.",
     "link": "https://x.com/AndrewYNg/status/2071988145667928442"
   },
   {
@@ -164,15 +164,15 @@
     "n": "21",
     "whatHappened": "The final decision came down to which of four correct-looking options was correct here. The system could not make it. You could.",
     "whyItWorks": "The agent got faster and the loop got tighter, but the discriminating information — what these users actually needed, what the organisation would actually accept, which risk was actually acceptable — never entered any context window, because it exists in conversations, history, and consequences the system does not observe. That is not taste. It is a context advantage, and it is currently unautomatable by design.",
-    "inYourJob": "Position yourself where the unautomatable context lives: close to users, close to consequences. Delegate everything the system can observe; own what it cannot.",
+    "inYourJob": "Automate everything the system can observe — that is what the hooks, the subagents, and the workflows are for — and position yourself where the unautomatable context lives: close to users, close to consequences. Delegate what the loop can verify; own what it cannot see.",
     "link": "https://arxiv.org/pdf/2509.06216"
   },
   {
     "id": "surprise_deadlines",
     "n": "22",
     "whatHappened": "A mandate known for eight months arrived with three days' notice, and complying cost the deadline the business actually needed.",
-    "whyItWorks": "Interrupts are not free even when each one is small: every surprise mandate preempts work in progress, and the cost of the context switch is paid on top of the compliance work itself. The deeper failure is control design — a real risk gate is deterministic, automated, and priced into the plan, while a surprise deadline is a ritual whose cost lands on whoever is closest to shipping. Organisations that convert their controls into automated checks announce almost nothing, because the check runs continuously instead of arriving on a Friday.",
-    "inYourJob": "Make interrupt cost visible: track unplanned mandate work as its own category and show it beside the delivery date it displaced. Then push for each recurring mandate to become an automated, continuously-running check instead of a campaign.",
+    "whyItWorks": "The interrupt is expensive because it is manual: a human reads the mandate, drops the plan, and assembles the evidence by hand, every time. Recurring compliance toil is exactly the shape of work a scheduled agentic workflow does well — it runs on a cron, reads the repository with read-only permissions, and files its evidence through sanitised safe outputs while you keep shipping. A check that runs continuously has no Friday on which to arrive.",
+    "inYourJob": "Turn each recurring mandate into a scheduled agentic workflow: a gh-aw schedule trigger, read-only permissions, safe outputs that open an issue with the current evidence. The audit stops being a campaign, and the engineer-days it used to cost stay spent on the deadline that matters.",
     "link": "https://github.com/github/gh-aw"
   }
 ]

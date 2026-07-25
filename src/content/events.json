@@ -166,7 +166,7 @@
     "id": "escalation_pmo_red",
     "weight": 0,
     "title": "STATUS: RED",
-    "body": "Your program status has been turned red for reporting non-compliance. Red status triggers a daily call to discuss the status. The call does not discuss the work. The work is what the call is preventing. Status will return to green when reports resume, which is to say the color measures the reporting, which is to say the color is working as designed.",
+    "body": "Your program status has been turned red for reporting non-compliance. Red status triggers a daily call to discuss the status. The call does not discuss the work. The work is what the call is preventing. Status will return to green when reports resume, which is to say the color measures the reporting. The color is working as designed.",
     "effects": { "days": 2, "morale": -6, "credibility": -3 },
     "choices": []
   },

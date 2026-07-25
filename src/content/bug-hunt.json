@@ -53,9 +53,9 @@
     "capacityLine": "You can carry {cap} lbs back. That is your context window.",
     "rotLine": "Everything you leave rots on the trail. It will be rediscovered later, from scratch, at full price.",
     "summaryPrompt": "One line per finding: what breaks, where, under what condition. The payout reads the line, not the bug.",
-    "leftBehindLine": "Left to rot: {count} findings, {weight} lbs.",
+    "leftBehindLine": "Left to rot: {weight} lbs of findings.",
     "emptyBag": "Nothing in the bag. The trail keeps its bugs.",
-    "payoutNotice": "Carry-out: {count} findings, {weight} lbs. The summaries earned {tokens} tokens.",
+    "payoutNotice": "Carry-out: {weight} lbs of findings. The summaries earned {tokens} tokens.",
     "nothingCarried": "You carried nothing out. The hunt happened. There is no evidence."
   },
   "messages": {

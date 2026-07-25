@@ -130,7 +130,8 @@ page one.
 Built by Claude-driven agents from a build spec (`prompt.md`), art
 direction v2 (`docs/ART-DIRECTION.md`), and a decisions log
 (`docs/DECISIONS.md`). Palette: the six Apple II hi-res colours. Scoring
-framework: Andrew Ng's three loops. Tonal ancestor: *The Oregon Trail*
-(MECC, 1985), memorialised with affection.
+framework: the three-loops model — see the
+[curriculum library](docs/CURRICULUM.md) for attribution. Tonal ancestor:
+*The Oregon Trail* (MECC, 1985), memorialised with affection.
 
 MIT — see [LICENSE](LICENSE). Go ship something.

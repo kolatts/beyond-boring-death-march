@@ -90,16 +90,31 @@ export function roleApiName(role: RoleId): string {
   }
 }
 
-/** Printable ASCII only (server rejects anything else), trimmed to a cap. */
+/**
+ * Printable ASCII only (server rejects anything else), trimmed to a cap.
+ * Common typography is transliterated before filtering (dashes, curly
+ * quotes, ellipsis) so punctuation degrades instead of vanishing, and the
+ * cap cuts at a word boundary — the feed never shows a mid-word chop.
+ */
 export function asciiClamp(s: string, max: number): string {
-  return [...s]
+  const ascii = [...s
+    .replace(/[—–―]/g, '--') // em/en/horizontal-bar dashes
+    .replace(/[‘’‚′]/g, "'") // curly single quotes, prime
+    .replace(/[“”„″]/g, '"') // curly double quotes, double prime
+    .replace(/…/g, '...') // ellipsis
+    .replace(/[  -​ 　]/g, ' ')] // exotic spaces
     .filter((ch) => {
       const c = ch.charCodeAt(0);
       return c >= 0x20 && c <= 0x7e;
     })
     .join('')
-    .slice(0, max)
     .trim();
+  if (ascii.length <= max) return ascii;
+  const hard = ascii.slice(0, max);
+  if (ascii.charAt(max) === ' ') return hard.trimEnd(); // cut fell exactly on a boundary
+  // Mid-word cut: back up to the last space; a single unbroken word keeps the hard cut.
+  const lastSpace = hard.lastIndexOf(' ');
+  return (lastSpace > 0 ? hard.slice(0, lastSpace) : hard).trimEnd();
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T | null> {

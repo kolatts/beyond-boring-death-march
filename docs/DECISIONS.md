@@ -93,3 +93,29 @@ don't want to have with a Standards Body.
   resource group `death-march-prod`, Y1 consumption + Table Storage +
   sampled App Insights. Frontend must degrade gracefully to localStorage
   when the API is unreachable.
+
+## Educational layer vs. fiction layer (user directive, 2026-07-25)
+
+This ruling overrides the earlier blanket genericization where the two conflict.
+
+- **The educational content is purely focused on agentic coding**: Claude
+  skills, agentic workflows with GitHub Actions, the Claude SDK, and the
+  practices around them. It is allowed — and expected — to **name real
+  tools**: Claude Code, the Claude Agent SDK, GitHub Actions, `gh-aw`,
+  `claude-code-action`, MCP. Teach the real thing concretely. The
+  educational layer is: `src/content/curriculum.json` (Field Notes),
+  `docs/CURRICULUM.md`, and the endgame scoring explanations.
+- **The fiction layer stays vendor-neutral** per prompt.md §12.2: events,
+  landmarks, deaths, NPC dialogue, and the robots' lines never name a real
+  vendor or product. The bureaucracy is the target, not anyone's tool.
+- **No real person's name appears in any player-visible copy, anywhere** —
+  fiction or educational. The endgame formerly credited the three-loops
+  framework by name; it now says "the three loops" and the attribution
+  lives in `docs/CURRICULUM.md` (and the README points there).
+- **Primary-source links in Field Notes are required by prompt.md §10.1**
+  and are attribution, not satire. A link URL may contain an author's or
+  vendor's domain name; the card prose may not name a person.
+- The `surprise_deadlines` card teaches the agentic lesson, not interrupt
+  management: recurring compliance toil belongs in **scheduled agentic
+  workflows** (gh-aw schedule triggers, read-only permissions, safe
+  outputs) so mandates stop costing engineer-days.
