@@ -13,6 +13,7 @@
  * Do not edit main.ts or LandmarkScene.ts.
  */
 import type Phaser from 'phaser';
+import { OutfittingScene } from './OutfittingScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -24,7 +25,8 @@ export interface MinigameEntry {
 
 /** mechanic key (from landmarks.json) -> scene to launch. */
 export const MINIGAMES: Record<string, MinigameEntry> = {
-  // outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+  outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+  harness_swap: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */
