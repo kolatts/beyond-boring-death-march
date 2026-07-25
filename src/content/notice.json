@@ -1,0 +1,54 @@
+{
+  "heading": "MANDATORY COMPLIANCE NOTICE",
+  "docLine": "Document BBDM-CN-001 · Revision 1 · Classification: PUBLIC (RESTRICTED) · Status: FINAL (DRAFT)",
+  "sections": [
+    {
+      "n": "1",
+      "title": "PURPOSE",
+      "body": [
+        "This notice exists because a notice was required. A checklist item cannot be closed by software alone. The software shipped; the item remained open; this document closes it.",
+        "Nothing else in this document is required reading. This is why reading it is mandatory."
+      ]
+    },
+    {
+      "n": "2",
+      "title": "SCOPE",
+      "body": [
+        "This notice applies to BEYOND BORING: DEATH MARCH, a browser game about the road to Production, which reached Production. The precedent this sets is under review.",
+        "It applies in all four approved environments, and in the fifth one, where it was actually tested."
+      ]
+    },
+    {
+      "n": "3",
+      "title": "ATTESTATION",
+      "body": [
+        "By reaching this sentence you have attested that you read the entire document. The attestation has been recorded at the top of page one, where the button is.",
+        "The audit trail is immaculate."
+      ]
+    },
+    {
+      "n": "4",
+      "title": "RISK ASSESSMENT",
+      "body": [
+        "This game costs $0.00 per month to operate, deploys on every push, and was built in a week by a party of agents with a budget cap. The risk this poses to organisations that estimate such work in quarters has been assessed as: material.",
+        "Remediation is required within 30 days. Change requests take 90 days to process. Teams are encouraged to be proactive."
+      ]
+    },
+    {
+      "n": "5",
+      "title": "EXCEPTIONS",
+      "body": [
+        "Exceptions to this notice may be requested via the standard exception process. The standard exception process is an exception to the standard process. Both are documented on a wiki page titled Draft - DO NOT USE.",
+        "No exception has ever been denied. No exception has ever been needed. The register is maintained regardless, and you are on it."
+      ]
+    },
+    {
+      "n": "6",
+      "title": "LICENCE",
+      "body": [
+        "What follows is the MIT Licence: the only section of this notice with legal force, the shortest section, and the only one nobody asked to be added. Draw no conclusions from this."
+      ]
+    }
+  ],
+  "closing": "This concludes the notice. The item is closed. The compliance is achieved. Close this tab and go ship something."
+}

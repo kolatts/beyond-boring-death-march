@@ -211,3 +211,131 @@ a:focus-visible,
   outline: 3px solid #1bcb01;
   outline-offset: 2px;
 }
+
+/* ---- Audio control (systems/audio.ts) — corner mute toggle, M key ---- */
+#audio-control {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 30;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.25em 0.5em;
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.75;
+}
+#audio-control:hover,
+#audio-control:focus-visible {
+  opacity: 1;
+}
+
+/* ---- Mobile (390px portrait is the bar): thumb-usable DOM overlays ---- */
+@media (max-width: 600px), (pointer: coarse) {
+  button,
+  .btn {
+    min-height: 44px;
+    padding: 0.6em 1.1em;
+  }
+  /* 16px inputs stop iOS Safari from zooming the page on focus. */
+  input[type='text'] {
+    font-size: 16px !important;
+    min-height: 40px;
+  }
+  .field-note {
+    max-width: 94vw;
+    padding: 0.85rem 0.9rem;
+  }
+  .field-note-close {
+    min-height: 44px;
+    width: 100%;
+  }
+}
+
+/* ---- MANDATORY COMPLIANCE NOTICE (ui/notice.ts, spec §17) ---- */
+body.notice-mode {
+  overflow: auto;
+}
+body.notice-mode #overlay {
+  position: static;
+  pointer-events: auto;
+}
+.compliance-notice {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+  background: var(--black);
+}
+.compliance-paper {
+  position: relative;
+  max-width: 44rem;
+  background: #f2e7c9;
+  color: #221c10;
+  border: 3px solid #221c10;
+  box-shadow: 0 0 0 3px #f2e7c9, 0 0 32px rgba(27, 203, 1, 0.25);
+  padding: 2rem 2.25rem 2.5rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.45;
+}
+.compliance-paper h1 {
+  color: #221c10;
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.4rem;
+}
+.compliance-paper h2 {
+  color: #221c10;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  margin: 1.3rem 0 0.3rem;
+}
+.compliance-paper p {
+  margin: 0.4rem 0;
+  font-size: 0.98rem;
+}
+.compliance-paper hr {
+  border: none;
+  border-top: 2px solid #221c10;
+  margin: 1.2rem 0;
+}
+.compliance-docline {
+  font-family: var(--font-mono);
+  font-size: 0.72rem !important;
+  letter-spacing: 0.04em;
+}
+.compliance-stamp {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  transform: rotate(8deg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  color: #b34206; /* shade of --orange, ART-DIRECTION v2 */
+  border: 3px double #b34206;
+  padding: 0.2em 0.5em;
+  opacity: 0.8;
+}
+.compliance-licence {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  background: rgba(34, 28, 16, 0.06);
+  border: 1px solid #221c10;
+  padding: 0.9rem 1rem;
+  margin: 0.8rem 0;
+}
+.compliance-closing {
+  font-family: var(--font-mono);
+  font-size: 0.9rem !important;
+  letter-spacing: 0.04em;
+}
+.compliance-return {
+  color: #14430a;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
