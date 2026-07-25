@@ -18,6 +18,7 @@ import { CabCrossingScene } from './CabCrossingScene';
 import { NightWatchScene } from './NightWatchScene';
 import { SkillsMarketScene } from './SkillsMarketScene';
 import { PermissionsPassScene } from './PermissionsPassScene';
+import { LoopBuilderScene } from './LoopBuilderScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -30,11 +31,15 @@ export interface MinigameEntry {
 /** mechanic key (from landmarks.json) -> scene to launch. */
 export const MINIGAMES: Record<string, MinigameEntry> = {
   // outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+<<<<<<< HEAD
   context_pack: { sceneKey: 'ContextPack', sceneClass: ContextPackScene },
   cab_crossing: { sceneKey: 'CabCrossing', sceneClass: CabCrossingScene },
   night_watch: { sceneKey: 'NightWatch', sceneClass: NightWatchScene },
   skills_market: { sceneKey: 'SkillsMarket', sceneClass: SkillsMarketScene },
   permissions_gauntlet: { sceneKey: 'PermissionsPass', sceneClass: PermissionsPassScene },
+  tutorial_one_shot: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
+  loop_builder_guided: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
+  loop_builder_verifier: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */

@@ -1,0 +1,249 @@
+{
+  "blocks": [
+    {
+      "id": "trigger",
+      "label": "TRIGGER",
+      "sub": "issue opened",
+      "desc": "Starts the loop: schedule, file change, issue opened, CI failure, manual. Something has to ask."
+    },
+    {
+      "id": "context",
+      "label": "CONTEXT",
+      "sub": "what it sees",
+      "desc": "What the agent gets to see this iteration. Not everything. Everything is how you die."
+    },
+    {
+      "id": "agent",
+      "label": "AGENT STEP",
+      "sub": "the model acts",
+      "desc": "The model acts. It is confident. Confidence is not a metric."
+    },
+    {
+      "id": "tool_tests",
+      "label": "TOOL",
+      "sub": "run tests",
+      "desc": "read / write / tests / build / browse / shell. Today: run tests. They do not care how the code feels."
+    },
+    {
+      "id": "observe",
+      "label": "OBSERVE",
+      "sub": "read the result",
+      "desc": "Capture what the tool said, put it back in context. An unread test is a ritual, not a signal."
+    },
+    {
+      "id": "verifier_machine",
+      "label": "VERIFIER",
+      "sub": "tests pass",
+      "desc": "Machine-checkable pass/fail. The whole point. It cannot be flattered."
+    },
+    {
+      "id": "verifier_subjective",
+      "label": "VERIFIER",
+      "sub": "looks good",
+      "desc": "A vibe with a socket. Accepts compliments. Returns opinions."
+    },
+    {
+      "id": "stop_success",
+      "label": "STOP: SUCCESS",
+      "sub": "exit on pass",
+      "desc": "Leave when the verifier says pass. A loop with no exit is called a career."
+    },
+    {
+      "id": "stop_cap",
+      "label": "STOP: CAP",
+      "sub": "max iterations",
+      "desc": "A maximum number of tries. Hope is not a maximum."
+    },
+    {
+      "id": "stop_budget",
+      "label": "STOP: BUDGET",
+      "sub": "max spend",
+      "desc": "A spending limit. The invoice arrives either way; this decides the font size."
+    },
+    {
+      "id": "human_gate",
+      "label": "HUMAN GATE",
+      "sub": "pause for a person",
+      "desc": "Pause for a person. Powerful in one place. In every place, the person is the loop."
+    },
+    {
+      "id": "escalate",
+      "label": "ESCALATE",
+      "sub": "give up loudly",
+      "desc": "Give up loudly instead of quietly. A failure that files a report is worth something."
+    }
+  ],
+  "guided": {
+    "hint": "Two sockets are cold. The loop knows what it is missing. Soon, so will you.",
+    "socketHints": {
+      "observe": "An empty socket after TOOL. The tests will say things. Someone should listen.",
+      "stop_cap": "An empty socket among the stops. How many tries is too many? Pick a number."
+    }
+  },
+  "ridge": {
+    "intro": "The bridge is missing one plank. The gap is shaped exactly like a verifier.",
+    "plate": "NO VERIFIER - NO EXIT",
+    "retreatDenied": "There is no way back. The trail behind you has been deprecated.",
+    "crossSuccess": [
+      "The plank fits. Machine-checked. The bridge holds because holding is testable.",
+      "The party crosses while the loop runs on. Nobody watches. That was the point."
+    ],
+    "crossGated": "You crossed. You personally inspected every plank. It took eleven days.",
+    "banked": "+40 UNATTENDED MILES. THE PARTY SLEPT. THE LOOP DID NOT."
+  },
+  "tutorial": {
+    "prompt": "You are a world-class principal staff senior engineer. Think step by step. Be correct. Do not be incorrect. My career depends on this. (revision 41, framed)",
+    "fires": [
+      [
+        "PROMPT fired. 62% of the task appears, fully formed, in one pass.",
+        "It is genuinely impressive. The remaining 38% is load-bearing."
+      ],
+      [
+        "PROMPT fired again, louder. 64%.",
+        "The same missing part is missing, with better formatting."
+      ],
+      [
+        "Persona added. Threat added. 65%.",
+        "The prompt is now longer than the task."
+      ]
+    ],
+    "ceremony": "Fort Prompt records this as its best result in two years. There is a ceremony.",
+    "loopIntro": "A settler whispers: some parties wire the output back into the input.",
+    "loopLines": [
+      "ITER 1 - act, observe: 74%. The loop found the missing part by looking.",
+      "ITER 2 - act, observe: 83%. No inspiration was involved.",
+      "ITER 3 - act, observe: 91%. The prompt has not changed once.",
+      "ITER 4 - act, observe: 97%. The fort has gone quiet.",
+      "ITER 5 - act, observe: 100%. Done. Verified. Boring."
+    ],
+    "banner": "A PROMPT IS A WISH. A LOOP IS A PROCESS.",
+    "moral": "The loop did not need to be inspired. It needed to be told when it was wrong."
+  },
+  "run": {
+    "start": "PANEL ENERGIZED. Current on the line.",
+    "visitLines": {
+      "trigger": "TRIGGER - issue #4198: 'button does nothing (the main button)'.",
+      "context": "CONTEXT - the failing test, the file, the conventions doc. Nothing else.",
+      "agent": "AGENT - reads, edits src/button.ts. Confidence: unearned, pending.",
+      "tool_tests": "TOOL - npm test.",
+      "human_gate": "GATE - waiting for a human. The human is in a meeting about this loop."
+    }
+  },
+  "verdicts": {
+    "success": {
+      "banner": "THE LOOP RAN UNATTENDED. THE PARTY SLEPT.",
+      "lines": [
+        "ITER 1 - edit, test: 3 failing. OBSERVE: noted. Adjusting.",
+        "ITER 2 - edit, test: 1 failing. OBSERVE: closer. The output steers.",
+        "ITER 3 - edit, test: 0 failing. VERIFIER: pass. It cannot be flattered.",
+        "STOP: SUCCESS - the loop exits on purpose. Under cap. Under budget."
+      ],
+      "gateLine": "GATE - a human approved iteration {n}. The human added nothing, warmly.",
+      "scoreLine": "Efficient loop. Tokens banked: {banked}."
+    },
+    "no_verifier": {
+      "banner": "YOU HAVE DIED OF UNEARNED CONFIDENCE.",
+      "cause": "UNEARNED CONFIDENCE",
+      "checks": [
+        "[ok] code written",
+        "[ok] code reviewed (by the author)",
+        "[ok] tests passing (assumed)",
+        "[ok] build green (unobserved)",
+        "[ok] edge cases handled (all of them)",
+        "[ok] docs updated (in spirit)",
+        "[ok] security reviewed (a feeling)",
+        "[ok] performance excellent (vibes, strong)",
+        "[ok] shipped to Production"
+      ],
+      "lines": [
+        "The agent declares victory. Nothing was asked to disagree.",
+        "Production reports the feature does not exist.",
+        "The tests were never run. The checkmarks were real, though."
+      ]
+    },
+    "subjective_verifier": {
+      "banner": "THE LOOP NEVER TERMINATED. IT LOOKED GOOD THE WHOLE TIME.",
+      "cause": "A SUBJECTIVE VERIFIER",
+      "lines": [
+        "VERIFIER - does it look good? Define look. Define good.",
+        "VERIFIER - good relative to what? The requirements also merely look good.",
+        "VERIFIER - consider the ship of Theseus, if every plank were a refactor.",
+        "VERIFIER - what is 'done'? A social construct with a deadline.",
+        "VERIFIER - it looks the way the sea looks. Deep. Unknowable. Wet.",
+        "VERIFIER - requesting additional tokens to continue looking."
+      ],
+      "drain": "Tokens draining. The verifier has opened a second line of inquiry."
+    },
+    "no_stop_cap": {
+      "banner": "NOTHING TOLD IT TO STOP. NOTHING WILL.",
+      "cause": "AN UNBOUNDED LOOP",
+      "iterLine": "ITER {n} - fix applied. tests failing. trying again.",
+      "iterVariants": [
+        "ITER {n} - same fix, more conviction.",
+        "ITER {n} - a bold new approach: the previous approach.",
+        "ITER {n} - renamed a variable. hope levels: unchanged.",
+        "ITER {n} - the fix now has a fix. they disagree."
+      ],
+      "watch": "The party watches the screen fill. The party says nothing.",
+      "escalated": [
+        "ESCALATE fired at ITER 6: 'I QUIT, AND HERE IS WHY', it wrote, correctly.",
+        "The report is attached. Loud failure. Cheap, as failures go."
+      ],
+      "lines": [
+        "The loop is still running somewhere. It sends its regards."
+      ]
+    },
+    "no_stop_budget": {
+      "banner": "THE WORK IS DONE. SO ARE YOU.",
+      "cause": "AN UNCAPPED BILL",
+      "lines": [
+        "ITER 1 - edit, test: 2 failing. Retrying, expensively.",
+        "ITER 2 - test: pass. VERIFIER: pass. Each step retried 40 times, to be sure.",
+        "STOP: SUCCESS - the loop exits. Something arrives with the sunrise."
+      ],
+      "invoice": [
+        "INVOICE - LOOP SERVICES RENDERED",
+        "  retries (identical) .......... 4,182",
+        "  retries (bold) ................. 917",
+        "  reading node_modules (why) ... 2,006",
+        "  apologies, generated ........... 312",
+        "  TOTAL ................. ALL OF IT"
+      ],
+      "after": "The bill was always coming. The cap decides whether you meet it standing."
+    },
+    "no_observe": {
+      "banner": "IT FIXED THE WRONG FILE. TWICE.",
+      "cause": "FIXING THE WRONG FILE",
+      "lines": [
+        "TOOL - npm test: 14 failing.",
+        "AGENT - output unread. Diagnosis anyway: probably utils.ts. Editing utils.ts.",
+        "TOOL - npm test: 14 failing. Identically.",
+        "AGENT - output unread. Bold new theory: utils.ts, but more so.",
+        "TOOL - npm test: 14 failing. The failures have formed a union.",
+        "The answer was in the output. The output was never in the context."
+      ]
+    },
+    "human_gate_everywhere": {
+      "banner": "IT WORKED. IT TOOK ELEVEN DAYS. YOU ARE THE BOTTLENECK.",
+      "lines": [
+        "GATE - waiting for a human. (day 1)",
+        "GATE - approved: 'lgtm'. Next gate in forty minutes. (day 2)",
+        "GATE - waiting. Your calendar has opinions. (day 4)",
+        "GATE - approved from an airport. (day 6)",
+        "GATE - waiting. The human is at an offsite about velocity. (day 9)",
+        "VERIFIER - pass. STOP: SUCCESS. (day 11)",
+        "Every step was safe. Every step was you. You stood in the loop you built."
+      ]
+    },
+    "incomplete": {
+      "banner": "THE PANEL WILL NOT ENERGIZE.",
+      "missing": {
+        "trigger": "No TRIGGER seated: nothing asks, so nothing answers.",
+        "context": "No CONTEXT seated: the agent would act on a clean conscience and an empty head.",
+        "agent": "No AGENT STEP seated: a loop of pure administration. The org has plenty.",
+        "tool_tests": "No TOOL seated: the agent can only describe what it would have done.",
+        "stop_success": "No STOP: SUCCESS seated: even a perfect pass would just keep going."
+      }
+    }
+  }
+}
