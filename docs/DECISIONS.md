@@ -74,3 +74,22 @@ don't want to have with a Standards Body.
   files under `public/`.
 - **No analytics, no telemetry, no runtime services in the frontend.** The
   whole point of the joke is that this cost nothing and shipped in a week.
+
+## Content interface decisions (Wave 1B)
+
+- **Escalation events use `weight: 0`** — never drawn from the random pool;
+  fired only by the deadline system via `escalationEventId` (also used for the
+  flag-triggered events `hollow_green_discovered`, `compromised_consequence`).
+  The event engine MUST treat weight 0 as "referenced-only, never random."
+- **`deferPenalty` values are negative deltas** (e.g. `credibility: -6`),
+  enforced by schema (`maximum: 0`).
+- **Real product names genericized** even where the spec mentioned them
+  ("the ticketing system", "chat scrollback", "the wiki"). Vendor names appear
+  only in `docs/CURRICULUM.md` reference links, which §18 mandates.
+- **Boring/Brilliant correctness sequence** across the 12 landmarks is
+  BXXBBXXBBXBX (6/6, no learnable pattern), marked in data, unmarked in prose.
+- **Social backend** (Wave 1C): the game is static; only the graveyard has a
+  server. API base `https://death-march-prod-functions.azurewebsites.net/api`,
+  resource group `death-march-prod`, Y1 consumption + Table Storage +
+  sampled App Insights. Frontend must degrade gracefully to localStorage
+  when the API is unreachable.
