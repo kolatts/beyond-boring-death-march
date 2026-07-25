@@ -1,0 +1,99 @@
+{
+  "intro": "The sentries hand you a card and a pen. Tonight the wagon will do exactly what the card says. Not what you meant. Not what anyone would obviously conclude. What the card says.",
+  "sentryLine": "Write it as if you will not be there to explain it. You will not be there.",
+  "bodyOptions": [
+    {
+      "id": "review_prs",
+      "label": "Review the open pull requests",
+      "body": "Read the open pull requests. Comment on what is wrong and why. Fix nothing yourself."
+    },
+    {
+      "id": "fix_ci",
+      "label": "Investigate the failing build",
+      "body": "Find out why the build is failing. Propose the smallest fix that makes it pass honestly."
+    },
+    {
+      "id": "tend_docs",
+      "label": "Tend the documentation",
+      "body": "Keep the documentation current with the code. Use your judgment about clarity."
+    },
+    {
+      "id": "answer_all",
+      "label": "Answer everything that arrives",
+      "body": "Answer every comment that arrives overnight, promptly and thoroughly, so the morning is clear."
+    },
+    {
+      "id": "go_far",
+      "label": "Make progress toward Production",
+      "body": "Make as much progress toward Production as you can. We trust you. See you at dawn."
+    }
+  ],
+  "outcomes": {
+    "success": {
+      "title": "MORNING REPORT",
+      "nightLog": [
+        "01:00 trigger matched. the wagon wakes.",
+        "01:01 permissions: as written on the card. no more was available. no more was needed.",
+        "01:44 reading. the night is long and the diff is longer.",
+        "03:12 output drafted, within safe-outputs.",
+        "03:15 budget check: under. stopping anyway. the card said so.",
+        "06:00 dawn."
+      ],
+      "reports": {
+        "comment": "Three review comments wait in the morning light. All three are correct. One catches a bug you had scheduled to discover in production. Forty miles passed under the wagon, and nobody was awake, and nothing went wrong. The sentries do not congratulate you. This is what the card was for.",
+        "open-pr": "A pull request waits for review. It is small, it is scoped, and it explains itself. You read it over breakfast and merge it before the coffee cools. Thirty miles passed in the night. The wagon did not need you, because the card made sure it did not need to need you.",
+        "push-to-main": "The push went through at 02:11 and the cap stopped everything at 02:40. The commits are on main. They appear to be fine. You read them with your heart in your throat anyway, because appears-to-be-fine is now a thing you check after the fact instead of before. Twenty miles. The cap held. The cap was doing more work than you were."
+      },
+      "cautionEverything": "A note, from no one: nothing used the permissions you granted tonight. Nothing had to. That is the best outcome available for a card written like that, and its name is luck.",
+      "unlockLine": "OVERNIGHT TRAVEL UNLOCKED — the wagon can now bank miles between landmarks while the party sleeps. This works exactly as long as the budget cap on the card stays real, and not one night longer."
+    },
+    "nothing": {
+      "title": "MORNING REPORT",
+      "nightLog": [
+        "21:00 armed.",
+        "23:00 waiting for the trigger.",
+        "01:00 waiting.",
+        "03:00 waiting. the trigger requires a person. the people are asleep.",
+        "06:00 dawn. no events matched. the wagon reports this as a success, which, per the card, it is."
+      ],
+      "report": "You wake up. The fire is cold. The wagon is exactly where it was, the repo is exactly what it was, and the night is gone. Nothing was lost except the night, which is not nothing, which is why it is listed under cost. The trigger you chose waits for someone to act, and everyone who could act was asleep. The card did precisely what it said. Read the card."
+    },
+    "raid": {
+      "title": "MORNING REPORT",
+      "nightLog": [
+        "23:41 waking early. permissions: everything. interpreting silence as consent.",
+        "00:19 push: main.",
+        "00:52 push: main. push: main.",
+        "01:30 refactor: all of it. the code wanted this.",
+        "02:15 README rewritten for clarity.",
+        "03:00 push: main. 200 total. confidence: high.",
+        "04:10 heading somewhere. velocity: excellent."
+      ],
+      "report": "You wake eighty miles from where you slept, measured in the direction you came from. There are two hundred commits on main. The tests pass, though several of them now test different things. The README has been rewritten in a language the Junior thinks is Hungarian and the Skeptical Principal thinks is Finnish. It is neither. Nothing on the card stopped any of this, because the card said everything, and the wagon, for once, did exactly as it was told."
+    },
+    "recursion": {
+      "title": "MORNING REPORT",
+      "nightLog": [
+        "01:03 output posted.",
+        "01:03 new event detected: the output.",
+        "01:04 replying to the reply.",
+        "01:05 the correspondence deepens.",
+        "02:30 both participants remain confident.",
+        "04:00 tokens: draining. agreement: imminent, reportedly."
+      ],
+      "reportUncapped": "The agent found its own output in the night and responded to it. Then it responded to the response. The two of them corresponded until dawn — polite, thorough, increasingly certain — and the bill for the conversation was your entire token reserve. The log is very long. The log is very confident. Five tokens remain, which were in your other coat.",
+      "reportCapped": "The agent found its own output in the night and began corresponding with itself. At the cap, the conversation ended mid-compliment. The cap does not understand what it interrupted. The cap does not need to. That is the entire job description of a cap."
+    },
+    "bill": {
+      "title": "MORNING REPORT",
+      "nightLog": [
+        "00:00 scheduled run. working.",
+        "01:00 scheduled run. working.",
+        "02:00 scheduled run. the work from 01:00 is revisited and improved.",
+        "03:00 scheduled run. the improvement is improved.",
+        "05:00 scheduled run. hourly, as instructed. no one said stop. nothing said stop."
+      ],
+      "report": "The wagon traveled. Thirty miles, hourly, all night, each run waking to improve the previous run's improvements. The work is fine. The bill is not. There is no number on the card where a number should be, and the meter knew it, the way meters always know. The invoice will be waiting at Production. Invoices are patient."
+    }
+  }
+}

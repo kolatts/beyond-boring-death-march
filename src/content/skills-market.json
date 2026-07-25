@@ -1,0 +1,32 @@
+{
+  "intro": "The proprietor gestures at four shelves. The goods on them look identical: folders. He assures you they are not identical. He is right, which is the problem.",
+  "typeSigns": [
+    {
+      "type": "procedure",
+      "name": "PROCEDURES",
+      "sign": "Instructions the party reads when the situation matches. Cost nothing to carry. Cost everything to rely on."
+    },
+    {
+      "type": "scout",
+      "name": "SCOUTS",
+      "sign": "They go ahead with their own supplies and come back with one sentence. The sentence is the product."
+    },
+    {
+      "type": "standing_order",
+      "name": "STANDING ORDERS",
+      "sign": "Fire whether or not anyone remembers, believes, or objects. The wagon does not get a vote."
+    },
+    {
+      "type": "trade_route",
+      "name": "TRADE ROUTES",
+      "sign": "Connections to somewhere else that has what you need. What the somewhere else needs from you is a separate question, and it is not on the sign."
+    }
+  ],
+  "proprietor": {
+    "greeting": "Buy anything. I don't check what's in them. Historically, neither do you.",
+    "genericSale": "Wrapped and loaded. No refunds. The refund policy is also in a folder.",
+    "trapProcedureSale": "A fine choice. Works four times out of five, and the fifth time is a long way from my stall.",
+    "trapRouteChampionDead": "The route works immediately. The discount was real. The wagon feels lighter, which you attribute to the savings."
+  },
+  "championIntercept": "{champion} reads the route's manifest at the perimeter, twice. \"It works,\" they say. \"So does a listening post.\" The route is quarantined, logged, and priced into the incident report they have already started writing."
+}
