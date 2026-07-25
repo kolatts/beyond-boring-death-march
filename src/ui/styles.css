@@ -1,0 +1,155 @@
+/* ============================================================
+   BEYOND BORING: DEATH MARCH — global styles + design tokens
+   Palette: Apple II Oregon Trail (see docs/DECISIONS.md).
+   Six values. No seventh.
+   ============================================================ */
+
+:root {
+  /* Palette tokens — Apple II hi-res */
+  --black: #000000;
+  --white: #ffffff;
+  --green: #1bcb01;
+  --violet: #bb36ff;
+  --orange: #f55d08;
+  --blue: #0da1ff;
+
+  /* Typography */
+  --font-mono: 'Courier New', Courier, 'IBM Plex Mono', 'Cascadia Mono',
+    ui-monospace, monospace;
+  --font-display: var(--font-mono); /* chunky display face lands in the art pass */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--black);
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+/* Phaser canvas mount — letterboxed, centered */
+#game {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+}
+
+#game canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* DOM overlay root — sits above the canvas, pointer-transparent by default */
+#overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#overlay > * {
+  pointer-events: auto;
+}
+
+/* Headings: chunky, all-caps, letterspaced — terminal-poster energy */
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--white);
+}
+
+/* Buttons say what happens. They do not apologise. */
+button,
+.btn {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  background: var(--black);
+  border: 2px solid var(--green);
+  padding: 0.5em 1.25em;
+  cursor: pointer;
+}
+
+button:hover,
+.btn:hover {
+  color: var(--black);
+  background: var(--green);
+}
+
+/* Visible focus states — keyboard players are first-class. */
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   Status glyph helpers.
+   Never colour alone: every status carries a shape or glyph
+   so it survives colourblindness and a bad projector.
+   ------------------------------------------------------------ */
+.status-ok,
+.status-warn,
+.status-fail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.status-ok {
+  color: var(--green);
+}
+.status-warn {
+  color: var(--orange);
+}
+.status-fail {
+  color: var(--violet);
+}
+
+.status-ok::before {
+  content: '\2713'; /* ✓ */
+}
+.status-warn::before {
+  content: '!';
+}
+.status-fail::before {
+  content: '\00d7'; /* × */
+}
+
+.noscript {
+  color: var(--white);
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Respect prefers-reduced-motion: cut to the result. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

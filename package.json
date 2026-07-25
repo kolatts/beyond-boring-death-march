@@ -1,0 +1,22 @@
+{
+  "name": "beyond-boring-death-march",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "BEYOND BORING: DEATH MARCH — You have died of context exhaustion.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint:content": "node scripts/validate-content.mjs"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.5"
+  }
+}

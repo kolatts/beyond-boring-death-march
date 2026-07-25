@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Beyond Boring: Death March</title>
+    <meta name="description" content="You have died of context exhaustion. An Oregon Trail parody about agentic engineering, surprise deadlines, and the long road to Production." />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Beyond Boring: Death March" />
+    <meta property="og:description" content="You have died of context exhaustion. Lead a party of five out of Legacy Junction toward Production, 2,000 miles of enterprise process away." />
+    <meta property="og:url" content="https://kolatts.github.io/beyond-boring-death-march/" />
+    <meta property="og:image" content="https://kolatts.github.io/beyond-boring-death-march/assets/art/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Beyond Boring: Death March" />
+    <meta name="twitter:description" content="You have died of context exhaustion." />
+    <meta name="twitter:image" content="https://kolatts.github.io/beyond-boring-death-march/assets/art/og.png" />
+  </head>
+  <body>
+    <!-- Phaser mounts the canvas here (320x200 logical, nearest-neighbour upscale, letterboxed). -->
+    <div id="game"></div>
+    <!-- DOM overlay root: HTML/CSS UI layered above the canvas, driven by the event bus. No React. -->
+    <div id="overlay" aria-live="polite"></div>
+    <noscript>
+      <p class="noscript">This game requires JavaScript. The Standards Body has been notified.</p>
+    </noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
