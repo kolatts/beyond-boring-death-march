@@ -26,7 +26,9 @@ import type { BBExchange, EventEffects, Landmark, Npc, NpcOption } from '../syst
 import { applyEventEffects } from '../systems/eventEngine';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
+import { queueArt } from '../systems/art';
 import { bus } from '../ui/overlay';
+import { padHit } from '../ui/touch';
 import { MINIGAMES } from './index';
 
 const WHITE = '#ffffff';
@@ -71,14 +73,20 @@ export class LandmarkScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // The ONLY generated art this wave may load (per the integration
-    // brief): the two mascot portraits.
-    const base = import.meta.env.BASE_URL ?? '/';
-    if (!this.textures.exists('bb-boring')) {
-      this.load.image('bb-boring', `${base}assets/art/boring-portrait.png`);
-    }
-    if (!this.textures.exists('bb-brilliant')) {
-      this.load.image('bb-brilliant', `${base}assets/art/brilliant-portrait.png`);
+    // Lazy per-scene art: the mascot portraits plus THIS landmark's
+    // vignette only — arriving at Fort Prompt never downloads Production.
+    queueArt(this, {
+      'bb-boring': 'boring-portrait.png',
+      'bb-brilliant': 'brilliant-portrait.png',
+    });
+    const lm = this.landmark;
+    if (lm) {
+      const idx = LANDMARKS.findIndex((l) => l.id === lm.id);
+      if (idx >= 0) {
+        queueArt(this, {
+          [`lm-${lm.id}`]: `landmark-${String(idx + 1).padStart(2, '0')}-${lm.id.replaceAll('_', '-')}.png`,
+        });
+      }
     }
   }
 
@@ -234,8 +242,8 @@ export class LandmarkScene extends Phaser.Scene {
           fontSize: '9px',
           color: WHITE,
         })
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true });
+        .setOrigin(0.5, 0.5);
+      padHit(t, 20, 6);
       t.on('pointerdown', () => only.onSelect());
       this.drawn.push(t);
       return;
@@ -250,7 +258,7 @@ export class LandmarkScene extends Phaser.Scene {
         7,
         GAME_WIDTH - 24,
       );
-      t.setInteractive({ useHandCursor: true });
+      padHit(t, 8, 1);
       t.on('pointerdown', () => {
         this.menuIndex = i;
         item.onSelect();
@@ -301,10 +309,26 @@ export class LandmarkScene extends Phaser.Scene {
     }
   }
 
+  /** The landmark's generated vignette, right of the text. 0 if absent. */
+  private drawVignette(lm: Landmark, cx: number, cy: number, size: number): boolean {
+    const key = `lm-${lm.id}`;
+    if (!this.textures.exists(key)) return false;
+    const img = this.add.image(cx, cy, key).setDisplaySize(size, size);
+    const border = this.add.graphics();
+    border.lineStyle(1, 0xffffff, 0.55);
+    border.strokeRect(cx - size / 2 - 1, cy - size / 2 - 1, size + 2, size + 2);
+    this.drawn.push(img, border);
+    return true;
+  }
+
   private renderBlurb(lm: Landmark): void {
     this.centeredText(6, lm.name.toUpperCase(), WHITE, 12);
     this.centeredText(20, `MILE ${lm.mile}`, BLUE, 8);
-    this.text(8, 34, lm.blurb, GREEN);
+    if (this.drawVignette(lm, 268, 78, 88)) {
+      this.text(8, 34, lm.blurb, GREEN, 7, 208);
+    } else {
+      this.text(8, 34, lm.blurb, GREEN);
+    }
     const label = this.npc ? `TALK TO ${this.npc.name.toUpperCase()}` : this.departLabel(lm);
     this.renderMenu([{ label, onSelect: () => this.afterBlurb() }], 0);
   }
@@ -400,6 +424,7 @@ export class LandmarkScene extends Phaser.Scene {
   private renderDepart(lm: Landmark): void {
     this.centeredText(6, lm.name.toUpperCase(), WHITE, 12);
     this.centeredText(20, `MILE ${lm.mile}`, BLUE, 8);
+    this.drawVignette(lm, 160, 112, 92);
     // The heed's resource effect is applied silently; whether it was the
     // right call surfaces at the campfire (and on the bars). No spoilers.
     const heed = getState().lastLandmarkHeed;

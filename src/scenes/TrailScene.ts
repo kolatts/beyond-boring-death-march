@@ -42,7 +42,10 @@ import { advanceDays, type DayAction } from '../systems/economy';
 import { buyException, complyDeadline, doomClock } from '../systems/deadlines';
 import { applyChoice, visibleChoices, type TriggeredEvent } from '../systems/eventEngine';
 import { bbForLandmark } from '../systems/content';
-import { saveRun } from '../systems/save';
+import { loadTombstones, saveRun } from '../systems/save';
+import { keyOutBlack, queueArt, resample } from '../systems/art';
+import { setBed } from '../systems/audio';
+import { padHit } from '../ui/touch';
 import { isFieldNoteOpen, showCurriculumCard } from '../ui/curriculumCard';
 import { bus } from '../ui/overlay';
 import { MINIGAMES } from './index';
@@ -126,16 +129,38 @@ export class TrailScene extends Phaser.Scene {
   /** Scene routing deferred until the modal queue drains. */
   private pendingRoute: (() => void) | null = null;
 
+  // Trail vignette (persistent across redraws; art pass §13)
+  private terrain: Phaser.GameObjects.TileSprite | null = null;
+  private wagon: Phaser.GameObjects.Image | null = null;
+  private wagonFrame = 1;
+  private graveObjs: Phaser.GameObjects.GameObject[] = [];
+
   constructor() {
     super('Trail');
   }
 
+  preload(): void {
+    // Lazy per-scene art (never in BootScene — spec §2 load budget).
+    queueArt(this, {
+      'trail-terrain': 'trail-terrain.png',
+      'trail-wagon-1': 'wagon-oxen-1.png',
+      'trail-wagon-2': 'wagon-oxen-2.png',
+      'trail-vulture': 'death-vulture.png',
+    });
+  }
+
   create(): void {
+    // Scene instances survive restarts; children don't. Drop stale refs.
+    this.terrain = null;
+    this.wagon = null;
+    this.graveObjs = [];
     if (!hasRun()) {
       this.scene.start('Title');
       return;
     }
     this.cameras.main.setBackgroundColor('#000000');
+    setBed('trail');
+    this.buildVignette();
     this.fastOn = fastModeMultiplier() > 1;
     this.modal = null;
     this.queue = [];
@@ -576,7 +601,7 @@ export class TrailScene extends Phaser.Scene {
         })
         .setOrigin(0, 0);
       if (!opt.disabled) {
-        t.setInteractive({ useHandCursor: true });
+        padHit(t, 6, 1);
         t.on('pointerdown', () => {
           if (!this.modal) return;
           this.modal.index = i;
@@ -694,6 +719,84 @@ export class TrailScene extends Phaser.Scene {
   }
 
   // -------------------------------------------------------------------------
+  // Trail vignette — tiled terrain, two-frame wagon, graves with vultures
+  // -------------------------------------------------------------------------
+
+  /** Strip box (logical px): sits right of the pace line, above the log. */
+  private static readonly STRIP = { x: 168, y: 102, w: 148, h: 44 } as const;
+
+  private buildVignette(): void {
+    const S = TrailScene.STRIP;
+    if (!this.textures.exists('trail-terrain')) return;
+
+    // The generated sprites ship on opaque black at 256px; key the black
+    // out and pre-downsample to display size (nearest-neighbour decimation
+    // at ~15% scale turns pixel art into noise).
+    keyOutBlack(this, 'trail-wagon-1', 'trail-wagon-1-t', 30);
+    keyOutBlack(this, 'trail-wagon-2', 'trail-wagon-2-t', 30);
+    keyOutBlack(this, 'trail-vulture', 'trail-vulture-t', 16);
+    resample(this, 'trail-terrain', 'trail-terrain-sm', 0.3);
+
+    const frame = this.add.graphics();
+    frame.lineStyle(1, GREEN_HEX, 0.5);
+    frame.strokeRect(S.x - 1, S.y - 1, S.w + 2, S.h + 2);
+
+    // Ground: the bottom band of the terrain tile, scrolling as you travel.
+    const groundH = 22;
+    const tileTex = this.textures.exists('trail-terrain-sm') ? 'trail-terrain-sm' : 'trail-terrain';
+    const tileH = this.textures.get(tileTex).getSourceImage().height;
+    this.terrain = this.add
+      .tileSprite(S.x + S.w / 2, S.y + S.h - groundH / 2, S.w, groundH, tileTex)
+      .setTilePosition(0, tileH - groundH);
+
+    // The wagon trundles: two frames, oxen-paced.
+    if (this.textures.exists('trail-wagon-1-t')) {
+      // Mid-strip, so passing graves sweep in from the right and fall
+      // behind: a grave at the party's exact mile lines up with the wagon.
+      this.wagon = this.add.image(S.x + 54, S.y + S.h - groundH - 6, 'trail-wagon-1-t');
+      if (!reducedMotion()) {
+        this.time.addEvent({
+          delay: 380,
+          loop: true,
+          callback: () => {
+            this.wagonFrame = this.wagonFrame === 1 ? 2 : 1;
+            this.wagon?.setTexture(`trail-wagon-${this.wagonFrame}-t`);
+          },
+        });
+      }
+    }
+    this.updateGraves();
+  }
+
+  /** Prior-run tombstones near the party's mile, vulture perched (§8.3). */
+  private updateGraves(): void {
+    this.graveObjs.forEach((o) => o.destroy());
+    this.graveObjs = [];
+    if (!this.terrain || !this.textures.exists('trail-vulture-t')) return;
+    const S = TrailScene.STRIP;
+    const mile = getState().mile;
+    const windowBack = 26; // keeps a same-mile grave aligned with the wagon
+    const windowSpan = 75; // miles mapped across the strip
+    for (const t of loadTombstones()) {
+      const offset = t.mile - (mile - windowBack);
+      if (offset < 0 || offset > windowSpan) continue;
+      const gx = Math.round(S.x + 8 + (offset / windowSpan) * (S.w - 16));
+      const gy = S.y + S.h - 22;
+      // The marker: a manila board; the vulture art brings its own post.
+      const board = this.add.rectangle(gx, gy - 3, 7, 9, 0xd8c7a0).setStrokeStyle(1, 0x3a342b);
+      const vulture = this.add.image(gx, gy - 12, 'trail-vulture-t');
+      this.graveObjs.push(board, vulture);
+    }
+  }
+
+  override update(_time: number, delta: number): void {
+    if (this.terrain && !reducedMotion()) {
+      // The ground drifts under the wagon: travel you can see.
+      this.terrain.tilePositionX += delta * 0.012;
+    }
+  }
+
+  // -------------------------------------------------------------------------
   // Rendering (rebuilt each state change; 320x200 text UI)
   // -------------------------------------------------------------------------
 
@@ -717,6 +820,7 @@ export class TrailScene extends Phaser.Scene {
     this.drawn = [];
     const s = getState();
     const role = ROLES[s.role];
+    this.updateGraves();
 
     // Row 1: mile / day / fast indicator
     this.text(4, 2, `MILE ${Math.floor(s.mile)}/${TOTAL_MILES}`, C.white);
@@ -761,15 +865,19 @@ export class TrailScene extends Phaser.Scene {
       }
     }
 
-    // Pace
+    // Pace (tap cycles it; Left/Right on keyboard)
     const pace = PACES[s.pace];
-    this.text(4, 106, `PACE: < ${pace.label} >  (${pace.milesPerDay} MI/DAY)`, C.blue);
+    const paceT = this.text(4, 106, `PACE: < ${pace.label} >  (${pace.milesPerDay} MI/DAY)`, C.blue);
+    padHit(paceT, 4, 3);
+    paceT.on('pointerdown', () => {
+      if (!this.modal) this.shiftPace(1);
+    });
 
     // Menu
     MENU_ITEMS.forEach((item, i) => {
       const selected = i === this.menuIndex;
       const t = this.text(12, 118 + i * 10, `${selected ? '>' : ' '} ${item.label}`, selected ? C.white : C.green);
-      t.setInteractive({ useHandCursor: true });
+      padHit(t, 10, 1);
       t.on('pointerdown', () => {
         if (this.modal) return;
         this.menuIndex = i;

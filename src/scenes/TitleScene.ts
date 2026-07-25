@@ -18,7 +18,10 @@
  */
 
 import Phaser from 'phaser';
-import { GAME_WIDTH, PARTY_TEMPLATE, ROLES, ROLE_ORDER, type RoleId } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, PARTY_TEMPLATE, ROLES, ROLE_ORDER, type RoleId } from '../config';
+import { coverBackdrop, queueArt } from '../systems/art';
+import { setBed } from '../systems/audio';
+import { padHit } from '../ui/touch';
 import { actions } from '../systems/state';
 import { LANDMARKS } from '../systems/content';
 import { loadRun, loadTombstones, saveRun } from '../systems/save';
@@ -80,15 +83,31 @@ export class TitleScene extends Phaser.Scene {
   private hasSave = false;
   private fameScores: RemoteScore[] | null = null;
   private fameLoaded = false;
+  /** True while the party-naming DOM panel owns input; Phaser keys go inert. */
+  private panelOpen = false;
 
   constructor() {
     super('Title');
+  }
+
+  preload(): void {
+    // Lazy per-scene art (spec §2 load budget): the title key art loads
+    // here, not in BootScene, and only once per session.
+    queueArt(this, { 'title-art': 'title-key-art.png' });
   }
 
   create(): void {
     this.cameras.main.setBackgroundColor('#000000');
     this.step = 'menu';
     this.cursor = 0;
+    this.panelOpen = false;
+    setBed(null);
+
+    // Title key art backdrop, letterboxed to cover; veils keep text legible.
+    if (coverBackdrop(this, 'title-art', GAME_WIDTH, GAME_HEIGHT)) {
+      this.add.rectangle(GAME_WIDTH / 2, 44, GAME_WIDTH, 88, 0x000000, 0.55);
+      this.add.rectangle(GAME_WIDTH / 2, 144, GAME_WIDTH, 112, 0x000000, 0.78);
+    }
     this.hasSave = loadRun() !== null;
     this.fameLoaded = false;
     this.fameScores = null;
@@ -201,7 +220,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private move(delta: number): void {
-    if (isFieldNoteOpen()) return;
+    if (isFieldNoteOpen() || this.panelOpen) return;
     const count = this.optionCount();
     if (count <= 1) return;
     this.cursor = (this.cursor + delta + count) % count;
@@ -209,7 +228,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private select(): void {
-    if (isFieldNoteOpen()) return;
+    if (isFieldNoteOpen() || this.panelOpen) return;
     if (this.step === 'menu') {
       const item = this.menuItems()[this.cursor];
       if (item === 'CONTINUE THE MARCH') {
@@ -249,7 +268,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private back(): void {
-    if (isFieldNoteOpen()) return;
+    if (isFieldNoteOpen() || this.panelOpen) return;
     if (this.step !== 'menu') {
       this.step = 'menu';
       this.cursor = 0;
@@ -297,7 +316,7 @@ export class TitleScene extends Phaser.Scene {
     this.menuItems().forEach((label, i) => {
       const selected = i === this.cursor;
       const t = this.text(110, 96 + i * 13, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN);
-      t.setInteractive({ useHandCursor: true });
+      padHit(t);
       t.on('pointerdown', () => {
         this.cursor = i;
         this.select();
@@ -318,7 +337,7 @@ export class TitleScene extends Phaser.Scene {
         selected ? WHITE : GREEN,
         8,
       );
-      t.setInteractive({ useHandCursor: true });
+      padHit(t);
       t.on('pointerdown', () => {
         this.cursor = i;
         this.select();
@@ -385,7 +404,15 @@ export class TitleScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   private openPartyPanel(role: RoleId): void {
+    // The DOM panel owns input now. Without this guard, the Enter that a
+    // player presses inside an input would ALSO reach Phaser's window-level
+    // keydown handler, re-run select(), and remount the panel mid-keystroke
+    // (discarding typed names and replacing the button under the pointer).
+    this.panelOpen = true;
     const panel = mountPanel(PANEL_ID);
+    // Every mount registers its own cleanup: whatever order shutdown and
+    // remounts interleave in, no party panel outlives the scene.
+    this.events.once('shutdown', () => unmountPanel(PANEL_ID));
     panel.setAttribute(
       'style',
       [
@@ -445,6 +472,10 @@ export class TitleScene extends Phaser.Scene {
 
     const start = (): void => {
       const names = inputs.map((el) => el.value);
+      // panelOpen stays TRUE: the same Enter keydown that triggered this
+      // continues to Phaser's window-level handler in the same dispatch,
+      // and select() must stay inert or it remounts the panel over the
+      // next scene (the leaked-panel bug). create() resets the flag.
       unmountPanel(PANEL_ID);
       actions.newRun(role, names);
       saveRun(getState());
@@ -464,6 +495,7 @@ export class TitleScene extends Phaser.Scene {
       if (e.key === 'Enter' && e.target !== backBtn) start();
     });
     backBtn.addEventListener('click', () => {
+      this.panelOpen = false;
       unmountPanel(PANEL_ID);
       this.redraw();
     });

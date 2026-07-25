@@ -18,6 +18,8 @@
 
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, TOTAL_MILES } from '../config';
+import { coverBackdrop, queueArt } from '../systems/art';
+import { setBed } from '../systems/audio';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
 import {
@@ -129,11 +131,17 @@ export class NightWatchScene extends Phaser.Scene {
     super('NightWatch');
   }
 
+  preload(): void {
+    // Lazy per-scene art: the overnight hero piece (§13's one big moment).
+    queueArt(this, { 'night-watch-art': 'night-watch.png' });
+  }
+
   create(): void {
     if (!hasRun()) {
       this.scene.start('Title');
       return;
     }
+    setBed(null);
     this.ensureStyles();
     this.card = {
       trigger: 'schedule',
@@ -386,19 +394,25 @@ export class NightWatchScene extends Phaser.Scene {
     this.children.removeAll();
     const cam = this.cameras.main;
     cam.setBackgroundColor('#000000');
+    setBed('night');
 
-    // The wash to --blue: a full-screen ledger-blue veil fades in over a
-    // deep blue night ground.
-    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x03101f);
+    // The wash to --blue: the night-watch key art (campfire, sleeping
+    // party, constellation wagon) under a ledger-blue veil; the existing
+    // effects play on top of it.
+    if (!coverBackdrop(this, 'night-watch-art', GAME_WIDTH, GAME_HEIGHT, 0.9)) {
+      this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x03101f);
+    }
     const veil = this.add
       .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0da1ff, 0)
       .setDepth(1);
     this.tweens.add({ targets: veil, fillAlpha: 0.14, duration: 1800, ease: 'Sine.easeInOut' });
 
-    // Stars: white pixels, gentle twinkle.
+    const hasArt = this.textures.exists('night-watch-art');
+
+    // Stars: white pixels, gentle twinkle (over the art's sky too).
     for (let i = 0; i < 42; i++) {
       const star = this.add
-        .rectangle(6 + Math.random() * (GAME_WIDTH - 12), 4 + Math.random() * 90, 1, 1, 0xffffff)
+        .rectangle(6 + Math.random() * (GAME_WIDTH - 12), 4 + Math.random() * 60, 1, 1, 0xffffff)
         .setDepth(2);
       this.tweens.add({
         targets: star,
@@ -409,16 +423,23 @@ export class NightWatchScene extends Phaser.Scene {
       });
     }
 
-    // Ground + sleeping party (bedrolls with slow-breathing Zzz).
-    this.add.rectangle(GAME_WIDTH / 2, 186, GAME_WIDTH, 28, 0x041426).setDepth(2);
-    for (let i = 0; i < 4; i++) {
-      this.add.rectangle(38 + i * 22, 172, 16, 6, 0x0a2440).setDepth(3);
+    // Ground + sleeping party — primitives only when the art is absent
+    // (the key art brings its own bedrolls and campfire).
+    if (!hasArt) {
+      this.add.rectangle(GAME_WIDTH / 2, 186, GAME_WIDTH, 28, 0x041426).setDepth(2);
+      for (let i = 0; i < 4; i++) {
+        this.add.rectangle(38 + i * 22, 172, 16, 6, 0x0a2440).setDepth(3);
+      }
     }
     const zzz = this.add
-      .text(66, 152, 'z Z z', { fontFamily: 'monospace', fontSize: '8px', color: '#0da1ff' })
+      .text(hasArt ? 46 : 66, hasArt ? 160 : 152, 'z Z z', {
+        fontFamily: 'monospace',
+        fontSize: '8px',
+        color: '#0da1ff',
+      })
       .setDepth(3)
       .setAlpha(0);
-    this.tweens.add({ targets: zzz, alpha: 1, y: 146, duration: 1600, yoyo: true, repeat: -1 });
+    this.tweens.add({ targets: zzz, alpha: 1, y: '-=6', duration: 1600, yoyo: true, repeat: -1 });
 
     // The wagon, rolling slowly right, the workflow card glowing through
     // the canvas.
@@ -479,6 +500,7 @@ export class NightWatchScene extends Phaser.Scene {
               fontFamily: 'monospace',
               fontSize: '7px',
               color: '#1bcb01',
+              backgroundColor: 'rgba(0,0,0,0.55)',
             })
             .setDepth(5)
             .setAlpha(0.95);
@@ -525,6 +547,7 @@ export class NightWatchScene extends Phaser.Scene {
     const res = this.resolution;
     if (!res || this.phase === 'morning') return;
     this.phase = 'morning';
+    setBed(null);
     this.nightTimers.forEach((t) => t.remove(false));
     this.nightTimers = [];
     this.tweens.killAll();

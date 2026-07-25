@@ -29,7 +29,9 @@
  */
 
 import Phaser from 'phaser';
-import { GAME_WIDTH, TOTAL_MILES } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, TOTAL_MILES } from '../config';
+import { coverBackdrop, queueArt } from '../systems/art';
+import { sting } from '../systems/audio';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
 import { showCurriculumCard } from '../ui/curriculumCard';
@@ -210,6 +212,12 @@ export class LoopBuilderScene extends Phaser.Scene {
     this.tutBusy = false;
   }
 
+  preload(): void {
+    // Lazy per-scene art: the pegboard illustration, used as dim set
+    // dressing behind the interactive board (which stays primary).
+    queueArt(this, { 'pegboard-art': 'loop-pegboard.png' });
+  }
+
   create(): void {
     if (!hasRun()) {
       this.scene.start('Title');
@@ -219,6 +227,11 @@ export class LoopBuilderScene extends Phaser.Scene {
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.cameras.main.setBackgroundColor('#000000');
+    if (this.mode !== 'tutorial') {
+      // Dressing only: dimmed hard so sockets, cables, and log stay
+      // primary. The interactive board is the signature screen.
+      coverBackdrop(this, 'pegboard-art', GAME_WIDTH, GAME_HEIGHT, 0.16);
+    }
     this.makePixelTexture();
     this.makeEmitters();
 
@@ -930,6 +943,7 @@ export class LoopBuilderScene extends Phaser.Scene {
         this.sparkAtPulse();
         break;
       case 'flash':
+        sting('verifier'); // audio is opt-in (muted by default), not motion
         if (!this.reduced) {
           this.cameras.main.flash(280, 27, 203, 1);
           this.shower?.explode(36, 160, 20);

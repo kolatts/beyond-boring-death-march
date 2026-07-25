@@ -251,6 +251,7 @@ export class BugHuntScene extends Phaser.Scene {
       kb.enabled = true;
       this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,A,S,D,SPACE,Q,P,ESC') as KeyMap;
     }
+    this.makeTouchControls();
 
     // Ambient wander: symptoms + TODOs graze.
     this.time.addEvent({
@@ -314,6 +315,58 @@ export class BugHuntScene extends Phaser.Scene {
     bus.emit('scene:ready', { scene: 'BugHunt' });
   }
 
+  /**
+   * On-screen controls for coarse pointers (spec §15 mobile bar): D-pad,
+   * FIRE, QUARANTINE, PACK OUT. Desktop never sees them.
+   */
+  private touchDx = 0;
+  private touchDy = 0;
+
+  private makeTouchControls(): void {
+    if (!window.matchMedia('(pointer: coarse)').matches) return;
+    this.input.addPointer(2); // D-pad + action simultaneously
+    const mk = (
+      x: number,
+      y: number,
+      label: string,
+      onDown: () => void,
+      onUp?: () => void,
+    ): void => {
+      const t = this.add
+        .text(x, y, label, {
+          fontFamily: 'monospace',
+          fontSize: '9px',
+          color: '#ffffff',
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          padding: { x: 5, y: 4 },
+        })
+        .setOrigin(0.5)
+        .setDepth(60)
+        .setAlpha(0.85)
+        .setInteractive({ useHandCursor: true });
+      t.on('pointerdown', onDown);
+      if (onUp) {
+        t.on('pointerup', onUp);
+        t.on('pointerout', onUp);
+      }
+    };
+    const dir = (dx: number, dy: number) => () => {
+      this.touchDx = dx;
+      this.touchDy = dy;
+    };
+    const stop = (): void => {
+      this.touchDx = 0;
+      this.touchDy = 0;
+    };
+    mk(24, 154, '▲', dir(0, -1), stop);
+    mk(24, 186, '▼', dir(0, 1), stop);
+    mk(8, 170, '◀', dir(-1, 0), stop);
+    mk(40, 170, '▶', dir(1, 0), stop);
+    mk(238, 186, 'FIRE', () => this.fire());
+    mk(276, 186, 'QUAR', () => this.quarantine());
+    mk(308, 186, 'OUT', () => this.packOut());
+  }
+
   override update(time: number): void {
     if (!this.keys || this.panelOpen || this.cardShowing || !this.hunt) return;
     // A Field Note modal (possibly opened by shared UI) owns the keyboard.
@@ -327,8 +380,22 @@ export class BugHuntScene extends Phaser.Scene {
       return;
     }
 
-    const dx = (k.LEFT.isDown || k.A.isDown ? -1 : 0) + (k.RIGHT.isDown || k.D.isDown ? 1 : 0);
-    const dy = (k.UP.isDown || k.W.isDown ? -1 : 0) + (k.DOWN.isDown || k.S.isDown ? 1 : 0);
+    const dx = Math.max(
+      -1,
+      Math.min(
+        1,
+        (k.LEFT.isDown || k.A.isDown ? -1 : 0) +
+          (k.RIGHT.isDown || k.D.isDown ? 1 : 0) +
+          this.touchDx,
+      ),
+    );
+    const dy = Math.max(
+      -1,
+      Math.min(
+        1,
+        (k.UP.isDown || k.W.isDown ? -1 : 0) + (k.DOWN.isDown || k.S.isDown ? 1 : 0) + this.touchDy,
+      ),
+    );
     if (dx === 0 && dy === 0) {
       this.nextStepAt = 0;
       return;

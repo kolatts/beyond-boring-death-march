@@ -11,7 +11,9 @@
  */
 
 import Phaser from 'phaser';
-import { GAME_WIDTH } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { coverBackdrop, queueArt } from '../systems/art';
+import { setBed, sting } from '../systems/audio';
 import { deathLineFor } from '../systems/content';
 import { actions, getState, hasRun, type Tombstone } from '../systems/state';
 import { addTombstone, clearRun } from '../systems/save';
@@ -36,6 +38,11 @@ export class DeathScene extends Phaser.Scene {
     this.carved = false;
   }
 
+  preload(): void {
+    // Lazy per-scene art: the tombstone hero piece loads on first death.
+    queueArt(this, { 'tombstone-art': 'tombstone.png' });
+  }
+
   create(): void {
     if (!hasRun()) {
       this.scene.start('Title');
@@ -43,6 +50,13 @@ export class DeathScene extends Phaser.Scene {
     }
     const s = getState();
     this.cameras.main.setBackgroundColor('#000000');
+    setBed(null);
+    sting('death');
+
+    // Tombstone key art behind a veil so the cause line stays legible.
+    if (coverBackdrop(this, 'tombstone-art', GAME_WIDTH, GAME_HEIGHT)) {
+      this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.5);
+    }
 
     const line = deathLineFor(`YOU HAVE DIED OF ${this.cause}.`, actions.rand());
 

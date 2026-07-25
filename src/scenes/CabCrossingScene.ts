@@ -22,12 +22,14 @@
  */
 
 import Phaser from 'phaser';
-import { GAME_WIDTH } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { coverBackdrop, queueArt } from '../systems/art';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
 import { doomClock, tickDeadlines } from '../systems/deadlines';
 import { showCurriculumCard } from '../ui/curriculumCard';
 import { bus } from '../ui/overlay';
+import { padHit } from '../ui/touch';
 import {
   CAB,
   readCabStore,
@@ -140,6 +142,11 @@ export class CabCrossingScene extends Phaser.Scene {
     this.formSpeeds = [];
   }
 
+  preload(): void {
+    // Lazy per-scene art: the CAB river hero piece.
+    queueArt(this, { 'cab-river-art': 'cab-river.png' });
+  }
+
   create(): void {
     if (!hasRun()) {
       this.scene.start('Title');
@@ -148,6 +155,14 @@ export class CabCrossingScene extends Phaser.Scene {
     this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.cameras.main.setBackgroundColor('#000000');
     this.makeTextures();
+
+    // The river of paperwork, as painted. Dimmed so the crossing geometry
+    // (banks, drifting forms, the wagon) stays readable on top; veils keep
+    // the header and the options menu legible.
+    if (coverBackdrop(this, 'cab-river-art', GAME_WIDTH, GAME_HEIGHT, 0.55)) {
+      this.add.rectangle(GAME_WIDTH / 2, 22, GAME_WIDTH, 46, 0x000000, 0.5);
+      this.add.rectangle(GAME_WIDTH / 2, TEXT_AREA_Y + 42, GAME_WIDTH, 92, 0x000000, 0.72);
+    }
 
     // The river: a band of drifting paperwork.
     this.add.rectangle(GAME_WIDTH / 2, (RIVER_TOP + RIVER_BOTTOM) / 2, GAME_WIDTH, RIVER_BOTTOM - RIVER_TOP, HEX.blue, 0.22);
@@ -412,8 +427,8 @@ export class CabCrossingScene extends Phaser.Scene {
     const t = this.add
       .text(GAME_WIDTH / 2, 190, label, { fontFamily: 'monospace', fontSize: '8px', color: C.white })
       .setOrigin(0.5, 0)
-      .setDepth(10)
-      .setInteractive({ useHandCursor: true });
+      .setDepth(10);
+    padHit(t, 20, 5);
     t.on('pointerdown', () => this.confirm());
     this.beatObjs.push(t);
 
@@ -872,7 +887,7 @@ export class CabCrossingScene extends Phaser.Scene {
       const affordable = opt.id !== 'caulk' || s.resources.tokens >= CAB.caulk.tokens;
       const labelColor = !affordable ? C.violet : selected ? C.white : C.green;
       const label = this.text(10, y, `${selected ? '>' : ' '} ${i + 1}. ${opt.label}${affordable ? '' : ' ×'}`, labelColor);
-      label.setInteractive({ useHandCursor: true });
+      padHit(label, 8, 3);
       label.on('pointerdown', () => this.pick(i));
       const hintText = affordable
         ? subst(opt.hint, { tokens: CAB.caulk.tokens })
