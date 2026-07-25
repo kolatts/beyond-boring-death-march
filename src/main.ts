@@ -63,26 +63,8 @@ function bootGame(): void {
   // Chiptune (spec §13): muted by default, M to toggle, zero assets.
   mountAudioControl();
 
-  /**
-   * Dev-only deep link: ?minigame=<mechanic>[&landmark=<id>] jumps straight
-   * into a registered minigame scene (fresh default run is created if none
-   * exists). For agents and playtests; harmless in production.
-   */
-  game.events.once(Phaser.Core.Events.READY, () => {
-    const params = new URLSearchParams(window.location.search);
-    const mechanic = params.get('minigame');
-    if (!mechanic) return;
-    import('./scenes/index').then(({ MINIGAMES }) => {
-      const entry = MINIGAMES[mechanic];
-      if (!entry) return;
-      import('./systems/state').then(({ hasRun, actions }) => {
-        if (!hasRun()) actions.newRun('staff', []);
-        game.scene.getScenes(true).forEach((s) => game.scene.stop(s.scene.key));
-        game.scene.start(entry.sceneKey, {
-          landmarkId: params.get('landmark') ?? undefined,
-          mechanic,
-        });
-      });
-    });
-  });
+  // Dev-only deep link (?minigame=<mechanic>) is handled inside BootScene,
+  // synchronously, so the Title scene is never created underneath a
+  // deep-linked minigame (see BootScene for the rationale + the accepted
+  // harness_swap limitation).
 }
