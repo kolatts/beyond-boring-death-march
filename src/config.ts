@@ -68,8 +68,10 @@ export const PACES: Record<Pace, PaceConfig> = {
 // Resource economy
 // ---------------------------------------------------------------------------
 
-/** Tokens burned per mile traveled, before the pace multiplier. */
-export const TOKENS_PER_MILE = 0.15;
+/** Tokens burned per mile traveled, before the pace multiplier.
+ * Retuned 0.15 -> 0.135 (-10%): three playtest runs all starved between
+ * miles 900-1200 (docs/DECISIONS.md, economy retune 2026-07-25). */
+export const TOKENS_PER_MILE = 0.135;
 
 /** A rest day: no miles, small token burn, morale up, context compacted. */
 export const REST = { tokens: 2, morale: 6, context: -10 } as const;
@@ -87,8 +89,10 @@ export const CONTEXT_OVERFLOW_REWORK = { days: 1, morale: -6, contextAfter: 60 }
 export const MORALE_COLLAPSE_RESET = 25;
 
 /** Tokens granted on landmark arrival ("requisition approved"). Keeps a
- * well-paced run solvent; a badly paced one still starves. */
-export const LANDMARK_RESUPPLY_TOKENS = 20;
+ * well-paced run solvent; a badly paced one still starves.
+ * Retuned 20 -> 30 (economy retune 2026-07-25): landmark income must
+ * roughly cover a leg's burn so first-timers can reach Production. */
+export const LANDMARK_RESUPPLY_TOKENS = 30;
 
 // ---------------------------------------------------------------------------
 // Events & surprise deadlines (Wave 3 — §8, DECISIONS.md weight-0 rule)

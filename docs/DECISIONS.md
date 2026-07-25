@@ -119,3 +119,27 @@ This ruling overrides the earlier blanket genericization where the two conflict.
   management: recurring compliance toil belongs in **scheduled agentic
   workflows** (gh-aw schedule triggers, read-only permissions, safe
   outputs) so mandates stop costing engineer-days.
+
+## Economy retune (playtest wave, 2026-07-25)
+
+Three independent playtest runs all starved between miles 900–1200: burn at
+grueling (~4.2 tokens/day) vs. +20/landmark and +6–28/minigame never closed,
+and Bug Hunt — the designed income valve — netted roughly break-even after
+its 1-day cost. Retuned at the config level, keeping the doom-clock pressure
+(the tension is the joke); the target is that a competent first-timer
+reaches Production on their first or second run, not that starvation
+disappears.
+
+| Tunable | Where | Was | Now |
+|---|---|---|---|
+| Landmark arrival requisition | `config.ts` `LANDMARK_RESUPPLY_TOKENS` | 20 | **30** |
+| Per-mile token burn | `config.ts` `TOKENS_PER_MILE` | 0.15 | **0.135** (−10%) |
+| Bug Hunt root-cause base value | `bugHuntSim.ts` `CREATURE_STATS.rootCause` | 45 | **63** (+40%) |
+| Bug Hunt symptom base value | `bugHuntSim.ts` `CREATURE_STATS.symptom` | 2 | **3** |
+| Bug Hunt TODO base value | `bugHuntSim.ts` `CREATURE_STATS.todo` | 1 | **2** |
+| Carry-out summary base multiplier | `bugHuntSim.ts` `scoreSummary` | 0.6 | **0.75** |
+
+Verified by scripted fast-mode runs (`?fast=25`, Staff role, middling play):
+a run that collects landmark requisitions but skips optional hunts now
+arrives at Production with tokens to spare; a gruelling-only, rest-free run
+still starves.

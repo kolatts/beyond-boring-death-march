@@ -67,11 +67,14 @@ export const SYMPTOM_START_COUNT = 6;
 /** Symptom population cap, so the joke can't fill every tile. */
 export const SYMPTOM_CAP = 22;
 
+/** Economy retune 2026-07-25 (docs/DECISIONS.md): Bug Hunt is the
+ * designed income valve, but it netted ~break-even after its 1-day cost.
+ * Root cause 45 -> 63 (+40%); symptom 2 -> 3; TODO 1 -> 2. */
 export const CREATURE_STATS = {
-  symptom: { weightLbs: 15, baseTokens: 2 },
-  rootCause: { weightLbs: 90, baseTokens: 45 },
+  symptom: { weightLbs: 15, baseTokens: 3 },
+  rootCause: { weightLbs: 90, baseTokens: 63 },
   flakyTest: { weightLbs: 30, baseTokens: 10 },
-  todo: { weightLbs: 5, baseTokens: 1 },
+  todo: { weightLbs: 5, baseTokens: 2 },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -609,7 +612,8 @@ export function markCardSeen(cardId: string, now: number): void {
  * SUMMARY QUALITY HEURISTIC (documented per assignment).
  *
  * A one-line finding summary earns a token multiplier in [0.25, 1.5]
- * applied to the finding's base value. Starting from 0.6:
+ * applied to the finding's base value. Starting from 0.75 (economy retune
+ * 2026-07-25: was 0.6 — a decent summary should beat break-even):
  *
  *  LENGTH (a real sentence, not a shrug, not a paragraph):
  *   +0.30 if 20–90 chars; +0.15 if 10–19; −0.10 if > 120.
@@ -623,14 +627,14 @@ export function markCardSeen(cardId: string, now: number): void {
  *   −0.20 each, capped at −0.40.
  *  Fewer than 3 words: −0.20. Empty: flat 0.25.
  *
- * "null deref in /legacy parser when input file is empty" ≈ 1.4×.
- * "weird bug" ≈ 0.25×. The payout reads the line, not the bug.
+ * "null deref in /legacy parser when input file is empty" ≈ 1.5× (capped).
+ * "weird bug" ≈ 0.35×. The payout reads the line, not the bug.
  */
 export function scoreSummary(text: string): number {
   const t = text.trim();
   if (t.length === 0) return 0.25;
 
-  let m = 0.6;
+  let m = 0.75;
 
   if (t.length >= 20 && t.length <= 90) m += 0.3;
   else if (t.length >= 10 && t.length < 20) m += 0.15;
