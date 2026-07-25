@@ -61,7 +61,8 @@
         "label": { "type": "string", "minLength": 1 },
         "requires": { "$ref": "#/definitions/requires" },
         "effects": { "$ref": "#/definitions/effects" },
-        "outcome": { "type": "string" }
+        "outcome": { "type": "string" },
+        "startsMechanic": { "type": "string" }
       }
     },
     "event": {
