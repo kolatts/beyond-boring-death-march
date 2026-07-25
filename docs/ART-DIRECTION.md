@@ -1,4 +1,34 @@
-# Art Direction — Modern-Retro (v2)
+# Art Direction — Cartoony SVGA (v3)
+
+**v3 supersedes v2 below.** User direction: *"less pixelated art… modernized,
+keep a cartoony feel. Think Warcraft 2 levels of detail. More animations to
+keep things exciting looking."*
+
+## The v3 look
+
+Mid-90s SVGA strategy-game art: hand-painted, cartoony, saturated, chunky
+OUTLINES not chunky PIXELS. Detail density like Warcraft 2 — readable
+silhouettes, painterly shading, personality in every sprite. No longer
+pretending to be an Apple II.
+
+- **Rendering: smooth.** No palette quantization, no nearest-neighbour
+  decimation for images. Art displays at native fidelity (the 4× backing
+  store gives real resolution headroom). Text stays crisp as-is.
+- **Palette identity kept loosely**: phosphor green, signal orange, manila,
+  ledger blue remain the brand accents on a richer painted palette.
+- **Characters**: Boring and Brilliant keep their established personalities
+  and silhouettes (boxy deadpan + coffee vs. starry-eyed + lightbulb),
+  re-rendered as cartoony painted sprites.
+- **Motion is a feature**: ambient animation everywhere it's cheap — bobbing
+  wagon, dust trails, parallax clouds, flickering fires, drifting title
+  scene, animated UI transitions, particle flourishes on outcomes. All
+  still instant-cut under `prefers-reduced-motion`.
+- Terminal/log UI elements may stay "screen-like" (that's fiction, not
+  pixelation).
+
+---
+
+# (superseded) Art Direction — Modern-Retro (v2)
 
 **Supersedes the strict-Apple-II ruling in DECISIONS.md.** User-directed shift
 mid-build: *"more modern looking, but still reminiscent of the old game.
