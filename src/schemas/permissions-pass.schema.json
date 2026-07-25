@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "permissions-pass.schema.json",
+  "title": "Permissions Pass gauntlet content",
+  "type": "object",
+  "required": ["intro", "scenarios", "finales"],
+  "additionalProperties": false,
+  "definitions": {
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens": { "type": "integer" },
+        "context": { "type": "integer" },
+        "trust": { "type": "integer" },
+        "greenBuilds": { "type": "integer" },
+        "morale": { "type": "integer" },
+        "credibility": { "type": "integer" }
+      }
+    },
+    "finale": {
+      "type": "object",
+      "required": ["title", "body", "effects", "days"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 },
+        "effects": { "$ref": "#/definitions/effects" },
+        "days": { "type": "integer", "minimum": 0 },
+        "miles": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "properties": {
+    "intro": { "type": "string", "minLength": 1 },
+    "scenarios": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "body", "choices"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "title": { "type": "string", "minLength": 1 },
+          "body": { "type": "string", "minLength": 1 },
+          "choices": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["id", "kind", "counts", "label", "outcome", "effects"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string" },
+                "kind": { "type": "string", "enum": ["grant", "scope", "deny"] },
+                "counts": {
+                  "type": "string",
+                  "enum": ["over_grant", "over_deny", "sound"]
+                },
+                "label": { "type": "string", "minLength": 1 },
+                "outcome": { "type": "string", "minLength": 1 },
+                "effects": { "$ref": "#/definitions/effects" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "finales": {
+      "type": "object",
+      "required": ["incident", "crawl", "clean"],
+      "additionalProperties": false,
+      "properties": {
+        "incident": { "$ref": "#/definitions/finale" },
+        "crawl": { "$ref": "#/definitions/finale" },
+        "clean": { "$ref": "#/definitions/finale" }
+      }
+    }
+  }
+}

@@ -15,6 +15,9 @@
 import type Phaser from 'phaser';
 import { ContextPackScene } from './ContextPackScene';
 import { CabCrossingScene } from './CabCrossingScene';
+import { NightWatchScene } from './NightWatchScene';
+import { SkillsMarketScene } from './SkillsMarketScene';
+import { PermissionsPassScene } from './PermissionsPassScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -29,6 +32,9 @@ export const MINIGAMES: Record<string, MinigameEntry> = {
   // outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
   context_pack: { sceneKey: 'ContextPack', sceneClass: ContextPackScene },
   cab_crossing: { sceneKey: 'CabCrossing', sceneClass: CabCrossingScene },
+  night_watch: { sceneKey: 'NightWatch', sceneClass: NightWatchScene },
+  skills_market: { sceneKey: 'SkillsMarket', sceneClass: SkillsMarketScene },
+  permissions_gauntlet: { sceneKey: 'PermissionsPass', sceneClass: PermissionsPassScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */

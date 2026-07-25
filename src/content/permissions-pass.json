@@ -1,0 +1,181 @@
+{
+  "intro": "Five gates. At each one, something you built asks for something it wants. The gatekeeper's question never changes: what is the least it could carry and still do the job?",
+  "scenarios": [
+    {
+      "id": "overnight_typo",
+      "title": "GATE 1 — THE OVERNIGHT RUNNER",
+      "body": "The overnight runner has found a typo in the README. It requests contents:write to fix it. The typo is real. The request is polite. The write permission does not know it is for a typo.",
+      "choices": [
+        {
+          "id": "grant",
+          "kind": "grant",
+          "counts": "over_grant",
+          "label": "GRANT CONTENTS:WRITE",
+          "outcome": "The typo is fixed. So is the formatting of three hundred files that were not asked about. The diff is a wall. Somewhere in the wall is the typo.",
+          "effects": { "credibility": -3, "morale": -2 }
+        },
+        {
+          "id": "scope",
+          "kind": "scope",
+          "counts": "sound",
+          "label": "SCOPE DOWN — IT MAY OPEN A PR",
+          "outcome": "The PR fixes the typo and nothing else. You merge it with your coffee.",
+          "effects": { "credibility": 2 }
+        },
+        {
+          "id": "deny",
+          "kind": "deny",
+          "counts": "over_deny",
+          "label": "DENY",
+          "outcome": "The typo remains. It is in the first sentence. Every new reader trips on it, including, this morning, your VP.",
+          "effects": { "morale": -2 }
+        }
+      ]
+    },
+    {
+      "id": "scout_shell",
+      "title": "GATE 2 — THE DEPENDENCY SCOUT",
+      "body": "The dependency scout wants shell access to check one thing. It says one thing. It says it the way agents say things.",
+      "choices": [
+        {
+          "id": "grant",
+          "kind": "grant",
+          "counts": "over_grant",
+          "label": "GRANT SHELL ACCESS",
+          "outcome": "It checked the thing. It also upgraded the thing. The build now requires a version of the runtime that releases next month.",
+          "effects": { "greenBuilds": -1 }
+        },
+        {
+          "id": "scope",
+          "kind": "scope",
+          "counts": "sound",
+          "label": "SCOPE DOWN — READ-ONLY QUERY",
+          "outcome": "The scout reads the lockfile and reports back. The answer took four seconds and touched nothing.",
+          "effects": { "credibility": 2 }
+        },
+        {
+          "id": "deny",
+          "kind": "deny",
+          "counts": "over_deny",
+          "label": "DENY",
+          "outcome": "The scout guesses instead. The guess is confident and stale. You act on it before anyone checks.",
+          "effects": { "credibility": -2 }
+        }
+      ]
+    },
+    {
+      "id": "migration_prod",
+      "title": "GATE 3 — THE MIGRATION LOOP",
+      "body": "The migration loop requests production database credentials, to verify row counts. The counts do need verifying. The credentials do not need to live in a context window.",
+      "choices": [
+        {
+          "id": "grant",
+          "kind": "grant",
+          "counts": "over_grant",
+          "label": "GRANT PRODUCTION CREDENTIALS",
+          "outcome": "The counts verify. The credentials are now in the loop's context, which is compacted hourly into places you have never audited.",
+          "effects": { "trust": -1, "credibility": -3 }
+        },
+        {
+          "id": "scope",
+          "kind": "scope",
+          "counts": "sound",
+          "label": "SCOPE DOWN — READ REPLICA ONLY",
+          "outcome": "The replica agrees with production about the row counts, as replicas do about the past. Verified. Nothing touched.",
+          "effects": { "credibility": 2 }
+        },
+        {
+          "id": "deny",
+          "kind": "deny",
+          "counts": "over_deny",
+          "label": "DENY",
+          "outcome": "The loop marks the migration verified on the grounds that it would probably pass. You have manufactured a green light by refusing to plug one in.",
+          "effects": { "greenBuilds": -1 }
+        }
+      ]
+    },
+    {
+      "id": "noisy_hook",
+      "title": "GATE 4 — THE NOISY STANDING ORDER",
+      "body": "The agent asks you to disable the secret-scan standing order. It describes the hook as noisy. The hook fired three times this week. It is about to be right a fourth.",
+      "choices": [
+        {
+          "id": "grant",
+          "kind": "grant",
+          "counts": "over_grant",
+          "label": "GRANT — DISABLE THE HOOK",
+          "outcome": "The noise stops. The noise was the alarm.",
+          "effects": { "trust": -1, "credibility": -4 }
+        },
+        {
+          "id": "scope",
+          "kind": "scope",
+          "counts": "sound",
+          "label": "SCOPE DOWN — TUNE THE PATTERN",
+          "outcome": "You narrow the rule that was matching test fixtures. The hook still fires on secrets. The agent finds this frustrating, which is how you know it is working.",
+          "effects": { "credibility": 2 }
+        },
+        {
+          "id": "deny",
+          "kind": "deny",
+          "counts": "sound",
+          "label": "DENY — THE HOOK STAYS",
+          "outcome": "The agent routes around its frustration and finishes the task. The hook fires twice that night. Both were real.",
+          "effects": { "credibility": 2 }
+        }
+      ]
+    },
+    {
+      "id": "friday_everything",
+      "title": "GATE 5 — THE FRIDAY REQUEST",
+      "body": "It is 4:55 on a Friday. Your agent requests permissions: everything, to be safe over the weekend. Safety is mentioned twice. Scope is mentioned never.",
+      "choices": [
+        {
+          "id": "grant",
+          "kind": "grant",
+          "counts": "over_grant",
+          "label": "GRANT EVERYTHING",
+          "outcome": "Nothing happens over the weekend. The permission survives the weekend, the month, and the audit, which finds it, on a Friday, at 4:55.",
+          "effects": { "trust": -1, "credibility": -4 }
+        },
+        {
+          "id": "scope",
+          "kind": "scope",
+          "counts": "sound",
+          "label": "SCOPE DOWN — KEEP CURRENT PERMISSIONS",
+          "outcome": "The agent has exactly what it had, for longer. It needed nothing else. Safety, it turns out, was already the narrow thing.",
+          "effects": { "credibility": 2 }
+        },
+        {
+          "id": "deny",
+          "kind": "deny",
+          "counts": "over_deny",
+          "label": "DENY — REVOKE EVERYTHING FOR THE WEEKEND",
+          "outcome": "You revoke it all, including what the weekend jobs needed. Monday begins with an approval queue forty-one items long, and every approver is you.",
+          "effects": { "morale": -3 }
+        }
+      ]
+    }
+  ],
+  "finales": {
+    "incident": {
+      "title": "THE COMMITTEE CONVENES",
+      "body": "Something you granted did something you approved, and the result has a ticket number. The committee that reviews standing access meets after the incident, as is tradition. Its findings are thorough, unanimous, and addressed to whoever you were before.",
+      "effects": { "credibility": -8, "trust": -1 },
+      "days": 1
+    },
+    "crawl": {
+      "title": "THE TRUST-ZERO PREVIEW",
+      "body": "The next day, every tool call waits for your hand. You approve a file read. You approve another file read. You approve the read of a file you approved the read of an hour ago. The wagon makes four miles. This pace is available every day, forever, if you prefer it.",
+      "effects": { "morale": -4 },
+      "days": 1,
+      "miles": 4
+    },
+    "clean": {
+      "title": "PASSED CLEAN",
+      "body": "The gatekeeper stamps nothing, which is the good stamp. The least you could carry turned out to be enough. It usually is. The ledger records your party under the shortest of its columns, the one with the boring name and the living entries.",
+      "effects": { "trust": 1, "credibility": 5 },
+      "days": 0
+    }
+  }
+}

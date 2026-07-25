@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "night-watch.schema.json",
+  "title": "Night Watch content",
+  "type": "object",
+  "required": ["intro", "sentryLine", "bodyOptions", "outcomes"],
+  "additionalProperties": false,
+  "properties": {
+    "intro": { "type": "string", "minLength": 1 },
+    "sentryLine": { "type": "string", "minLength": 1 },
+    "bodyOptions": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "body"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "label": { "type": "string", "minLength": 1 },
+          "body": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "required": ["success", "nothing", "raid", "recursion", "bill"],
+      "additionalProperties": false,
+      "properties": {
+        "success": {
+          "type": "object",
+          "required": ["title", "nightLog", "reports", "cautionEverything", "unlockLine"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string" },
+            "nightLog": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "reports": {
+              "type": "object",
+              "required": ["comment", "open-pr", "push-to-main"],
+              "additionalProperties": false,
+              "properties": {
+                "comment": { "type": "string", "minLength": 1 },
+                "open-pr": { "type": "string", "minLength": 1 },
+                "push-to-main": { "type": "string", "minLength": 1 }
+              }
+            },
+            "cautionEverything": { "type": "string", "minLength": 1 },
+            "unlockLine": { "type": "string", "minLength": 1 }
+          }
+        },
+        "nothing": {
+          "type": "object",
+          "required": ["title", "nightLog", "report"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string" },
+            "nightLog": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "report": { "type": "string", "minLength": 1 }
+          }
+        },
+        "raid": {
+          "type": "object",
+          "required": ["title", "nightLog", "report"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string" },
+            "nightLog": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "report": { "type": "string", "minLength": 1 }
+          }
+        },
+        "recursion": {
+          "type": "object",
+          "required": ["title", "nightLog", "reportUncapped", "reportCapped"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string" },
+            "nightLog": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "reportUncapped": { "type": "string", "minLength": 1 },
+            "reportCapped": { "type": "string", "minLength": 1 }
+          }
+        },
+        "bill": {
+          "type": "object",
+          "required": ["title", "nightLog", "report"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string" },
+            "nightLog": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+            "report": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}
