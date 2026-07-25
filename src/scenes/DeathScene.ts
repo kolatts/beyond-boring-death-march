@@ -12,7 +12,8 @@
 
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { coverBackdrop, queueArt } from '../systems/art';
+import { coverBackdrop, keyOutBlack, queueArt } from '../systems/art';
+import { prefersReducedMotion } from '../ui/transitions';
 import { setBed, sting } from '../systems/audio';
 import { deathLineFor } from '../systems/content';
 import { actions, getState, hasRun, type Tombstone } from '../systems/state';
@@ -40,8 +41,12 @@ export class DeathScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Lazy per-scene art: the tombstone hero piece loads on first death.
-    queueArt(this, { 'tombstone-art': 'tombstone.png' });
+    // Lazy per-scene art: the tombstone hero piece loads on first death,
+    // plus the vulture (same key as TrailScene — shared texture cache).
+    queueArt(this, {
+      'tombstone-art': 'tombstone.png',
+      'trail-vulture': 'death-vulture.png',
+    });
   }
 
   create(): void {
@@ -94,7 +99,41 @@ export class DeathScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
-    this.mountEpitaphPanel(line);
+    // The vulture arrives first; the paperwork follows (v3 motion). It
+    // drops onto its perch by the cause line, settles with a small squash,
+    // and only then does the epitaph input appear. Reduced motion (or no
+    // vulture art): everything is instant.
+    const perchX = 288;
+    const perchY = 44;
+    keyOutBlack(this, 'trail-vulture', 'death-vulture-t', 22);
+    if (!this.textures.exists('death-vulture-t') || prefersReducedMotion()) {
+      if (this.textures.exists('death-vulture-t')) {
+        this.add.image(perchX, perchY, 'death-vulture-t');
+      }
+      this.mountEpitaphPanel(line);
+    } else {
+      const vulture = this.add.image(perchX, -20, 'death-vulture-t');
+      this.tweens.add({
+        targets: vulture,
+        y: perchY,
+        duration: 480,
+        ease: 'Quad.easeIn',
+        onComplete: () => {
+          // Settle: wings-out squash, then upright.
+          this.tweens.add({
+            targets: vulture,
+            scaleY: 0.82,
+            scaleX: 1.12,
+            duration: 90,
+            yoyo: true,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+              if (this.scene.isActive()) this.mountEpitaphPanel(line);
+            },
+          });
+        },
+      });
+    }
     // Phaser does not auto-call a shutdown() method; hook the event.
     this.events.once('shutdown', () => unmountPanel(PANEL_ID));
     bus.emit('scene:ready', { scene: 'Death' });

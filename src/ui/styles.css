@@ -46,10 +46,10 @@ body {
   background: var(--black);
 }
 
-#game canvas {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
+/* ART-DIRECTION v3: smooth rendering — the 4x backing store is scaled
+   to the window with the browser's default (smooth) interpolation.
+   `image-rendering: pixelated` would re-chunk everything at the CSS
+   scaling step and undo the linear-filtered art pass. */
 
 /* DOM overlay root — sits above the canvas, pointer-transparent by default */
 #overlay {

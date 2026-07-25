@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import './ui/styles.css';
 import { GAME_HEIGHT, GAME_WIDTH, RENDER_SCALE } from './config';
 import { installCrispRendering } from './ui/text';
+import { installSceneTransitions } from './ui/transitions';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { TrailScene } from './scenes/TrailScene';
@@ -30,8 +31,9 @@ if (noticeRequested()) {
  *
  * The BACKING store is supersampled RENDER_SCALE x (see ui/text.ts):
  * scenes still lay out in 320x200 logical pixels via a global camera
- * zoom, sprites stay nearest-neighbour chunky, but text renders at high
- * resolution instead of being decimated to the logical grid.
+ * zoom. Since the v3 art pass, images render SMOOTHLY (linear filter,
+ * native art resolution) and text renders at high resolution — nothing
+ * is decimated to the logical grid anymore.
  */
 function bootGame(): void {
   const game = new Phaser.Game({
@@ -40,8 +42,12 @@ function bootGame(): void {
     width: GAME_WIDTH * RENDER_SCALE,
     height: GAME_HEIGHT * RENDER_SCALE,
     backgroundColor: '#000000',
-    pixelArt: true, // nearest-neighbour scaling, no antialiasing
-    roundPixels: true,
+    // ART-DIRECTION v3: smooth rendering. LINEAR texture filtering lets
+    // generated art display at native fidelity on the supersampled
+    // backing store (no nearest-neighbour decimation); text already
+    // renders at RENDER_SCALE resolution so it stays crisp either way.
+    pixelArt: false,
+    roundPixels: false,
     scale: {
       mode: Phaser.Scale.FIT, // letterbox to preserve 16:10 logical aspect
       autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -59,6 +65,10 @@ function bootGame(): void {
 
   // Supersampled backing store + crisp text (mobile pass — ui/text.ts).
   installCrispRendering(game);
+
+  // Quick fade between every scene change instead of hard cuts
+  // (ART-DIRECTION v3; instant cut under prefers-reduced-motion).
+  installSceneTransitions(game);
 
   // Chiptune (spec §13): muted by default, M to toggle, zero assets.
   mountAudioControl();

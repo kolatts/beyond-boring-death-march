@@ -44,6 +44,7 @@ import { applyChoice, visibleChoices, type TriggeredEvent } from '../systems/eve
 import { campfireReactionFor } from '../systems/content';
 import { loadTombstones, saveRun } from '../systems/save';
 import { keyOutBlack, queueArt, resample } from '../systems/art';
+import { ensureCloudTexture, ensureFxTexture } from '../ui/transitions';
 import { setBed } from '../systems/audio';
 import { isCoarse, padHit } from '../ui/touch';
 import { isFieldNoteOpen, showCurriculumCard } from '../ui/curriculumCard';
@@ -134,6 +135,8 @@ export class TrailScene extends Phaser.Scene {
   private wagon: Phaser.GameObjects.Image | null = null;
   private wagonFrame = 1;
   private graveObjs: Phaser.GameObjects.GameObject[] = [];
+  /** Parallax cloud band over the vignette (null under reduced motion). */
+  private cloudBand: Phaser.GameObjects.TileSprite | null = null;
 
   constructor() {
     super('Trail');
@@ -154,6 +157,8 @@ export class TrailScene extends Phaser.Scene {
     this.terrain = null;
     this.wagon = null;
     this.graveObjs = [];
+    this.cloudBand = null;
+    this.reducedCached = reducedMotion();
     if (!hasRun()) {
       this.scene.start('Title');
       return;
@@ -729,6 +734,21 @@ export class TrailScene extends Phaser.Scene {
         ease: 'Quad.easeOut',
         onComplete: () => t.destroy(),
       });
+      // Overnight tint: the screen dips ledger-blue-dark while the night
+      // loop banks its miles, then dawn comes back. Subtle (max 0.22
+      // alpha) so every line of text stays readable throughout.
+      const night = this.add
+        .rectangle(GAME_WIDTH / 2, 100, GAME_WIDTH, 200, 0x0a1a3a, 0)
+        .setDepth(60);
+      this.tweens.add({
+        targets: night,
+        fillAlpha: 0.22,
+        duration: 550,
+        yoyo: true,
+        hold: 250,
+        ease: 'Sine.easeInOut',
+        onComplete: () => night.destroy(),
+      });
     }
   }
 
@@ -763,11 +783,40 @@ export class TrailScene extends Phaser.Scene {
       .tileSprite(S.x + S.w / 2, S.y + S.h - groundH / 2, S.w, groundH, tileTex)
       .setTilePosition(0, tileH - groundH);
 
+    // Parallax cloud band: drifts slower than the ground (v3 ambient).
+    if (!reducedMotion()) {
+      ensureCloudTexture(this);
+      this.cloudBand = this.add
+        .tileSprite(S.x + S.w / 2, S.y + 7, S.w, 12, 'fx-cloud')
+        .setTileScale(0.5)
+        .setAlpha(0.22);
+    }
+
     // The wagon trundles: two frames, oxen-paced.
     if (this.textures.exists('trail-wagon-1-t')) {
       // Mid-strip, so passing graves sweep in from the right and fall
       // behind: a grave at the party's exact mile lines up with the wagon.
-      this.wagon = this.add.image(S.x + 54, S.y + S.h - groundH - 6, 'trail-wagon-1-t');
+      const wagonX = S.x + 54;
+      const wagonY = S.y + S.h - groundH - 6;
+
+      // Dust trail kicked up behind the wheels (added before the wagon so
+      // motes pass under it). Capped small; the emitter lives scene-long.
+      if (!reducedMotion()) {
+        ensureFxTexture(this);
+        this.add.particles(wagonX - 14, S.y + S.h - groundH + 2, 'fx-px', {
+          speedX: { min: -30, max: -12 },
+          speedY: { min: -10, max: -2 },
+          frequency: 120,
+          quantity: 1,
+          maxAliveParticles: 16,
+          lifespan: { min: 450, max: 750 },
+          alpha: { start: 0.55, end: 0 },
+          scale: { start: 1, end: 0.3 },
+          tint: [0xd8c7a0, 0x9a8c6c],
+        });
+      }
+
+      this.wagon = this.add.image(wagonX, wagonY, 'trail-wagon-1-t');
       if (!reducedMotion()) {
         this.time.addEvent({
           delay: 380,
@@ -777,6 +826,23 @@ export class TrailScene extends Phaser.Scene {
             this.wagon?.setTexture(`trail-wagon-${this.wagonFrame}-t`);
           },
         });
+        // Wheel-rhythm bob + sway: small, oxen-slow, forever.
+        this.tweens.add({
+          targets: this.wagon,
+          y: wagonY - 1,
+          duration: 380,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
+        this.tweens.add({
+          targets: this.wagon,
+          angle: { from: -1.2, to: 1.2 },
+          duration: 760,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
       }
     }
     this.updateGraves();
@@ -784,7 +850,12 @@ export class TrailScene extends Phaser.Scene {
 
   /** Prior-run tombstones near the party's mile, vulture perched (§8.3). */
   private updateGraves(): void {
-    this.graveObjs.forEach((o) => o.destroy());
+    // Kill each object's tweens explicitly (the idle flap below) — Phaser
+    // does not reliably remove tweens whose targets are destroyed.
+    this.graveObjs.forEach((o) => {
+      this.tweens.killTweensOf(o);
+      o.destroy();
+    });
     this.graveObjs = [];
     if (!this.terrain || !this.textures.exists('trail-vulture-t')) return;
     const S = TrailScene.STRIP;
@@ -799,14 +870,31 @@ export class TrailScene extends Phaser.Scene {
       // The marker: a manila board; the vulture art brings its own post.
       const board = this.add.rectangle(gx, gy - 3, 7, 9, 0xd8c7a0).setStrokeStyle(1, 0x3a342b);
       const vulture = this.add.image(gx, gy - 12, 'trail-vulture-t');
+      // Idle flap: a lazy squash-and-stretch, desynced per bird.
+      if (!reducedMotion()) {
+        this.tweens.add({
+          targets: vulture,
+          scaleY: 0.88,
+          duration: 620,
+          delay: (gx * 37) % 500,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
+      }
       this.graveObjs.push(board, vulture);
     }
   }
 
+  /** Cached in create — matchMedia is not free at 60fps. */
+  private reducedCached = false;
+
   override update(_time: number, delta: number): void {
-    if (this.terrain && !reducedMotion()) {
+    if (this.terrain && !this.reducedCached) {
       // The ground drifts under the wagon: travel you can see.
       this.terrain.tilePositionX += delta * 0.012;
+      // Clouds lag the ground: cheap parallax depth.
+      if (this.cloudBand) this.cloudBand.tilePositionX += delta * 0.003;
     }
   }
 

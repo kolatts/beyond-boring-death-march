@@ -19,6 +19,7 @@ import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
 import { journalEntries, showCurriculumCard } from '../ui/curriculumCard';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
+import { failPuff, winBurst } from '../ui/transitions';
 import passContent from '../content/permissions-pass.json';
 
 // ---------------------------------------------------------------------------
@@ -246,6 +247,11 @@ export class PermissionsPassScene extends Phaser.Scene {
     actions.applyResourceDelta({ ...finale.effects });
     if (finale === CONTENT.finales.incident) actions.setFlag('permissions_incident');
     saveRun(getState());
+
+    // Outcome flourish on the canvas behind the report (no-op under
+    // reduced motion): clean pass earns confetti, the incident a dust puff.
+    if (finale === CONTENT.finales.clean) winBurst(this, GAME_WIDTH / 2, 40);
+    else if (finale === CONTENT.finales.incident) failPuff(this, GAME_WIDTH / 2, 50);
 
     const esc = escapeHtml;
     const glyph = finale === CONTENT.finales.clean ? '✓' : '×';

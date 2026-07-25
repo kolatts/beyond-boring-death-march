@@ -38,6 +38,7 @@ import {
 } from '../systems/nightWatchSim';
 import { journalEntries, showCurriculumCard } from '../ui/curriculumCard';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
+import { failPuff, winBurst } from '../ui/transitions';
 import nightContent from '../content/night-watch.json';
 
 // ---------------------------------------------------------------------------
@@ -573,6 +574,13 @@ export class NightWatchScene extends Phaser.Scene {
     saveRun(getState());
 
     this.drawMorningBackdrop(res);
+    // Outcome flourish (no-op under reduced motion): confetti-ish burst
+    // for a clean success, a dry dust puff for the raid / uncapped
+    // recursion mornings. The DOM report sits center, so aim high.
+    if (res.kind === 'success') winBurst(this, GAME_WIDTH / 2, 46);
+    else if (res.kind === 'raid' || (res.kind === 'recursion' && !res.capped)) {
+      failPuff(this, GAME_WIDTH / 2, 60);
+    }
     this.renderMorningPanel(res);
     void this.fireCurriculum(res);
   }

@@ -20,12 +20,12 @@
  *     object defaults to `resolution: RENDER_SCALE`; its glyph canvas
  *     then maps 1:1 onto backing-store pixels — crisp at any size.
  *
- * Sprites and Graphics still render nearest-neighbour (pixelArt: true):
- * one logical pixel becomes an exact RENDER_SCALE-sized block, which is
- * pixel-identical to what CSS upscaling produced before. Art that ships
- * larger than its on-screen logical size (backdrops, portraits) is
- * pre-quantised to the logical grid in systems/art.ts so the 320x200 art
- * aesthetic survives the higher-resolution framebuffer.
+ * ART-DIRECTION v3: sprites and images now render with LINEAR filtering
+ * (pixelArt: false in main.ts) — art that ships larger than its
+ * on-screen logical size (backdrops, portraits) displays its native
+ * detail, smoothly scaled by the supersampled framebuffer. Text is
+ * unaffected: its glyph canvases already map ~1:1 onto backing-store
+ * pixels, so it stays crisp under either filter.
  */
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, RENDER_SCALE } from '../config';

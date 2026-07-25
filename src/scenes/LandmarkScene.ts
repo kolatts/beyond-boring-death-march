@@ -26,7 +26,8 @@ import type { BBExchange, EventEffects, Landmark, Npc, NpcOption } from '../syst
 import { applyEventEffects } from '../systems/eventEngine';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
-import { quantize, queueArt } from '../systems/art';
+import { queueArt } from '../systems/art';
+import { prefersReducedMotion } from '../ui/transitions';
 import { bus } from '../ui/overlay';
 import { isCoarse, padHit } from '../ui/touch';
 import { MINIGAMES } from './index';
@@ -61,6 +62,9 @@ export class LandmarkScene extends Phaser.Scene {
   private npcChosen: NpcOption | null = null;
   /** Advice order for npcTalk, shuffled once per visit (seeded rand). */
   private adviceCorrectFirst = true;
+  /** Entrance animations already played this visit (they must not replay
+   * on cursor-move re-renders — render() rebuilds everything). */
+  private animated = new Set<string>();
 
   constructor() {
     super('Landmark');
@@ -70,6 +74,7 @@ export class LandmarkScene extends Phaser.Scene {
     this.landmark = LANDMARKS.find((l) => l.id === data.landmarkId) ?? null;
     this.phase = 'blurb';
     this.npcChosen = null;
+    this.animated = new Set<string>();
   }
 
   preload(): void {
@@ -316,19 +321,37 @@ export class LandmarkScene extends Phaser.Scene {
     }
   }
 
-  /** The landmark's generated vignette, right of the text. 0 if absent. */
+  /** The landmark's generated vignette, right of the text. 0 if absent.
+   * v3 smooth rendering: native-resolution art, GPU-scaled to size.
+   * First draw of a phase eases in with a soft scale/fade. */
   private drawVignette(lm: Landmark, cx: number, cy: number, size: number): boolean {
     const key = `lm-${lm.id}`;
     if (!this.textures.exists(key)) return false;
-    // Quantise the 400px source to its logical on-screen size so the
-    // vignette keeps the 320x200 grid look on the supersampled canvas.
-    const qKey = `${key}-q${size}`;
-    quantize(this, key, qKey, size, size);
-    const img = this.add.image(cx, cy, this.textures.exists(qKey) ? qKey : key).setDisplaySize(size, size);
+    const img = this.add.image(cx, cy, key).setDisplaySize(size, size);
     const border = this.add.graphics();
     border.lineStyle(1, 0xffffff, 0.55);
     border.strokeRect(cx - size / 2 - 1, cy - size / 2 - 1, size + 2, size + 2);
     this.drawn.push(img, border);
+
+    const animKey = `vignette-${this.phase}`;
+    if (!this.animated.has(animKey) && !prefersReducedMotion()) {
+      this.animated.add(animKey);
+      const fsx = img.scaleX;
+      const fsy = img.scaleY;
+      img.setScale(fsx * 1.06, fsy * 1.06).setAlpha(0);
+      border.setAlpha(0);
+      this.tweens.add({
+        targets: img,
+        scaleX: fsx,
+        scaleY: fsy,
+        alpha: 1,
+        duration: 240,
+        ease: 'Quad.easeOut',
+      });
+      this.tweens.add({ targets: border, alpha: 1, duration: 240, ease: 'Quad.easeOut' });
+    } else {
+      this.animated.add(animKey);
+    }
     return true;
   }
 
@@ -404,18 +427,40 @@ export class LandmarkScene extends Phaser.Scene {
     const wrap = GAME_WIDTH - textX - 8;
     let y = 16;
 
+    // Portrait entrances, once per visit — personalities in the motion:
+    // Boring slides in flat and level; Brilliant pops with an overshoot.
+    const animate = !this.animated.has('bb') && !prefersReducedMotion();
+    this.animated.add('bb');
+
     if (this.textures.exists('bb-boring')) {
-      quantize(this, 'bb-boring', 'bb-boring-q', 26, 26);
-      const img = this.add.image(18, y + 12, this.textures.exists('bb-boring-q') ? 'bb-boring-q' : 'bb-boring').setDisplaySize(26, 26);
+      const img = this.add.image(18, y + 12, 'bb-boring').setDisplaySize(26, 26);
       this.drawn.push(img);
+      if (animate) {
+        const fx = img.x;
+        img.setX(fx - 16).setAlpha(0);
+        this.tweens.add({ targets: img, x: fx, alpha: 1, duration: 260, ease: 'Quad.easeOut' });
+      }
     }
     const boring = this.text(textX, y, `BORING: ${bb.boring}`, GREEN, 7, wrap);
     y += Math.max(30, boring.height + 6);
 
     if (this.textures.exists('bb-brilliant')) {
-      quantize(this, 'bb-brilliant', 'bb-brilliant-q', 26, 26);
-      const img = this.add.image(18, y + 12, this.textures.exists('bb-brilliant-q') ? 'bb-brilliant-q' : 'bb-brilliant').setDisplaySize(26, 26);
+      const img = this.add.image(18, y + 12, 'bb-brilliant').setDisplaySize(26, 26);
       this.drawn.push(img);
+      if (animate) {
+        const fsx = img.scaleX;
+        const fsy = img.scaleY;
+        img.setScale(fsx * 0.4, fsy * 0.4).setAlpha(0);
+        this.tweens.add({
+          targets: img,
+          scaleX: fsx,
+          scaleY: fsy,
+          alpha: 1,
+          delay: 140,
+          duration: 320,
+          ease: 'Back.easeOut',
+        });
+      }
     }
     const brilliant = this.text(textX, y, `BRILLIANT: ${bb.brilliant}`, BLUE, 7, wrap);
     y += Math.max(30, brilliant.height + 8);

@@ -20,6 +20,7 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, PARTY_TEMPLATE, ROLES, ROLE_ORDER, type RoleId } from '../config';
 import { coverBackdrop, queueArt } from '../systems/art';
+import { ensureCloudTexture, prefersReducedMotion } from '../ui/transitions';
 import { setBed } from '../systems/audio';
 import { isCoarse, padHit } from '../ui/touch';
 import { actions } from '../systems/state';
@@ -85,6 +86,10 @@ export class TitleScene extends Phaser.Scene {
   private fameLoaded = false;
   /** True while the party-naming DOM panel owns input; Phaser keys go inert. */
   private panelOpen = false;
+  /** Menu slide-in plays once per scene entry, not on every redraw. */
+  private introPlayed = false;
+  /** Ambient drifting cloud layers (empty under reduced motion). */
+  private clouds: { img: Phaser.GameObjects.Image; speed: number }[] = [];
 
   constructor() {
     super('Title');
@@ -101,16 +106,56 @@ export class TitleScene extends Phaser.Scene {
     this.step = 'menu';
     this.cursor = 0;
     this.panelOpen = false;
+    this.introPlayed = false;
+    this.clouds = [];
     setBed(null);
+    const reduced = prefersReducedMotion();
 
     // Title key art backdrop, letterboxed to cover; veils keep text legible.
     if (coverBackdrop(this, 'title-art', GAME_WIDTH, GAME_HEIGHT)) {
+      // Ambient drift: two soft cloud/dust layers cross the key art very
+      // slowly (ART-DIRECTION v3). Behind the veils so text stays crisp.
+      // Moved in update() with wrap-around — a repeating tween would snap
+      // back to its captured start each cycle.
+      if (!reduced) {
+        ensureCloudTexture(this);
+        const drift = (y: number, scale: number, alpha: number, pxPerSec: number, from: number): void => {
+          const cloud = this.add.image(from, y, 'fx-cloud').setScale(scale).setAlpha(alpha);
+          this.clouds.push({ img: cloud, speed: pxPerSec });
+        };
+        drift(34, 1.6, 0.14, 7, 40);
+        drift(72, 1.1, 0.1, 4.5, 220);
+      }
       this.add.rectangle(GAME_WIDTH / 2, 44, GAME_WIDTH, 88, 0x000000, 0.55);
       this.add.rectangle(GAME_WIDTH / 2, 144, GAME_WIDTH, 112, 0x000000, 0.78);
     }
     this.hasSave = loadRun() !== null;
     this.fameLoaded = false;
     this.fameScores = null;
+
+    // Gentle title glow pulse: an additive phosphor-green ghost behind
+    // the title text breathes; the title itself never moves or dims.
+    if (!reduced) {
+      const glow = this.add
+        .text(GAME_WIDTH / 2, 20, 'BEYOND BORING:\nDEATH MARCH', {
+          fontFamily: 'monospace',
+          fontSize: '20px',
+          color: GREEN,
+          align: 'center',
+        })
+        .setOrigin(0.5, 0)
+        .setScale(1.03)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD);
+      this.tweens.add({
+        targets: glow,
+        alpha: 0.3,
+        duration: 1700,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    }
 
     this.add
       .text(GAME_WIDTH / 2, 20, 'BEYOND BORING:\nDEATH MARCH', {
@@ -156,6 +201,14 @@ export class TitleScene extends Phaser.Scene {
     });
     this.redraw();
     bus.emit('scene:ready', { scene: 'Title' });
+  }
+
+  /** Ambient cloud drift (clouds is empty under reduced motion). */
+  override update(_time: number, delta: number): void {
+    for (const c of this.clouds) {
+      c.img.x += (c.speed * delta) / 1000;
+      if (c.img.x > GAME_WIDTH + 80) c.img.x = -80;
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -325,6 +378,9 @@ export class TitleScene extends Phaser.Scene {
     const coarse = isCoarse();
     const pitch = coarse ? 17 : 13;
     const y0 = coarse ? 92 : 96;
+    // Slide+fade the menu in on scene entry only (never on cursor moves).
+    const intro = !this.introPlayed && !prefersReducedMotion();
+    this.introPlayed = true;
     this.menuItems().forEach((label, i) => {
       const selected = i === this.cursor;
       const t = this.text(
@@ -339,6 +395,18 @@ export class TitleScene extends Phaser.Scene {
         this.cursor = i;
         this.select();
       });
+      if (intro) {
+        const fx = t.x;
+        t.setX(fx - 12).setAlpha(0);
+        this.tweens.add({
+          targets: t,
+          x: fx,
+          alpha: 1,
+          delay: i * 70,
+          duration: 220,
+          ease: 'Quad.easeOut',
+        });
+      }
     });
     this.text(
       70,
