@@ -21,7 +21,7 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, PARTY_TEMPLATE, ROLES, ROLE_ORDER, type RoleId } from '../config';
 import { coverBackdrop, queueArt } from '../systems/art';
 import { setBed } from '../systems/audio';
-import { padHit } from '../ui/touch';
+import { isCoarse, padHit } from '../ui/touch';
 import { actions } from '../systems/state';
 import { LANDMARKS } from '../systems/content';
 import { loadRun, loadTombstones, saveRun } from '../systems/save';
@@ -312,39 +312,67 @@ export class TitleScene extends Phaser.Scene {
     }
   }
 
+  /** Tappable back affordance (touch has no Esc key). */
+  private backLink(y: number, label: string): void {
+    const t = this.text(16, y, label, BLUE, 7);
+    padHit(t, 12, 3, 14);
+    t.on('pointerdown', () => this.back());
+  }
+
   private drawMenu(): void {
+    // Touch: taller pitch + hit bands capped at the pitch so adjacent
+    // rows can never both claim a tap.
+    const coarse = isCoarse();
+    const pitch = coarse ? 17 : 13;
+    const y0 = coarse ? 92 : 96;
     this.menuItems().forEach((label, i) => {
       const selected = i === this.cursor;
-      const t = this.text(110, 96 + i * 13, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN);
-      padHit(t);
+      const t = this.text(
+        coarse ? 100 : 110,
+        y0 + i * pitch,
+        `${selected ? '>' : ' '} ${label}`,
+        selected ? WHITE : GREEN,
+        coarse ? 10 : 9,
+      );
+      padHit(t, coarse ? 40 : 8, 4, pitch - 1);
       t.on('pointerdown', () => {
         this.cursor = i;
         this.select();
       });
     });
-    this.text(70, 178, 'ARROWS + ENTER. THAT IS THE WHOLE MANUAL.', BLUE, 7);
+    this.text(
+      70,
+      178,
+      coarse ? 'TAP AN OPTION. THAT IS THE WHOLE MANUAL.' : 'ARROWS + ENTER. THAT IS THE WHOLE MANUAL.',
+      BLUE,
+      7,
+    );
   }
 
   private drawRoles(): void {
+    const coarse = isCoarse();
+    const pitch = coarse ? 26 : 22;
+    const y0 = coarse ? 104 : 108;
     this.text(16, 92, 'WHO IS ACCOUNTABLE FOR THIS?', WHITE, 9);
     ROLE_ORDER.forEach((id, i) => {
       const role = ROLES[id];
       const selected = i === this.cursor;
       const t = this.text(
         16,
-        108 + i * 22,
+        y0 + i * pitch,
         `${selected ? '>' : ' '} ${role.name}  (SCORE x${role.scoreMultiplier})`,
         selected ? WHITE : GREEN,
         8,
       );
-      padHit(t);
+      // Band covers the row AND its tagline: one thumb target per role.
+      padHit(t, coarse ? 40 : 8, 4, pitch - 1);
       t.on('pointerdown', () => {
         this.cursor = i;
         this.select();
       });
-      this.text(26, 117 + i * 22, role.tagline, selected ? ORANGE : BLUE, 7);
+      this.text(26, y0 + 9 + i * pitch, role.tagline, selected ? ORANGE : BLUE, 7);
     });
-    this.text(16, 180, 'ESC TO GO BACK', BLUE, 7);
+    this.backLink(184, coarse ? '< BACK' : 'ESC TO GO BACK');
   }
 
   private drawFame(): void {
@@ -370,33 +398,42 @@ export class TitleScene extends Phaser.Scene {
         );
       });
     }
-    this.text(16, 184, 'ESC TO GO BACK', BLUE, 7);
+    this.backLink(184, isCoarse() ? '< BACK' : 'ESC TO GO BACK');
   }
 
   private drawJournal(): void {
+    const coarse = isCoarse();
     this.text(16, 92, 'FIELD JOURNAL — NOTES COLLECTED', WHITE, 9);
     const ids = journalEntries();
     if (ids.length === 0) {
       this.text(16, 108, 'No field notes yet. Lessons are issued on the', GREEN, 8);
       this.text(16, 118, 'trail, shortly after each joke lands on you.', GREEN, 8);
     } else {
-      // Show a window of 7 entries around the cursor.
-      const start = Math.max(0, Math.min(this.cursor - 3, ids.length - 7));
-      ids.slice(start, start + 7).forEach((id, i) => {
+      // Window of entries around the cursor (fewer, taller rows on touch).
+      const rows = coarse ? 5 : 7;
+      const pitch = coarse ? 14 : 10;
+      const start = Math.max(0, Math.min(this.cursor - Math.floor(rows / 2), ids.length - rows));
+      ids.slice(start, start + rows).forEach((id, i) => {
         const idx = start + i;
         const card = getCard(id);
         const label = `${card ? card.n : '??'} — ${id.replaceAll('_', ' ').toUpperCase()}`;
         const selected = idx === this.cursor;
-        const t = this.text(16, 106 + i * 10, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN, 7);
-        t.setInteractive({ useHandCursor: true });
+        const t = this.text(
+          16,
+          106 + i * pitch,
+          `${selected ? '>' : ' '} ${label}`,
+          selected ? WHITE : GREEN,
+          coarse ? 8 : 7,
+        );
+        padHit(t, coarse ? 24 : 4, 1, pitch - 1);
         t.on('pointerdown', () => {
           this.cursor = idx;
           this.select();
         });
       });
-      if (ids.length > 7) this.text(260, 92, `${this.cursor + 1}/${ids.length}`, VIOLET, 7);
+      if (ids.length > rows) this.text(260, 92, `${this.cursor + 1}/${ids.length}`, VIOLET, 7);
     }
-    this.text(16, 184, 'ENTER TO RE-READ · ESC TO GO BACK', BLUE, 7);
+    this.backLink(184, coarse ? 'TAP A NOTE TO RE-READ · < BACK' : 'ENTER TO RE-READ · ESC TO GO BACK');
   }
 
   // -------------------------------------------------------------------------

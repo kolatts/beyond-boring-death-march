@@ -103,9 +103,44 @@ export function resample(scene: Phaser.Scene, srcKey: string, outKey: string, sc
 }
 
 /**
+ * Register `outKey` as a nearest-neighbour decimated copy of `srcKey` at
+ * `outW` x `outH` LOGICAL pixels.
+ *
+ * Why: the backing store is now supersampled (config.RENDER_SCALE — see
+ * ui/text.ts), so a 400px generated PNG drawn at 88 logical pixels would
+ * render its full native detail instead of the 320x200-grid decimation
+ * the art direction was built on. Quantising to the logical grid first
+ * (with smoothing OFF, matching the GPU's old NEAREST downsample
+ * pixel-for-pixel) preserves the chunky aesthetic; the supersampled
+ * framebuffer then upscales each logical pixel into a crisp block.
+ */
+export function quantize(
+  scene: Phaser.Scene,
+  srcKey: string,
+  outKey: string,
+  outW: number,
+  outH: number,
+): void {
+  if (scene.textures.exists(outKey) || !scene.textures.exists(srcKey)) return;
+  const src = scene.textures.get(srcKey).getSourceImage() as CanvasImageSource & {
+    width: number;
+    height: number;
+  };
+  const canvasTexture = scene.textures.createCanvas(outKey, Math.max(1, Math.round(outW)), Math.max(1, Math.round(outH)));
+  if (!canvasTexture) return;
+  const ctx = canvasTexture.getContext();
+  ctx.imageSmoothingEnabled = false; // nearest: identical to the old decimation
+  ctx.drawImage(src, 0, 0, src.width, src.height, 0, 0, canvasTexture.width, canvasTexture.height);
+  canvasTexture.refresh();
+}
+
+/**
  * Add an image covering the full logical canvas (like CSS `cover`),
  * centered, preserving aspect. Returns the image (or null if the texture
  * never loaded — scenes must stay playable art-less).
+ *
+ * The source is quantised to the logical cover size first so backdrops
+ * keep the 320x200 look under the supersampled backing store.
  */
 export function coverBackdrop(
   scene: Phaser.Scene,
@@ -115,8 +150,13 @@ export function coverBackdrop(
   alpha = 1,
 ): Phaser.GameObjects.Image | null {
   if (!scene.textures.exists(key)) return null;
-  const img = scene.add.image(canvasW / 2, canvasH / 2, key);
-  const scale = Math.max(canvasW / img.width, canvasH / img.height);
-  img.setScale(scale).setAlpha(alpha);
+  const src = scene.textures.get(key).getSourceImage() as { width: number; height: number };
+  const scale = Math.max(canvasW / src.width, canvasH / src.height);
+  const qKey = `${key}-q`;
+  quantize(scene, key, qKey, src.width * scale, src.height * scale);
+  const useKey = scene.textures.exists(qKey) ? qKey : key;
+  const img = scene.add.image(canvasW / 2, canvasH / 2, useKey);
+  if (useKey === key) img.setScale(scale);
+  img.setAlpha(alpha);
   return img;
 }

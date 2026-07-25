@@ -45,7 +45,7 @@ import { bbForLandmark } from '../systems/content';
 import { loadTombstones, saveRun } from '../systems/save';
 import { keyOutBlack, queueArt, resample } from '../systems/art';
 import { setBed } from '../systems/audio';
-import { padHit } from '../ui/touch';
+import { isCoarse, padHit } from '../ui/touch';
 import { isFieldNoteOpen, showCurriculumCard } from '../ui/curriculumCard';
 import { bus } from '../ui/overlay';
 import { MINIGAMES } from './index';
@@ -590,18 +590,22 @@ export class TrailScene extends Phaser.Scene {
       y += body.height + 6;
     }
 
+    // Touch: bigger option type, taller row pitch, and hit bands capped
+    // at the pitch so adjacent options can never both claim a tap.
+    const coarse = isCoarse();
+    const optionGap = coarse ? 9 : 3;
     const optionTexts: Phaser.GameObjects.Text[] = [];
     spec.options.forEach((opt, i) => {
       const t = this.add
         .text(panelX + 10, y, opt.label, {
           fontFamily: 'monospace',
-          fontSize: '7px',
+          fontSize: coarse ? '8px' : '7px',
           color: C.green,
           wordWrap: { width: panelW - 24 },
         })
         .setOrigin(0, 0);
       if (!opt.disabled) {
-        padHit(t, 6, 1);
+        padHit(t, 6, 1, t.height + optionGap - 1);
         t.on('pointerdown', () => {
           if (!this.modal) return;
           this.modal.index = i;
@@ -610,7 +614,7 @@ export class TrailScene extends Phaser.Scene {
       }
       container.add(t);
       optionTexts.push(t);
-      y += t.height + 3;
+      y += t.height + optionGap;
     });
 
     const panelTop = 10;
@@ -850,34 +854,60 @@ export class TrailScene extends Phaser.Scene {
     ];
     bars.forEach((bar, i) => this.drawBar(bar, 24 + i * 11, s.resources[bar.key]));
 
-    // Deadline line
+    // Deadline line — tappable (touch has no C/D keys).
+    const coarse = isCoarse();
     const firstDeadline = s.activeDeadlines[0];
     if (firstDeadline) {
-      this.text(
+      const dt = this.text(
         4,
         94,
-        `! ${firstDeadline.source.toUpperCase()}: ${firstDeadline.title} — DUE DAY ${firstDeadline.dueOnDay} [C/D]`,
+        `! ${firstDeadline.source.toUpperCase()}: ${firstDeadline.title} — DUE DAY ${firstDeadline.dueOnDay} ${coarse ? '[TAP]' : '[C/D]'}`,
         C.orange,
         7,
       );
+      padHit(dt, 4, 1, 8);
+      dt.on('pointerdown', () => {
+        if (!this.modal) this.openDeadlineManager();
+      });
       if (s.activeDeadlines.length > 1) {
-        this.text(GAME_WIDTH - 4, 87, `+${s.activeDeadlines.length - 1} more [D]`, C.orange, 7).setOrigin(1, 0);
+        const more = this.text(GAME_WIDTH - 4, 87, `+${s.activeDeadlines.length - 1} more [D]`, C.orange, 7).setOrigin(1, 0);
+        padHit(more, 4, 1, 8);
+        more.on('pointerdown', () => {
+          if (!this.modal) this.openDeadlineManager();
+        });
       }
     }
 
-    // Pace (tap cycles it; Left/Right on keyboard)
+    // Pace: tap cycles it (on touch it is one full-width band and says
+    // so); Left/Right on keyboard steps both ways.
     const pace = PACES[s.pace];
-    const paceT = this.text(4, 106, `PACE: < ${pace.label} >  (${pace.milesPerDay} MI/DAY)`, C.blue);
-    padHit(paceT, 4, 3);
+    const paceT = this.text(
+      4,
+      coarse ? 107 : 106,
+      coarse
+        ? `PACE: ${pace.label} (${pace.milesPerDay} MI/DAY) — TAP TO CYCLE`
+        : `PACE: < ${pace.label} >  (${pace.milesPerDay} MI/DAY)`,
+      C.blue,
+    );
+    padHit(paceT, coarse ? 60 : 4, 2, coarse ? 14 : undefined);
     paceT.on('pointerdown', () => {
       if (!this.modal) this.shiftPace(1);
     });
 
-    // Menu
+    // Menu — on touch: larger type, 16px row pitch, hit bands capped at
+    // the pitch so TRAVEL/REST/HUNT taps can never misfire on a neighbour.
+    const menuY = coarse ? 123 : 118;
+    const menuPitch = coarse ? 16 : 10;
     MENU_ITEMS.forEach((item, i) => {
       const selected = i === this.menuIndex;
-      const t = this.text(12, 118 + i * 10, `${selected ? '>' : ' '} ${item.label}`, selected ? C.white : C.green);
-      padHit(t, 10, 1);
+      const t = this.text(
+        12,
+        menuY + i * menuPitch,
+        `${selected ? '>' : ' '} ${item.label}`,
+        selected ? C.white : C.green,
+        coarse ? 10 : 8,
+      );
+      padHit(t, coarse ? 60 : 10, 1, menuPitch - 1);
       t.on('pointerdown', () => {
         if (this.modal) return;
         this.menuIndex = i;
@@ -885,12 +915,17 @@ export class TrailScene extends Phaser.Scene {
       });
     });
 
-    // Notice log (last few lines, wrapped)
-    const logY = 150;
-    const logLines = s.recentLog.slice(-3);
-    logLines.forEach((line, i) => {
+    // Notice log: laid out bottom-up with MEASURED heights, so a wrapped
+    // two-line grave entry can never overdraw the next line or the party
+    // row, and the newest entry is always fully visible.
+    const logTop = coarse ? 172 : 150;
+    const entries = s.recentLog.slice(coarse ? -2 : -3);
+    let logBottom = 188;
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const line = entries[i];
+      if (line === undefined) continue;
       const t = this.add
-        .text(4, logY + i * 12, line, {
+        .text(4, 0, line, {
           fontFamily: 'monospace',
           fontSize: '7px',
           color: C.green,
@@ -898,8 +933,15 @@ export class TrailScene extends Phaser.Scene {
           maxLines: 2,
         })
         .setOrigin(0, 0);
+      const y = logBottom - t.height;
+      if (y < logTop) {
+        t.destroy();
+        break;
+      }
+      t.setY(y);
       this.drawn.push(t);
-    });
+      logBottom = y - 2;
+    }
 
     // Party status line — glyph per member so loss survives colorblindness.
     let px = 4;

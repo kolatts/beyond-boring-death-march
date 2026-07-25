@@ -52,6 +52,9 @@ export class DeathScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#000000');
     setBed(null);
     sting('death');
+    // Defensive: a scene that captured keys (Bug Hunt's SPACE) must not
+    // block spaces typed into the epitaph input (ui/keyboard.ts).
+    this.input.keyboard?.clearCaptures();
 
     // Tombstone key art behind a veil so the cause line stays legible.
     if (coverBackdrop(this, 'tombstone-art', GAME_WIDTH, GAME_HEIGHT)) {
@@ -99,18 +102,25 @@ export class DeathScene extends Phaser.Scene {
    */
   private mountEpitaphPanel(deathLine: string): void {
     const panel = mountPanel(PANEL_ID);
+    // On small screens the letterboxed canvas is short and vertically
+    // centered: a viewport-centered overlay lands ON the canvas and
+    // occludes the tombstone's cause line. Anchor it to the bottom of the
+    // viewport there (below the canvas) instead; desktop keeps the
+    // canvas-relative placement.
+    const small = window.innerWidth < 600;
     panel.setAttribute(
       'style',
       [
         'position:absolute',
         'left:50%',
-        'top:55%',
+        small ? 'bottom:12px' : 'top:55%',
         'transform:translate(-50%,0)',
         'display:flex',
         'flex-direction:column',
-        'gap:12px',
+        small ? 'gap:8px' : 'gap:12px',
         'align-items:center',
         'font-family:monospace',
+        'max-width:96vw',
       ].join(';'),
     );
 

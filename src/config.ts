@@ -9,6 +9,23 @@
 export const GAME_WIDTH = 320;
 export const GAME_HEIGHT = 200;
 
+/**
+ * Supersample factor for the real canvas backing store (mobile pass).
+ *
+ * The game still THINKS in 320x200 — every scene positions objects in
+ * logical pixels — but the canvas renders at 4x (1280x800) with every
+ * scene camera zoomed 4x (see ui/text.ts). Sprites keep their chunky
+ * nearest-neighbour look (one logical pixel = a crisp 4x4 block, exactly
+ * what CSS upscaling produced before); text objects render their glyph
+ * canvases at matching resolution so type is sharp instead of 320x200-
+ * decimated mush. 4x means the backing store roughly matches device
+ * pixels on both a 390px-wide phone at DPR 3 (1170) and a 1280 desktop.
+ */
+export const RENDER_SCALE = 4;
+
+/** Minimum touch-target size, in device (CSS) pixels, for coarse pointers. */
+export const MIN_TOUCH_PX = 44;
+
 /** The trail. Legacy Junction to Production. */
 export const TOTAL_MILES = 2000;
 
