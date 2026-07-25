@@ -41,7 +41,7 @@ import type { SurpriseDeadline } from '../systems/state';
 import { advanceDays, type DayAction } from '../systems/economy';
 import { buyException, complyDeadline, doomClock } from '../systems/deadlines';
 import { applyChoice, visibleChoices, type TriggeredEvent } from '../systems/eventEngine';
-import { bbForLandmark } from '../systems/content';
+import { campfireReactionFor } from '../systems/content';
 import { loadTombstones, saveRun } from '../systems/save';
 import { keyOutBlack, queueArt, resample } from '../systems/art';
 import { setBed } from '../systems/audio';
@@ -185,8 +185,16 @@ export class TrailScene extends Phaser.Scene {
         if (!this.modal) this.openDeadlineManager();
       });
       kb.on('keydown-F', () => {
-        if (this.modal) return;
+        // Ignore F while any modal or DOM dialog owns input — a swallowed
+        // toggle with no feedback reads as "the key does nothing".
+        if (this.modal || isFieldNoteOpen()) return;
         this.fastOn = !this.fastOn;
+        const mult = Math.max(10, fastModeMultiplier());
+        actions.log(
+          this.fastOn
+            ? `FAST MODE ON — x${mult} DAYS PER PRESS. F TO TURN OFF.`
+            : 'FAST MODE OFF — 1 DAY PER PRESS.',
+        );
         this.redraw();
       });
     }
@@ -195,9 +203,11 @@ export class TrailScene extends Phaser.Scene {
 
     // Boring & Brilliant react to the landmark HEED choice at the first
     // campfire after the minigame (content boring-brilliant.json).
+    // campfireReactionFor rotates through not-yet-heard reaction pairs so
+    // replayed runs don't hear the same exchange verbatim every camp.
     const heed = getState().lastLandmarkHeed;
     if (heed) {
-      const bb = bbForLandmark(heed.landmarkId);
+      const bb = campfireReactionFor(heed.landmarkId, actions.rand());
       actions.setLastLandmarkHeed(null);
       saveRun(getState());
       if (bb) {
@@ -826,11 +836,20 @@ export class TrailScene extends Phaser.Scene {
     const role = ROLES[s.role];
     this.updateGraves();
 
-    // Row 1: mile / day / fast indicator
+    // Row 1: mile / day / fast-mode state chip. The chip is a filled
+    // block (not bare text) so the mode is unmissable while it is on.
     this.text(4, 2, `MILE ${Math.floor(s.mile)}/${TOTAL_MILES}`, C.white);
     this.text(130, 2, `DAY ${s.day}`, C.white);
     if (this.fastOn) {
-      this.text(GAME_WIDTH - 4, 2, `FAST x${Math.max(10, fastModeMultiplier())}`, C.blue).setOrigin(1, 0);
+      const chip = this.add
+        .text(GAME_WIDTH - 4, 1, ` FAST x${Math.max(10, fastModeMultiplier())} `, {
+          fontFamily: 'monospace',
+          fontSize: '8px',
+          color: '#000000',
+          backgroundColor: C.blue,
+        })
+        .setOrigin(1, 0);
+      this.drawn.push(chip);
     }
 
     // Row 2: doom clock

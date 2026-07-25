@@ -236,6 +236,9 @@ export class OutfittingScene extends Phaser.Scene {
               : ''
           }
           <div class="oc-grid" role="listbox" aria-label="${esc(opts.stepLabel)}"></div>
+          <div class="oc-hint">ARROWS NAVIGATE · ENTER INSPECTS · ENTER AGAIN OR TAB → ${
+            opts.allowKeep ? 'SWAP' : 'PURCHASE'
+          }</div>
           <div class="oc-detail" aria-live="polite">Select a card to inspect it.</div>
           <div class="oc-actions"></div>
         </div>`;
@@ -348,10 +351,16 @@ export class OutfittingScene extends Phaser.Scene {
                 : `× ${price} TK`
           }</span>`;
         btn.addEventListener('click', () => {
+          // Keyboard flow: Enter on an ALREADY-selected card jumps focus
+          // to the confirm button (Tab also reaches it — see .oc-hint).
+          const alreadySelected = selected === card;
           selected = card;
           buttons.forEach((b) => b.classList.remove('sel'));
           btn.classList.add('sel');
           renderDetail();
+          if (alreadySelected) {
+            actionsEl.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus();
+          }
         });
         grid.appendChild(btn);
         buttons.push(btn);
@@ -696,6 +705,9 @@ function injectStyles(): void {
 .oc-cstats { display: block; font-size: 0.68rem; opacity: 0.85; margin-top: 0.2rem; }
 .oc-cprice { display: block; font-size: 0.72rem; color: var(--white); margin-top: 0.25rem; }
 .oc-card.locked .oc-cprice { color: var(--violet); }
+.oc-hint { color: var(--blue); font-size: 0.7rem; letter-spacing: 0.08em;
+  margin: 0 0 0.35rem; }
+@media (pointer: coarse) { .oc-hint { display: none; } }
 .oc-detail { border: 1px solid rgba(27,203,1,0.4); padding: 0.6rem 0.8rem;
   min-height: 6.5rem; font-size: 0.85rem; }
 .oc-dname { color: var(--white); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
