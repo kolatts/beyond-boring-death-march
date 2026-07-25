@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "bug-hunt.schema.json",
+  "title": "Bug Hunt flavor content (§7.4)",
+  "type": "object",
+  "required": ["creatures", "terrain", "carryOut", "messages"],
+  "additionalProperties": false,
+  "definitions": {
+    "line": { "type": "string", "minLength": 1 }
+  },
+  "properties": {
+    "creatures": {
+      "type": "object",
+      "required": ["symptom", "rootCause", "flakyTest", "tradeRoute", "todo"],
+      "additionalProperties": false,
+      "properties": {
+        "symptom": {
+          "type": "object",
+          "required": ["name", "glyph", "description", "killMessage", "respawnMessage", "thirdRespawnMessage"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/definitions/line" },
+            "glyph": { "$ref": "#/definitions/line" },
+            "description": { "$ref": "#/definitions/line" },
+            "killMessage": { "$ref": "#/definitions/line" },
+            "respawnMessage": { "$ref": "#/definitions/line" },
+            "thirdRespawnMessage": { "$ref": "#/definitions/line" }
+          }
+        },
+        "rootCause": {
+          "type": "object",
+          "required": ["name", "glyph", "description", "killMessage", "relocateMessage", "settledMessage"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/definitions/line" },
+            "glyph": { "$ref": "#/definitions/line" },
+            "description": { "$ref": "#/definitions/line" },
+            "killMessage": { "$ref": "#/definitions/line" },
+            "relocateMessage": { "$ref": "#/definitions/line" },
+            "settledMessage": { "$ref": "#/definitions/line" }
+          }
+        },
+        "flakyTest": {
+          "type": "object",
+          "required": ["name", "glyph", "description", "shootMessage", "returnMessage", "quarantineMessage"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/definitions/line" },
+            "glyph": { "$ref": "#/definitions/line" },
+            "description": { "$ref": "#/definitions/line" },
+            "shootMessage": { "$ref": "#/definitions/line" },
+            "returnMessage": { "$ref": "#/definitions/line" },
+            "quarantineMessage": { "$ref": "#/definitions/line" }
+          }
+        },
+        "tradeRoute": {
+          "type": "object",
+          "required": ["name", "glyph", "description", "warningMessage", "envReadMessage", "envReadHalvedMessage", "shootMessage"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/definitions/line" },
+            "glyph": { "$ref": "#/definitions/line" },
+            "description": { "$ref": "#/definitions/line" },
+            "warningMessage": { "$ref": "#/definitions/line" },
+            "envReadMessage": { "$ref": "#/definitions/line" },
+            "envReadHalvedMessage": { "$ref": "#/definitions/line" },
+            "shootMessage": { "$ref": "#/definitions/line" }
+          }
+        },
+        "todo": {
+          "type": "object",
+          "required": ["name", "glyph", "description", "killMessage"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "$ref": "#/definitions/line" },
+            "glyph": { "$ref": "#/definitions/line" },
+            "description": { "$ref": "#/definitions/line" },
+            "killMessage": { "$ref": "#/definitions/line" }
+          }
+        }
+      }
+    },
+    "terrain": {
+      "type": "object",
+      "required": ["src", "tests", "docs", "legacy", "node_modules", "scripts"],
+      "additionalProperties": false,
+      "properties": {
+        "src": { "$ref": "#/definitions/line" },
+        "tests": { "$ref": "#/definitions/line" },
+        "docs": { "$ref": "#/definitions/line" },
+        "legacy": { "$ref": "#/definitions/line" },
+        "node_modules": { "$ref": "#/definitions/line" },
+        "scripts": { "$ref": "#/definitions/line" }
+      }
+    },
+    "carryOut": {
+      "type": "object",
+      "required": [
+        "headline",
+        "capacityLine",
+        "rotLine",
+        "summaryPrompt",
+        "leftBehindLine",
+        "emptyBag",
+        "payoutNotice",
+        "nothingCarried"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "headline": { "$ref": "#/definitions/line" },
+        "capacityLine": { "$ref": "#/definitions/line" },
+        "rotLine": { "$ref": "#/definitions/line" },
+        "summaryPrompt": { "$ref": "#/definitions/line" },
+        "leftBehindLine": { "$ref": "#/definitions/line" },
+        "emptyBag": { "$ref": "#/definitions/line" },
+        "payoutNotice": { "$ref": "#/definitions/line" },
+        "nothingCarried": { "$ref": "#/definitions/line" }
+      }
+    },
+    "messages": {
+      "type": "object",
+      "required": [
+        "enter",
+        "outOfToolCalls",
+        "miss",
+        "quarantineTooFar",
+        "quarantineNone",
+        "compromisedNotice"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "enter": { "$ref": "#/definitions/line" },
+        "outOfToolCalls": { "$ref": "#/definitions/line" },
+        "miss": { "$ref": "#/definitions/line" },
+        "quarantineTooFar": { "$ref": "#/definitions/line" },
+        "quarantineNone": { "$ref": "#/definitions/line" },
+        "compromisedNotice": { "$ref": "#/definitions/line" }
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "creatures": {
+    "symptom": {
+      "name": "SYMPTOM",
+      "glyph": "s",
+      "description": "Abundant. Docile. Each one you fix is survived by two.",
+      "killMessage": "Symptom fixed. Two more arrive for the funeral.",
+      "respawnMessage": "The mechanism that makes symptoms is intact. It made two more.",
+      "thirdRespawnMessage": "You have now fixed more symptoms than existed when you arrived."
+    },
+    "rootCause": {
+      "name": "ROOT CAUSE",
+      "glyph": "R",
+      "description": "Rare. Camouflaged as an ordinary file. It has been here since the second rewrite.",
+      "killMessage": "ROOT CAUSE ELIMINATED. A whole family of future incidents retires.",
+      "relocateMessage": "Something moved. The stack trace goes cold.",
+      "settledMessage": "It has stopped running. It thinks you cannot see it. Almost right."
+    },
+    "flakyTest": {
+      "name": "THE FLAKY TEST",
+      "glyph": "F",
+      "description": "Fails only when watched. Passes only when it matters that it fails.",
+      "shootMessage": "The tool call passes clean through. This one can only be quarantined.",
+      "returnMessage": "The Flaky Test is back. It was never really gone.",
+      "quarantineMessage": "Quarantined. The suite is green. Nobody asks why. This took one full day."
+    },
+    "tradeRoute": {
+      "name": "FRIENDLY TRADE ROUTE",
+      "glyph": ":)",
+      "description": "A charming roadside stall on the wire. It waves at you. Excellent prices on capabilities.",
+      "warningMessage": "{name}: \"Nothing on this trail waves at you for free. Stay back.\"",
+      "envReadMessage": "IT READ YOUR .ENV. The stall was a prompt-injected MCP server.",
+      "envReadHalvedMessage": "It read your .env, but {name} cut the cable. Half your secrets stay home.",
+      "shootMessage": "The stall collapses into a tarp and forty lines of injected prompt."
+    },
+    "todo": {
+      "name": "STALE TODO",
+      "glyph": "TODO",
+      "description": "Grazing peacefully since 2019. Harms no one. Helps no one.",
+      "killMessage": "You bagged a TODO from 2019. It says \"fix later.\" It is later."
+    }
+  },
+  "terrain": {
+    "src": "/src",
+    "tests": "/tests",
+    "docs": "/docs",
+    "legacy": "/legacy",
+    "node_modules": "/node_modules",
+    "scripts": "/scripts"
+  },
+  "carryOut": {
+    "headline": "YOU SHOT {shot} LBS OF BUGS.",
+    "capacityLine": "You can carry {cap} lbs back. That is your context window.",
+    "rotLine": "Everything you leave rots on the trail. It will be rediscovered later, from scratch, at full price.",
+    "summaryPrompt": "One line per finding: what breaks, where, under what condition. The payout reads the line, not the bug.",
+    "leftBehindLine": "Left to rot: {count} findings, {weight} lbs.",
+    "emptyBag": "Nothing in the bag. The trail keeps its bugs.",
+    "payoutNotice": "Carry-out: {count} findings, {weight} lbs. The summaries earned {tokens} tokens.",
+    "nothingCarried": "You carried nothing out. The hunt happened. There is no evidence."
+  },
+  "messages": {
+    "enter": "The repo spreads out ahead. Something in /legacy is watching you.",
+    "outOfToolCalls": "Out of tool calls. The budget regenerates while you are elsewhere.",
+    "miss": "A clean hit on a file that was correct. It is now differently correct.",
+    "quarantineTooFar": "You are not close enough to quarantine it. It can tell.",
+    "quarantineNone": "Nothing left to quarantine. The suite is as green as it will get.",
+    "compromisedNotice": "FLAG RAISED: compromised. Your secrets now travel faster than you."
+  }
+}
