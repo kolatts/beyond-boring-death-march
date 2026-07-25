@@ -743,6 +743,19 @@ function injectStyles(): void {
   .oc-reveal { animation: none; }
   .oc-card { transition: none; }
 }
+/* Mobile (390px portrait is the bar): fixed-width label+meter columns
+   pushed the stat VALUES off the right edge. Let the meter flex and
+   shrink the label column so every row fits; thumb-size the buttons. */
+@media (max-width: 600px) {
+  .oc-frame { padding: 0.7rem 0.75rem; }
+  .oc-mrow { gap: 0.35rem; font-size: 0.7rem; }
+  .oc-mlabel { width: 5.8rem; }
+  .oc-meter { width: auto; flex: 1 1 2.5rem; min-width: 2.5rem; }
+  .oc-detail { padding: 0.5rem 0.55rem; }
+  .oc-drow { gap: 0.45rem; font-size: 0.78rem; }
+  .oc-confirm, .oc-keep { min-height: 44px; }
+  .oc-card { min-height: 44px; }
+}
 `;
   document.head.appendChild(style);
 }

@@ -26,9 +26,9 @@ import type { BBExchange, EventEffects, Landmark, Npc, NpcOption } from '../syst
 import { applyEventEffects } from '../systems/eventEngine';
 import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
-import { queueArt } from '../systems/art';
+import { quantize, queueArt } from '../systems/art';
 import { bus } from '../ui/overlay';
-import { padHit } from '../ui/touch';
+import { isCoarse, padHit } from '../ui/touch';
 import { MINIGAMES } from './index';
 
 const WHITE = '#ffffff';
@@ -200,7 +200,9 @@ export class LandmarkScene extends Phaser.Scene {
     y: number,
     str: string,
     color: string,
-    size = 7,
+    // 8px default (was 7): with crisp text resolution the layout has the
+    // room, and landmark blurbs are the longest prose in the game.
+    size = 8,
     wrapWidth = GAME_WIDTH - 16,
   ): Phaser.GameObjects.Text {
     const t = this.add
@@ -233,32 +235,37 @@ export class LandmarkScene extends Phaser.Scene {
   /** Render the phase's menu starting at y. Single items center at 190. */
   private renderMenu(items: MenuItem[], y: number): void {
     this.menu = items;
+    const coarse = isCoarse();
     if (items.length === 1) {
       const only = items[0];
       if (!only) return;
       const t = this.add
-        .text(GAME_WIDTH / 2, 190, `> ${only.label}`, {
+        .text(GAME_WIDTH / 2, coarse ? 188 : 190, `> ${only.label}`, {
           fontFamily: 'monospace',
-          fontSize: '9px',
+          fontSize: coarse ? '10px' : '9px',
           color: WHITE,
         })
         .setOrigin(0.5, 0.5);
-      padHit(t, 20, 6);
+      // Sole control on screen: let it grow to the full touch target.
+      padHit(t, 30, 6);
       t.on('pointerdown', () => only.onSelect());
       this.drawn.push(t);
       return;
     }
+    // Dialogue choices: taller pitch on touch, hit bands capped at the
+    // pitch so adjacent choices never both claim a tap.
+    const pitch = coarse ? 15 : 11;
     items.forEach((item, i) => {
       const selected = i === this.menuIndex;
       const t = this.text(
         12,
-        y + i * 11,
+        y + i * pitch,
         `${selected ? '>' : ' '} ${item.label}`,
         selected ? WHITE : GREEN,
-        7,
+        8,
         GAME_WIDTH - 24,
       );
-      padHit(t, 8, 1);
+      padHit(t, coarse ? 40 : 8, 1, pitch - 1);
       t.on('pointerdown', () => {
         this.menuIndex = i;
         item.onSelect();
@@ -313,7 +320,11 @@ export class LandmarkScene extends Phaser.Scene {
   private drawVignette(lm: Landmark, cx: number, cy: number, size: number): boolean {
     const key = `lm-${lm.id}`;
     if (!this.textures.exists(key)) return false;
-    const img = this.add.image(cx, cy, key).setDisplaySize(size, size);
+    // Quantise the 400px source to its logical on-screen size so the
+    // vignette keeps the 320x200 grid look on the supersampled canvas.
+    const qKey = `${key}-q${size}`;
+    quantize(this, key, qKey, size, size);
+    const img = this.add.image(cx, cy, this.textures.exists(qKey) ? qKey : key).setDisplaySize(size, size);
     const border = this.add.graphics();
     border.lineStyle(1, 0xffffff, 0.55);
     border.strokeRect(cx - size / 2 - 1, cy - size / 2 - 1, size + 2, size + 2);
@@ -394,14 +405,16 @@ export class LandmarkScene extends Phaser.Scene {
     let y = 16;
 
     if (this.textures.exists('bb-boring')) {
-      const img = this.add.image(18, y + 12, 'bb-boring').setDisplaySize(26, 26);
+      quantize(this, 'bb-boring', 'bb-boring-q', 26, 26);
+      const img = this.add.image(18, y + 12, this.textures.exists('bb-boring-q') ? 'bb-boring-q' : 'bb-boring').setDisplaySize(26, 26);
       this.drawn.push(img);
     }
     const boring = this.text(textX, y, `BORING: ${bb.boring}`, GREEN, 7, wrap);
     y += Math.max(30, boring.height + 6);
 
     if (this.textures.exists('bb-brilliant')) {
-      const img = this.add.image(18, y + 12, 'bb-brilliant').setDisplaySize(26, 26);
+      quantize(this, 'bb-brilliant', 'bb-brilliant-q', 26, 26);
+      const img = this.add.image(18, y + 12, this.textures.exists('bb-brilliant-q') ? 'bb-brilliant-q' : 'bb-brilliant').setDisplaySize(26, 26);
       this.drawn.push(img);
     }
     const brilliant = this.text(textX, y, `BRILLIANT: ${bb.brilliant}`, BLUE, 7, wrap);

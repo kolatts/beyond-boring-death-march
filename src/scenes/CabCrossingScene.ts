@@ -887,7 +887,7 @@ export class CabCrossingScene extends Phaser.Scene {
       const affordable = opt.id !== 'caulk' || s.resources.tokens >= CAB.caulk.tokens;
       const labelColor = !affordable ? C.violet : selected ? C.white : C.green;
       const label = this.text(10, y, `${selected ? '>' : ' '} ${i + 1}. ${opt.label}${affordable ? '' : ' ×'}`, labelColor);
-      padHit(label, 8, 3);
+      padHit(label, 8, 3, 16); // band capped at the 17px row pitch (touch)
       label.on('pointerdown', () => this.pick(i));
       const hintText = affordable
         ? subst(opt.hint, { tokens: CAB.caulk.tokens })

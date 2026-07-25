@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import './ui/styles.css';
-import { GAME_HEIGHT, GAME_WIDTH } from './config';
+import { GAME_HEIGHT, GAME_WIDTH, RENDER_SCALE } from './config';
+import { installCrispRendering } from './ui/text';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { TrailScene } from './scenes/TrailScene';
@@ -23,16 +24,21 @@ if (noticeRequested()) {
 }
 
 /**
- * Logical resolution: 320x200 (Apple IIgs / early VGA), upscaled with
- * nearest-neighbour and letterboxed to fit the window. Spec §13.
- * GAME_WIDTH/GAME_HEIGHT live in config.ts so scenes never import main.
+ * Logical resolution: 320x200 (Apple IIgs / early VGA), letterboxed to
+ * fit the window. Spec §13. GAME_WIDTH/GAME_HEIGHT live in config.ts so
+ * scenes never import main.
+ *
+ * The BACKING store is supersampled RENDER_SCALE x (see ui/text.ts):
+ * scenes still lay out in 320x200 logical pixels via a global camera
+ * zoom, sprites stay nearest-neighbour chunky, but text renders at high
+ * resolution instead of being decimated to the logical grid.
  */
 function bootGame(): void {
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'game',
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
+    width: GAME_WIDTH * RENDER_SCALE,
+    height: GAME_HEIGHT * RENDER_SCALE,
     backgroundColor: '#000000',
     pixelArt: true, // nearest-neighbour scaling, no antialiasing
     roundPixels: true,
@@ -50,6 +56,9 @@ function bootGame(): void {
       ...minigameSceneClasses(),
     ],
   });
+
+  // Supersampled backing store + crisp text (mobile pass — ui/text.ts).
+  installCrispRendering(game);
 
   // Chiptune (spec §13): muted by default, M to toggle, zero assets.
   mountAudioControl();

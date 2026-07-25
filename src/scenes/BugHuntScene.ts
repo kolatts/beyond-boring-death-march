@@ -25,6 +25,8 @@ import { actions, getState, hasRun } from '../systems/state';
 import { saveRun } from '../systems/save';
 import { showCurriculumCard } from '../ui/curriculumCard';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
+import { suspendKeyboard, resumeKeyboard } from '../ui/keyboard';
+import { isCoarse, touchTargetLogical } from '../ui/touch';
 import rawContent from '../content/bug-hunt.json';
 import {
   CARRY_CAPACITY_LBS,
@@ -149,6 +151,11 @@ const MSG_Y = 186;
 const STEP_COOLDOWN_MS = 150;
 const FLAKY_RETURN_MS = 4000;
 
+/** Key codes preventDefault-ed while the hunt owns the keyboard. ONLY the
+ * page-scroll keys: capturing the letters too (as addKeys does by
+ * default) would globally block typing W/A/S/D/Q/P into DOM inputs. */
+const CAPTURES = 'UP,DOWN,LEFT,RIGHT,SPACE';
+
 function tileCX(col: number): number {
   return col * TILE + TILE / 2;
 }
@@ -250,6 +257,11 @@ export class BugHuntScene extends Phaser.Scene {
     if (kb) {
       kb.enabled = true;
       this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,A,S,D,SPACE,Q,P,ESC') as KeyMap;
+      // addKeys captured every one of those codes globally, which would
+      // preventDefault W/A/S/D/Q/P/SPACE in DOM inputs for the rest of
+      // the session. Keep only the scroll keys captured (ui/keyboard.ts).
+      kb.clearCaptures();
+      kb.addCapture(CAPTURES);
     }
     this.makeTouchControls();
 
@@ -304,7 +316,14 @@ export class BugHuntScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       unmountPanel('bughunt-carryout');
-      if (this.input.keyboard) this.input.keyboard.enabled = true;
+      const skb = this.input.keyboard;
+      if (skb) {
+        // Leave no global captures behind: a lingering SPACE capture
+        // blocks checkbox toggling / space typing in every later DOM
+        // dialog (epitaph, party naming).
+        skb.clearCaptures();
+        skb.enabled = true;
+      }
     });
 
     // Dev-only hook so playtest tooling can inspect hunt state (dev builds only).
@@ -318,32 +337,51 @@ export class BugHuntScene extends Phaser.Scene {
   /**
    * On-screen controls for coarse pointers (spec §15 mobile bar): D-pad,
    * FIRE, QUARANTINE, PACK OUT. Desktop never sees them.
+   *
+   * Sized for thumbs: each control's HIT AREA is at least ~44 device px
+   * (touchTargetLogical), spaced so no two hit boxes overlap. Visually
+   * translucent so the play area stays readable underneath.
    */
   private touchDx = 0;
   private touchDy = 0;
 
   private makeTouchControls(): void {
-    if (!window.matchMedia('(pointer: coarse)').matches) return;
+    if (!isCoarse()) return;
     this.input.addPointer(2); // D-pad + action simultaneously
+    // ~44 device px in logical units (≈36 on a 390px phone), but never so
+    // large that neighbouring D-pad boxes would overlap (gap 32).
+    const target = Math.min(30, Math.ceil(touchTargetLogical(this)));
     const mk = (
       x: number,
       y: number,
       label: string,
+      hitW: number,
+      hitH: number,
+      fontSize: number,
       onDown: () => void,
       onUp?: () => void,
     ): void => {
       const t = this.add
         .text(x, y, label, {
           fontFamily: 'monospace',
-          fontSize: '9px',
+          fontSize: `${fontSize}px`,
           color: '#ffffff',
           backgroundColor: 'rgba(0,0,0,0.6)',
-          padding: { x: 5, y: 4 },
+          padding: { x: 6, y: 5 },
         })
         .setOrigin(0.5)
         .setDepth(60)
-        .setAlpha(0.85)
-        .setInteractive({ useHandCursor: true });
+        .setAlpha(0.8);
+      t.setInteractive({
+        hitArea: new Phaser.Geom.Rectangle(
+          (t.width - hitW) / 2,
+          (t.height - hitH) / 2,
+          hitW,
+          hitH,
+        ),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+        useHandCursor: true,
+      });
       t.on('pointerdown', onDown);
       if (onUp) {
         t.on('pointerup', onUp);
@@ -358,13 +396,16 @@ export class BugHuntScene extends Phaser.Scene {
       this.touchDx = 0;
       this.touchDy = 0;
     };
-    mk(24, 154, '▲', dir(0, -1), stop);
-    mk(24, 186, '▼', dir(0, 1), stop);
-    mk(8, 170, '◀', dir(-1, 0), stop);
-    mk(40, 170, '▶', dir(1, 0), stop);
-    mk(238, 186, 'FIRE', () => this.fire());
-    mk(276, 186, 'QUAR', () => this.quarantine());
-    mk(308, 186, 'OUT', () => this.packOut());
+    // D-pad cross, lower-left. Centers 32 apart -> hit boxes (<=30) never
+    // overlap, so a thumb aimed at RIGHT cannot fire DOWN.
+    mk(36, 126, '▲', target, target, 12, dir(0, -1), stop);
+    mk(36, 190, '▼', target, target, 12, dir(0, 1), stop);
+    mk(4, 158, '◀', target, target, 12, dir(-1, 0), stop);
+    mk(68, 158, '▶', target, target, 12, dir(1, 0), stop);
+    // Action column, right edge: 44-wide boxes, 36-pitch vertical stack.
+    mk(294, 120, 'FIRE', 48, 34, 10, () => this.fire());
+    mk(294, 156, 'QUAR', 48, 34, 10, () => this.quarantine());
+    mk(294, 192, 'OUT', 48, 34, 10, () => this.packOut());
   }
 
   override update(time: number): void {
@@ -492,9 +533,12 @@ export class BugHuntScene extends Phaser.Scene {
             this.cardShowing = true;
             // Let the respawn pop land first; the card explains after.
             this.time.delayedCall(this.reducedMotion ? 0 : 900, () => {
+              // The DOM note owns input: release captures so its button
+              // keeps native keyboard behaviour; resume swallows keys
+              // pressed while the note was open (incl. its Enter).
+              suspendKeyboard(this);
               void showCurriculumCard('root_cause_vs_symptom').then(() => {
-                // Swallow keys pressed while the note was open (incl. its Enter).
-                this.input.keyboard?.resetKeys();
+                resumeKeyboard(this, CAPTURES);
                 this.cardShowing = false;
               });
             });
@@ -790,31 +834,43 @@ export class BugHuntScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   private makeHud(): void {
+    const coarse = isCoarse();
     this.hudLine1 = this.add
       .text(4, 2, '', { fontFamily: 'monospace', fontSize: '8px', color: C.white })
       .setDepth(10);
     this.add
-      .text(4, 13, 'ARROWS MOVE   SPACE FIRE   Q QUARANTINE   P PACK OUT', {
-        fontFamily: 'monospace',
-        fontSize: '6px',
-        color: C.blue,
-      })
+      .text(
+        4,
+        13,
+        coarse
+          ? 'D-PAD MOVES   FIRE   QUAR   OUT'
+          : 'ARROWS MOVE   SPACE FIRE   Q QUARANTINE   P PACK OUT',
+        {
+          fontFamily: 'monospace',
+          fontSize: '6px',
+          color: C.blue,
+        },
+      )
       .setDepth(10);
+    // On touch the bottom corners belong to the D-pad and action column;
+    // squeeze the message lines into the gap between them.
+    const msgX = coarse ? 56 : 4;
+    const msgW = coarse ? 210 : GAME_WIDTH - 8;
     this.msgLine1 = this.add
-      .text(4, MSG_Y, '', {
+      .text(msgX, MSG_Y, '', {
         fontFamily: 'monospace',
         fontSize: '7px',
         color: C.green,
-        wordWrap: { width: GAME_WIDTH - 8 },
+        wordWrap: { width: msgW },
         maxLines: 1,
       })
       .setDepth(10);
     this.msgLine2 = this.add
-      .text(4, MSG_Y + 8, '', {
+      .text(msgX, MSG_Y + 8, '', {
         fontFamily: 'monospace',
         fontSize: '7px',
         color: C.green,
-        wordWrap: { width: GAME_WIDTH - 8 },
+        wordWrap: { width: msgW },
         maxLines: 1,
       })
       .setDepth(10);
@@ -908,7 +964,10 @@ export class BugHuntScene extends Phaser.Scene {
 
   private openCarryOut(): void {
     this.panelOpen = true;
-    if (this.input.keyboard) this.input.keyboard.enabled = false;
+    // The DOM dialog owns input now: plugin off AND global captures
+    // cleared, else the captured SPACE preventDefaults checkbox toggling
+    // and space characters inside the summary inputs (ui/keyboard.ts).
+    suspendKeyboard(this);
 
     const findings = [...this.hunt.findings];
     const co = content.carryOut;
@@ -1029,7 +1088,7 @@ export class BugHuntScene extends Phaser.Scene {
     backBtn.addEventListener('click', () => {
       unmountPanel('bughunt-carryout');
       this.panelOpen = false;
-      if (this.input.keyboard) this.input.keyboard.enabled = true;
+      resumeKeyboard(this, CAPTURES);
     });
 
     confirmBtn.addEventListener('click', () => {
@@ -1064,7 +1123,7 @@ export class BugHuntScene extends Phaser.Scene {
 
     const leave = (): void => {
       this.panelOpen = false;
-      if (this.input.keyboard) this.input.keyboard.enabled = true;
+      resumeKeyboard(this); // captures re-cleared by the shutdown hook
       this.scene.start('Trail');
     };
     if (!hasSeenCard('summarise_findings')) {
