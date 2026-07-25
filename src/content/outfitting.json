@@ -1,0 +1,81 @@
+{
+  "vpMarkup": 1.5,
+  "prices": {
+    "models": {
+      "prodigy": 60,
+      "workhorse": 25,
+      "committee": 30,
+      "approved_version": 0,
+      "preview_build": 45,
+      "specialist": 40
+    },
+    "harnesses": {
+      "bare_api": 0,
+      "chat_window": 20,
+      "terminal_agent": 45,
+      "governed_runner": 55,
+      "approved_portal": 35,
+      "side_project": 0
+    }
+  },
+  "intro": {
+    "outfitting": "The clerk sells two things: engines, and everything else. Most parties spend the whole budget on the engine and walk out carrying it. The clerk has stopped commenting.",
+    "harness_swap": "Parties stop here to look at their harness. It is usually the thing they thought was the model. Your engine stays. The car is negotiable."
+  },
+  "roleFlavor": {
+    "vp": "The vendor quoted after seeing the org chart. Prices reflect confidence in your budget.",
+    "staff": "Standard rates. The requisition form is already filled in. You know where they keep them.",
+    "contractor": "Procurement requires a cost center and an employee ID. You have neither. You do have read-only production access, which is somehow more than the staff have, and nobody inventories the free shelf. Scavenge."
+  },
+  "lockedReason": "Procurement denied. No cost center on file.",
+  "notices": {
+    "purchase": "Requisitioned {name}. -{price} tokens.",
+    "scavenge": "Scavenged {name}. The budget does not know.",
+    "swap": "Harness swapped: {old} -> {new}."
+  },
+  "shakedown": {
+    "boot": [
+      "SHAKEDOWN RUN -- 20 MILES, SIMULATED",
+      "engine ....... {model}",
+      "harness ...... {harness}",
+      "telemetry follows."
+    ],
+    "progress": [
+      "day {day}: {miles} miles. the loop held.",
+      "day {day}: {miles} miles. nothing broke that anyone noticed.",
+      "day {day}: {miles} miles."
+    ],
+    "compress": "days {from}-{to}: the remaining {miles} miles, at this rate.",
+    "incidents": [
+      "incident, mile {mile}: build failed.",
+      "incident, mile {mile}: the agent edited a file it had no reason to know about.",
+      "incident, mile {mile}: a dependency vanished upstream."
+    ],
+    "autoRecover": [
+      "recovery: read the failure, fixed the file, reran the tests. no humans were consulted.",
+      "recovery: retried with backoff. it held."
+    ],
+    "slowRescue": [
+      "recovery: eventually. a form was involved. day lost.",
+      "recovery: escalated through the proper channel. the channel meets Thursdays. day lost."
+    ],
+    "handRescue": [
+      "recovery: none on board. a human pasted the stack trace back in by hand. day lost.",
+      "recovery: none on board. the error and the fix live in different windows. day lost."
+    ],
+    "drift": [
+      "note: the agent rewrote the auth layer. nobody asked about the auth layer.",
+      "note: instructions judged boring were set aside. confidence remains high."
+    ],
+    "literal": [
+      "note: did exactly what was asked. including the part you didn't mean."
+    ],
+    "complete": "20 miles complete. days: {days}. tokens: {tokens}. requirements met: {met}/5.",
+    "ledgerHead": "OUTFITTER'S LEDGER -- shakedowns on file:",
+    "ledgerRow": "{pair}: {days} days, {tokens} tk, req {met}/5"
+  },
+  "swap": {
+    "head": "Same engine. Different car. Your run, before and after:",
+    "keep": "The harness stays. The hollow watches you go."
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "outfitting.schema.json",
+  "title": "Outfitting Store content (prices + flavor prose, spec 7.1)",
+  "type": "object",
+  "required": [
+    "vpMarkup",
+    "prices",
+    "intro",
+    "roleFlavor",
+    "lockedReason",
+    "notices",
+    "shakedown",
+    "swap"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "vpMarkup": { "type": "number", "minimum": 1 },
+    "prices": {
+      "type": "object",
+      "required": ["models", "harnesses"],
+      "additionalProperties": false,
+      "properties": {
+        "models": { "$ref": "#/definitions/priceTable" },
+        "harnesses": { "$ref": "#/definitions/priceTable" }
+      }
+    },
+    "intro": {
+      "type": "object",
+      "required": ["outfitting", "harness_swap"],
+      "additionalProperties": false,
+      "properties": {
+        "outfitting": { "type": "string", "minLength": 1 },
+        "harness_swap": { "type": "string", "minLength": 1 }
+      }
+    },
+    "roleFlavor": {
+      "type": "object",
+      "required": ["vp", "staff", "contractor"],
+      "additionalProperties": false,
+      "properties": {
+        "vp": { "type": "string", "minLength": 1 },
+        "staff": { "type": "string", "minLength": 1 },
+        "contractor": { "type": "string", "minLength": 1 }
+      }
+    },
+    "lockedReason": { "type": "string", "minLength": 1 },
+    "notices": {
+      "type": "object",
+      "required": ["purchase", "scavenge", "swap"],
+      "additionalProperties": false,
+      "properties": {
+        "purchase": { "type": "string", "minLength": 1 },
+        "scavenge": { "type": "string", "minLength": 1 },
+        "swap": { "type": "string", "minLength": 1 }
+      }
+    },
+    "shakedown": {
+      "type": "object",
+      "required": [
+        "boot",
+        "progress",
+        "compress",
+        "incidents",
+        "autoRecover",
+        "slowRescue",
+        "handRescue",
+        "drift",
+        "literal",
+        "complete",
+        "ledgerHead",
+        "ledgerRow"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "boot": { "$ref": "#/definitions/lines" },
+        "progress": { "$ref": "#/definitions/lines" },
+        "compress": { "type": "string", "minLength": 1 },
+        "incidents": { "$ref": "#/definitions/lines" },
+        "autoRecover": { "$ref": "#/definitions/lines" },
+        "slowRescue": { "$ref": "#/definitions/lines" },
+        "handRescue": { "$ref": "#/definitions/lines" },
+        "drift": { "$ref": "#/definitions/lines" },
+        "literal": { "$ref": "#/definitions/lines" },
+        "complete": { "type": "string", "minLength": 1 },
+        "ledgerHead": { "type": "string", "minLength": 1 },
+        "ledgerRow": { "type": "string", "minLength": 1 }
+      }
+    },
+    "swap": {
+      "type": "object",
+      "required": ["head", "keep"],
+      "additionalProperties": false,
+      "properties": {
+        "head": { "type": "string", "minLength": 1 },
+        "keep": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "definitions": {
+    "priceTable": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": { "type": "number", "minimum": 0 }
+      }
+    },
+    "lines": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -20,6 +20,7 @@ import { SkillsMarketScene } from './SkillsMarketScene';
 import { PermissionsPassScene } from './PermissionsPassScene';
 import { LoopBuilderScene } from './LoopBuilderScene';
 import { BugHuntScene } from './BugHuntScene';
+import { OutfittingScene } from './OutfittingScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -41,6 +42,8 @@ export const MINIGAMES: Record<string, MinigameEntry> = {
   loop_builder_guided: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
   loop_builder_verifier: { sceneKey: 'LoopBuilder', sceneClass: LoopBuilderScene },
   bug_hunt: { sceneKey: 'BugHunt', sceneClass: BugHuntScene },
+  outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+  harness_swap: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */
