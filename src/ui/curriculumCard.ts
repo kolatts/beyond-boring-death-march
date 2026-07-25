@@ -21,6 +21,16 @@ export interface CurriculumCard {
 const CARDS: CurriculumCard[] = curriculum as CurriculumCard[];
 const JOURNAL_KEY = 'bbdm:journal';
 
+/**
+ * True while a Field Note modal is on screen. Scenes should guard their own
+ * window-level key handlers with this (Phaser listeners registered at boot
+ * can still see events before the modal's capture listener in some
+ * dispatch paths, e.g. synthetic events targeted at window).
+ */
+export function isFieldNoteOpen(): boolean {
+  return document.querySelector('.field-note-backdrop') !== null;
+}
+
 export function getCard(id: string): CurriculumCard | undefined {
   return CARDS.find((c) => c.id === id);
 }
@@ -86,8 +96,12 @@ export function showCurriculumCard(id: string): Promise<void> {
       resolve();
     };
     const onKey = (e: KeyboardEvent): void => {
+      // stopImmediatePropagation + preventDefault: stopPropagation alone
+      // still lets other same-node (window) listeners — i.e. Phaser — see
+      // the dismissing keypress and act on it mid-scene.
       if (e.key === 'Enter' || e.key === 'Escape') {
-        e.stopPropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation();
         close();
       }
     };
