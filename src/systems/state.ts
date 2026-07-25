@@ -51,11 +51,34 @@ export interface SurpriseDeadline {
   id: string;
   source: DeadlineSource;
   title: string;
+  /** Courier-modal prose (content deadlines.json). */
+  body?: string;
   dueOnDay: number;
   complyCost: { days?: number; tokens?: number };
   /** Applied as signed deltas when the deadline expires unresolved. */
   deferPenalty: { trust?: number; credibility?: number; morale?: number };
+  /** Weight-0 event fired through the event engine on expiry. */
+  escalationEventId?: string;
   escalated: boolean;
+}
+
+/**
+ * A flag-triggered event scheduled to fire later (eventEngine): e.g.
+ * `compromised_consequence` some days after `compromised` is set, or
+ * `hollow_green_discovered` 200 miles after `hollow_green`.
+ */
+export interface PendingEvent {
+  id: string;
+  onDay?: number;
+  onMile?: number;
+}
+
+/** The player's HEED choice at a landmark's Boring & Brilliant exchange.
+ * TrailScene consumes it (campfire reactions) on return from the minigame. */
+export interface LandmarkHeed {
+  landmarkId: string;
+  heeded: 'boring' | 'brilliant';
+  correct: boolean;
 }
 
 export interface GameState {
@@ -78,6 +101,14 @@ export interface GameState {
   causeOfDeath: string | null;
   /** Last few notice lines shown on the Trail screen. Capped. */
   recentLog: string[];
+  /** Flag-triggered events waiting on a day/mile fuse (eventEngine). */
+  pendingEvents: PendingEvent[];
+  /** Recently drawn random event ids, excluded from the pool. Capped. */
+  recentEventIds: string[];
+  /** Day the last surprise deadline spawned (spawn cooldown). */
+  lastDeadlineSpawnDay: number;
+  /** Boring/Brilliant HEED choice awaiting its campfire reactions. */
+  lastLandmarkHeed: LandmarkHeed | null;
 }
 
 const LOG_CAP = 4;
@@ -142,9 +173,39 @@ function mulberry32(seed: number): { value: number; nextSeed: number } {
 // Actions
 // ---------------------------------------------------------------------------
 
+/**
+ * RUN-SCOPED localStorage keys cleared by actions.newRun. These belong to
+ * one journey (loadout, market purchases, night-watch card, packing stats).
+ *
+ * PRESERVED across runs BY DESIGN (do not add here):
+ *  - bbdm:cab         (caulk-and-float count — feature-flag lesson arc)
+ *  - bbdm:bughunt     (tool-call regeneration pool)
+ *  - bbdm:loopbuilder (best-loop trophy)
+ *  - bbdm:journal     (collected Field Notes)
+ *  - bbdm:tombstones  (the graveyard, spec §8.3)
+ */
+const RUN_SCOPED_STORAGE_KEYS = [
+  'bbdm:outfitting',
+  'bbdm:skillsmarket',
+  'bbdm:nightwatch',
+  'bbdm:contextpack',
+] as const;
+
+function clearRunScopedStorage(): void {
+  for (const key of RUN_SCOPED_STORAGE_KEYS) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // Storage blocked: stale per-run data may linger; systems read it
+      // defensively and a mismatch only means slightly wrong flavor.
+    }
+  }
+}
+
 export const actions = {
   /** Begin a fresh run. `names` maps onto PARTY_TEMPLATE slots in order. */
   newRun(role: RoleId, names: readonly string[]): void {
+    clearRunScopedStorage();
     const party: PartyMember[] = PARTY_TEMPLATE.map((slot, i) => {
       const name = (names[i] ?? '').trim();
       return {
@@ -170,12 +231,24 @@ export const actions = {
       alive: true,
       causeOfDeath: null,
       recentLog: [],
+      pendingEvents: [],
+      recentEventIds: [],
+      lastDeadlineSpawnDay: -999,
+      lastLandmarkHeed: null,
     });
   },
 
-  /** Restore a run loaded from localStorage (systems/save.ts). */
+  /** Restore a run loaded from localStorage (systems/save.ts). Fields added
+   * after a save was written are defaulted, never trusted. */
   restoreRun(state: GameState): void {
-    commit(state);
+    commit({
+      ...state,
+      pendingEvents: Array.isArray(state.pendingEvents) ? state.pendingEvents : [],
+      recentEventIds: Array.isArray(state.recentEventIds) ? state.recentEventIds : [],
+      lastDeadlineSpawnDay:
+        typeof state.lastDeadlineSpawnDay === 'number' ? state.lastDeadlineSpawnDay : -999,
+      lastLandmarkHeed: state.lastLandmarkHeed ?? null,
+    });
   },
 
   /** Drop the current run (after death or a finished score screen). */
@@ -269,5 +342,33 @@ export const actions = {
     const { value, nextSeed } = mulberry32(s.rngSeed);
     commit({ ...s, rngSeed: nextSeed });
     return value;
+  },
+
+  // --- Event engine bookkeeping (Wave 3) ----------------------------------
+
+  /** Schedule a flag-triggered event on a day/mile fuse. Idempotent by id. */
+  schedulePendingEvent(pending: PendingEvent): void {
+    const s = getState();
+    if (s.pendingEvents.some((p) => p.id === pending.id)) return;
+    commit({ ...s, pendingEvents: [...s.pendingEvents, pending] });
+  },
+
+  removePendingEvent(id: string): void {
+    const s = getState();
+    commit({ ...s, pendingEvents: s.pendingEvents.filter((p) => p.id !== id) });
+  },
+
+  /** Record a drawn random event id (recent-event cooldown, capped). */
+  noteEventDrawn(id: string, cap: number): void {
+    const s = getState();
+    commit({ ...s, recentEventIds: [...s.recentEventIds, id].slice(-Math.max(1, cap)) });
+  },
+
+  noteDeadlineSpawn(day: number): void {
+    commit({ ...getState(), lastDeadlineSpawnDay: day });
+  },
+
+  setLastLandmarkHeed(heed: LandmarkHeed | null): void {
+    commit({ ...getState(), lastLandmarkHeed: heed });
   },
 };

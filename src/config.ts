@@ -74,6 +74,69 @@ export const MORALE_COLLAPSE_RESET = 25;
 export const LANDMARK_RESUPPLY_TOKENS = 20;
 
 // ---------------------------------------------------------------------------
+// Events & surprise deadlines (Wave 3 — §8, DECISIONS.md weight-0 rule)
+// ---------------------------------------------------------------------------
+
+/** Chance a random event is drawn on a travel day (rest days are quiet). */
+export const EVENT_CHANCE_PER_TRAVEL_DAY = 0.3;
+
+/** Recently drawn event ids excluded from the random pool (variety cap). */
+export const EVENT_COOLDOWN_COUNT = 8;
+
+/** Days after the `compromised` flag before THE SECRET SURFACES fires. */
+export const COMPROMISED_FUSE_DAYS = { min: 3, span: 4 } as const;
+
+/** Miles after the `hollow_green` flag before THE GREEN THAT WASN'T fires
+ * ("discovered at mile +200", spec §8.2). */
+export const HOLLOW_GREEN_DISCOVERY_MILES = 200;
+
+/** Surprise-deadline spawning (systems/deadlines.ts, content deadlines.json). */
+export const DEADLINE_SPAWN_CHANCE_PER_DAY = 0.14;
+export const DEADLINE_SPAWN_MIN_DAY = 4;
+export const DEADLINE_SPAWN_COOLDOWN_DAYS = 5;
+export const DEADLINE_MAX_ACTIVE = 2;
+
+/** BUY EXCEPTION: credibility spent to make a surprise deadline someone
+ * else's finding. The exception is granted; the register remembers. */
+export const EXCEPTION_CREDIBILITY_COST = 12;
+
+/** HUNT (Bug Hunt from the Trail menu) costs a day — consistent with
+ * quarantine/comply's advanceDay simplification: focused work burns days,
+ * not miles. */
+export const HUNT_COST_DAYS = 1;
+
+// ---------------------------------------------------------------------------
+// Outfitting economy wiring (Wave 3 reads localStorage bbdm:outfitting)
+// ---------------------------------------------------------------------------
+
+/**
+ * Reference derived stats = The Workhorse + The Terminal Agent (the
+ * canonical ledger pair in outfittingSim). A loadout's derived stats are
+ * normalized against these so the default loadout changes nothing.
+ */
+export const OUTFIT_REFERENCE = { speed: 7.0, costPerMile: 2.2 } as const;
+
+/** Clamps on the outfitting multipliers so no loadout breaks the economy. */
+export const OUTFIT_SPEED_CLAMP = { min: 0.5, max: 1.6 } as const;
+export const OUTFIT_COST_CLAMP = { min: 0.4, max: 3.0 } as const;
+
+/**
+ * Instruction adherence damps BAD random-event severity (the agent follows
+ * the runbook when things go sideways): each derived-adherence point above
+ * ADHERENCE_DAMP_FLOOR shaves ADHERENCE_DAMP_PER_POINT off negative event
+ * deltas, capped at ADHERENCE_DAMP_MAX. Small and documented (§5.4 brief).
+ */
+export const ADHERENCE_DAMP_FLOOR = 6;
+export const ADHERENCE_DAMP_PER_POINT = 0.04;
+export const ADHERENCE_DAMP_MAX = 0.16;
+
+/** Overnight travel (Night Watch unlock): miles banked per travel night
+ * while `overnightTravel` flag + bbdm:nightwatch { unlocked, budget!=='none' }
+ * hold. Burns tokens at the normal per-mile rate (no pace multiplier —
+ * the night loop does not hurry). */
+export const OVERNIGHT_MILES_PER_NIGHT = 6;
+
+// ---------------------------------------------------------------------------
 // Roles (§5.2)
 // ---------------------------------------------------------------------------
 

@@ -617,7 +617,7 @@
   {
     "id": "overnight_windfall",
     "weight": 2,
-    "requires": { "milesTraveled": { "gt": 1180 }, "hasFlag": "overnight_travel" },
+    "requires": { "milesTraveled": { "gt": 1180 }, "hasFlag": "overnightTravel" },
     "title": "THE QUIET NIGHT",
     "body": "The overnight loop ran within its cap, posted three review comments, and stopped. You wake to forty banked miles and a log so boring it is beautiful. Nobody will ever convene a war room about the night nothing went wrong. That is the tragedy of good engineering and the entire reason to do it.",
     "effects": { "miles": 40, "morale": 5 },
@@ -648,6 +648,26 @@
     "title": "THE GREEN THAT WASN'T",
     "body": "Two hundred miles later, someone reads the test the agent fixed. It asserts that true is true. It has been asserting this, successfully, in every build since, a tiny perfect machine for manufacturing confidence. The retro asks how this happened. The retro does not ask why the review that approved it took ninety seconds. Everyone knows why.",
     "effects": { "credibility": -10, "greenBuilds": -1 },
+    "choices": []
+  },
+  {
+    "id": "the_tributary",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 1050, "lt": 1900 }, "notFlag": "tributary_crossed" },
+    "title": "THE TRIBUTARY",
+    "body": "The map shows no river here. The river is new. It was chartered on Tuesday as an Interim Review Checkpoint, staffed by the same office as the main crossing, using the same forms, at a table that several of you recognise as the same table. Downstream, the Change Advisory Board has issued a statement congratulating the tributary on its independence. The water is rising at the rate of one business day per business day.",
+    "effects": { "setFlag": "tributary_crossed" },
+    "choices": [
+      { "id": "ford_it", "label": "Ford the checkpoint now", "effects": {}, "startsMechanic": "cab_crossing", "outcome": "You walk down to the bank. The water is made of business days. You have crossed one of these before, which the river neither remembers nor cares about." },
+      { "id": "detour", "label": "Detour around it (2 days)", "effects": { "days": 2, "morale": -3 }, "outcome": "The detour is long, muddy, and unlisted, which is the point. By the time the tributary's intake form reaches your inbox, you are somewhere it defines as out of scope. The form follows anyway. Forms migrate." }
+    ]
+  },
+  {
+    "id": "procedure_trap_leak",
+    "weight": 0,
+    "title": "THE FIFTH TIME",
+    "body": "The secret-scrubbing procedure has held four times, which everyone agrees is most of the time. Tonight the agent, mid-write, did not consult it. Nothing enforced the consulting. A secret went out in a diff description, politely, in full, formatted for readability. The procedure is unchanged. It reads beautifully. It is, exactly as sold, a very good paragraph.",
+    "effects": { "credibility": -6, "setFlag": "compromised" },
     "choices": []
   },
   {

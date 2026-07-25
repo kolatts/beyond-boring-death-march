@@ -6,17 +6,32 @@
  *     Passing it does not end the run; it sets `businessDeadlineMissed`,
  *     which Production consumes as the "compliance victory" ending.
  *  2. SURPRISE DEADLINES — dropped on the party by InfoSec / Compliance /
- *     ARB / PMO / The Standards Body. Each can be complied with (costs
- *     days and tokens — the business deadline slips) or left to expire
- *     (trust/credibility penalties, escalation).
+ *     ARB / PMO / The Standards Body, drawn from content/deadlines.json
+ *     by weight + `requires` (filtered exactly like events). Each can be:
+ *       COMPLY        — pay complyCost days/tokens (the go-live slips),
+ *       DEFER         — leave it; on expiry the deferPenalty lands AND its
+ *                       `escalationEventId` fires through the event engine,
+ *       BUY EXCEPTION — spend EXCEPTION_CREDIBILITY_COST credibility to
+ *                       make it a signature instead of a work item.
  *
- * The event engine (later wave) is the intended spawner: it should call
- * `spawnDeadline(...)` with content-authored definitions. Until then a
- * small seed table exercises the machinery. TODO(events-wave): replace
- * SEED_DEADLINES with event-engine spawns from content JSON.
+ * Spawn pacing: at most DEADLINE_MAX_ACTIVE active, a cooldown of
+ * DEADLINE_SPAWN_COOLDOWN_DAYS between couriers, spawn chance per day
+ * after DEADLINE_SPAWN_MIN_DAY. Each definition spawns at most once per
+ * run (flag `deadline_seen_<id>`).
  */
 
-import { BUSINESS_DEADLINE_DAY, DOOM_WARN_DAYS } from '../config';
+import {
+  BUSINESS_DEADLINE_DAY,
+  DEADLINE_MAX_ACTIVE,
+  DEADLINE_SPAWN_CHANCE_PER_DAY,
+  DEADLINE_SPAWN_COOLDOWN_DAYS,
+  DEADLINE_SPAWN_MIN_DAY,
+  DOOM_WARN_DAYS,
+  EXCEPTION_CREDIBILITY_COST,
+} from '../config';
+import { DEADLINE_DEFS } from './content';
+import type { DeadlineDef } from './content';
+import { fireEventById, requirementsMet } from './eventEngine';
 import type { SurpriseDeadline } from './state';
 import { actions, getState } from './state';
 
@@ -41,64 +56,54 @@ export function doomClock(day: number): DoomClock {
 }
 
 // ---------------------------------------------------------------------------
-// Seed deadlines (placeholder until the event engine wave)
+// Spawning from content
 // ---------------------------------------------------------------------------
 
-interface DeadlineSeed {
-  spawnOnDay: number;
-  deadline: Omit<SurpriseDeadline, 'escalated'>;
+function toActive(def: DeadlineDef, day: number): SurpriseDeadline {
+  return {
+    id: def.id,
+    source: def.source,
+    title: def.title,
+    body: def.body,
+    dueOnDay: day + def.dueInDays,
+    complyCost: def.complyCost,
+    deferPenalty: def.deferPenalty,
+    escalationEventId: def.escalationEventId,
+    escalated: false,
+  };
 }
-
-const SEED_DEADLINES: readonly DeadlineSeed[] = [
-  {
-    spawnOnDay: 12,
-    deadline: {
-      id: 'seed_cert_rotation',
-      source: 'InfoSec',
-      title: 'CERTIFICATE ROTATION, ALL SERVICES',
-      dueOnDay: 19,
-      complyCost: { days: 2, tokens: 10 },
-      deferPenalty: { trust: -1, credibility: -8 },
-    },
-  },
-  {
-    spawnOnDay: 40,
-    deadline: {
-      id: 'seed_attestation',
-      source: 'The Standards Body',
-      title: 'MANDATORY ATTESTATION CAMPAIGN',
-      dueOnDay: 47,
-      complyCost: { days: 1, tokens: 4 },
-      deferPenalty: { credibility: -10, morale: -4 },
-    },
-  },
-  {
-    spawnOnDay: 70,
-    deadline: {
-      id: 'seed_arb_review',
-      source: 'Architecture Review Board',
-      title: 'RETROACTIVE DESIGN REVIEW',
-      dueOnDay: 80,
-      complyCost: { days: 2 },
-      deferPenalty: { trust: -1, credibility: -6 },
-    },
-  },
-];
-
-// ---------------------------------------------------------------------------
-// API — the event engine calls these in a later wave
-// ---------------------------------------------------------------------------
 
 /** Add a surprise deadline to the active set. Idempotent by id. */
-export function spawnDeadline(deadline: Omit<SurpriseDeadline, 'escalated'>): void {
-  actions.addDeadline({ ...deadline, escalated: false });
+export function spawnDeadline(deadline: SurpriseDeadline): void {
+  actions.addDeadline(deadline);
 }
 
+/** Weighted draw of one eligible, unseen deadline definition. */
+function drawDeadline(): DeadlineDef | null {
+  const s = getState();
+  const pool = DEADLINE_DEFS.filter(
+    (d) =>
+      d.weight > 0 && !s.flags[`deadline_seen_${d.id}`] && requirementsMet(d.requires, s),
+  );
+  if (pool.length === 0) return null;
+  const total = pool.reduce((sum, d) => sum + d.weight, 0);
+  let roll = actions.rand() * total;
+  for (const d of pool) {
+    roll -= d.weight;
+    if (roll <= 0) return d;
+  }
+  return pool[pool.length - 1] ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Player actions on an active deadline
+// ---------------------------------------------------------------------------
+
 /**
- * Comply with an active deadline now: pay the days (the business deadline
- * slips) and the tokens. Returns notice lines. NOTE: comply days advance
- * the calendar without a full economy tick — compliance work burns days,
- * not miles. Documented simplification.
+ * Comply now: pay the days (the business deadline slips) and the tokens.
+ * Returns notice lines. NOTE: comply days advance the calendar without a
+ * full economy tick — compliance work burns days, not miles. Documented
+ * simplification.
  */
 export function complyDeadline(id: string): string[] {
   const s = getState();
@@ -113,31 +118,63 @@ export function complyDeadline(id: string): string[] {
 }
 
 /**
- * Daily tick. Spawns seeded deadlines, expires overdue ones (applying
- * defer penalties + escalation), and flips the businessDeadlineMissed
- * flag the day the doom clock passes. Returns notice lines.
+ * Buy an exception: EXCEPTION_CREDIBILITY_COST credibility converts the
+ * mandate into a signature. Counts as MET — the register is immaculate;
+ * that is what the register is for. Returns null if credibility is short.
  */
-export function tickDeadlines(): string[] {
+export function buyException(id: string): string[] | null {
+  const s = getState();
+  const d = s.activeDeadlines.find((x) => x.id === id);
+  if (!d) return null;
+  if (s.resources.credibility < EXCEPTION_CREDIBILITY_COST) return null;
+  actions.applyResourceDelta({ credibility: -EXCEPTION_CREDIBILITY_COST });
+  actions.removeDeadline(id, 'met');
+  actions.setFlag(`deadline_excepted_${id}`);
+  return [
+    `Exception granted: ${d.source} — ${d.title}. -${EXCEPTION_CREDIBILITY_COST} credibility. The work is not done. The form saying so is.`,
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// Daily tick — called by economy.ts inside tickOneDay
+// ---------------------------------------------------------------------------
+
+export interface DeadlineTickResult {
+  notices: string[];
+  /** Deadlines that spawned today (the Trail slams a courier notice). */
+  spawned: SurpriseDeadline[];
+  /** Escalation event ids to fire through the event engine (expiries). */
+  escalationEventIds: string[];
+}
+
+export function tickDeadlinesDetailed(): DeadlineTickResult {
   const notices: string[] = [];
+  const spawned: SurpriseDeadline[] = [];
+  const escalationEventIds: string[] = [];
   const day = getState().day;
 
-  // Seed spawns. TODO(events-wave): the event engine replaces this.
-  for (const seed of SEED_DEADLINES) {
-    if (day >= seed.spawnOnDay && day < seed.deadline.dueOnDay) {
-      const already =
-        getState().activeDeadlines.some((d) => d.id === seed.deadline.id) ||
-        getState().flags[`deadline_seen_${seed.deadline.id}`];
-      if (!already) {
-        spawnDeadline(seed.deadline);
-        actions.setFlag(`deadline_seen_${seed.deadline.id}`);
-        notices.push(
-          `${seed.deadline.source}: ${seed.deadline.title} — due day ${seed.deadline.dueOnDay}. They have known for months. You learned in this sentence.`,
-        );
-      }
+  // Spawn roll: capped active set, cooldown between couriers.
+  const s = getState();
+  if (
+    day >= DEADLINE_SPAWN_MIN_DAY &&
+    s.activeDeadlines.length < DEADLINE_MAX_ACTIVE &&
+    day - s.lastDeadlineSpawnDay >= DEADLINE_SPAWN_COOLDOWN_DAYS &&
+    actions.rand() < DEADLINE_SPAWN_CHANCE_PER_DAY
+  ) {
+    const def = drawDeadline();
+    if (def) {
+      const active = toActive(def, day);
+      spawnDeadline(active);
+      actions.setFlag(`deadline_seen_${def.id}`);
+      actions.noteDeadlineSpawn(day);
+      spawned.push(active);
+      notices.push(
+        `${def.source}: ${def.title} — due day ${active.dueOnDay}. They have known for months. You learned in this sentence.`,
+      );
     }
   }
 
-  // Expiry.
+  // Expiry: penalty lands AND the escalation event fires (event engine).
   for (const d of [...getState().activeDeadlines]) {
     if (day > d.dueOnDay) {
       actions.applyResourceDelta({
@@ -147,7 +184,8 @@ export function tickDeadlines(): string[] {
       });
       actions.removeDeadline(d.id, 'missed');
       actions.setFlag(`deadline_escalated_${d.id}`);
-      notices.push(`ESCALATED: ${d.source} — ${d.title}. Penalties applied. A register has your name on it.`);
+      if (d.escalationEventId) escalationEventIds.push(d.escalationEventId);
+      notices.push(`ESCALATED: ${d.source} — ${d.title}. A register has your name on it.`);
     }
   }
 
@@ -157,5 +195,17 @@ export function tickDeadlines(): string[] {
     notices.push('DAY 120 HAS PASSED. The go-live date is behind you. The march continues.');
   }
 
-  return notices;
+  return { notices, spawned, escalationEventIds };
+}
+
+/**
+ * Back-compat wrapper (CabCrossingScene's reconciliation tick expects
+ * notice lines). Escalation events fire through the engine immediately —
+ * their effects apply and log, without a Trail modal. The economy tick
+ * uses tickDeadlinesDetailed instead and presents modals itself.
+ */
+export function tickDeadlines(): string[] {
+  const result = tickDeadlinesDetailed();
+  for (const id of result.escalationEventIds) fireEventById(id, 'escalation');
+  return result.notices;
 }
