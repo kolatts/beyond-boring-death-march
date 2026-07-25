@@ -7,6 +7,7 @@ import { TrailScene } from './scenes/TrailScene';
 import { LandmarkScene } from './scenes/LandmarkScene';
 import { DeathScene } from './scenes/DeathScene';
 import { ScoreScene } from './scenes/ScoreScene';
+import { minigameSceneClasses } from './scenes/index';
 
 /**
  * Logical resolution: 320x200 (Apple IIgs / early VGA), upscaled with
@@ -25,5 +26,13 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT, // letterbox to preserve 16:10 logical aspect
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, TitleScene, TrailScene, LandmarkScene, DeathScene, ScoreScene],
+  scene: [
+    BootScene,
+    TitleScene,
+    TrailScene,
+    LandmarkScene,
+    DeathScene,
+    ScoreScene,
+    ...minigameSceneClasses(),
+  ],
 });

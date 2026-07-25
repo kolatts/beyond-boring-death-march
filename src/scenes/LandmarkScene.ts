@@ -14,6 +14,7 @@ import { GAME_WIDTH, TOTAL_MILES } from '../config';
 import { LANDMARKS, type Landmark } from '../systems/content';
 import { hasRun } from '../systems/state';
 import { bus } from '../ui/overlay';
+import { MINIGAMES } from './index';
 
 const WHITE = '#ffffff';
 const GREEN = '#1bcb01';
@@ -64,7 +65,13 @@ export class LandmarkScene extends Phaser.Scene {
       })
       .setOrigin(0, 0);
 
-    const continueLabel = lm.mile >= TOTAL_MILES ? '> ENTER PRODUCTION' : '> CONTINUE THE MARCH';
+    const minigame = MINIGAMES[lm.mechanic];
+    const continueLabel =
+      lm.mile >= TOTAL_MILES
+        ? '> ENTER PRODUCTION'
+        : minigame
+          ? '> APPROACH'
+          : '> CONTINUE THE MARCH';
     const btn = this.add
       .text(GAME_WIDTH / 2, 190, continueLabel, {
         fontFamily: 'monospace',
@@ -85,8 +92,20 @@ export class LandmarkScene extends Phaser.Scene {
   }
 
   private continueOn(): void {
-    if (this.landmark && this.landmark.mile >= TOTAL_MILES) {
+    if (!this.landmark) {
+      this.scene.start('Trail');
+      return;
+    }
+    if (this.landmark.mile >= TOTAL_MILES) {
       this.scene.start('Score');
+      return;
+    }
+    const minigame = MINIGAMES[this.landmark.mechanic];
+    if (minigame) {
+      this.scene.start(minigame.sceneKey, {
+        landmarkId: this.landmark.id,
+        mechanic: this.landmark.mechanic,
+      });
     } else {
       this.scene.start('Trail');
     }

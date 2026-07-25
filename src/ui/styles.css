@@ -153,3 +153,61 @@ a:focus-visible,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Curriculum Card / Field Note (ui/curriculumCard.ts) ---- */
+.field-note-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 40;
+  pointer-events: auto;
+}
+.field-note {
+  max-width: min(34rem, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #f2e7c9; /* paper: warm tint of --white, per ART-DIRECTION v2 */
+  color: #221c10;
+  border: 3px solid #221c10;
+  box-shadow: 0 0 0 3px #f2e7c9, 0 0 24px rgba(27, 203, 1, 0.35);
+  padding: 1rem 1.25rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.35;
+  animation: field-note-in 220ms ease-out;
+}
+@keyframes field-note-in {
+  from { transform: translateY(12px) scale(0.98); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-note { animation: none; }
+}
+.field-note-head {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.field-note h2 {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  margin: 0.75rem 0 0.2rem;
+}
+.field-note p { margin: 0.2rem 0; font-size: 0.92rem; }
+.field-note-link a { color: #14430a; }
+.field-note-close {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono, monospace);
+  background: #221c10;
+  color: #f2e7c9;
+  border: none;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+.field-note-close:focus-visible {
+  outline: 3px solid #1bcb01;
+  outline-offset: 2px;
+}
