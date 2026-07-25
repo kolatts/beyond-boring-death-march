@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "cab-crossing.schema.json",
+  "title": "CAB Crossing content",
+  "type": "object",
+  "required": ["arrival", "conditions", "options", "outcomes", "ui"],
+  "additionalProperties": false,
+  "properties": {
+    "arrival": {
+      "type": "object",
+      "required": ["prompt", "depthLine"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "depthLine": { "type": "string", "pattern": "\\{depth\\}" }
+      }
+    },
+    "conditions": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "hint"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "enum": ["ford", "caulk", "ferry", "wait"] },
+          "label": { "type": "string", "minLength": 1 },
+          "hint": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "required": [
+        "ford_success",
+        "ford_failure",
+        "ford_register",
+        "caulk_success",
+        "caulk_scrape",
+        "ferry_file",
+        "ferry_cve",
+        "ferry_arrive",
+        "wait"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ford_success": { "$ref": "#/definitions/beat" },
+        "ford_failure": { "$ref": "#/definitions/beat" },
+        "ford_register": { "$ref": "#/definitions/beat" },
+        "caulk_success": { "$ref": "#/definitions/beat" },
+        "caulk_scrape": { "$ref": "#/definitions/beat" },
+        "ferry_file": { "$ref": "#/definitions/beat" },
+        "ferry_cve": { "$ref": "#/definitions/beat" },
+        "ferry_arrive": { "$ref": "#/definitions/beat" },
+        "wait": { "$ref": "#/definitions/beat" }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "required": ["registerNote", "cannotAffordCaulk", "continueLabel", "chooseAgainLabel", "stamp"],
+      "additionalProperties": false,
+      "properties": {
+        "registerNote": { "type": "string", "pattern": "\\{member\\}" },
+        "cannotAffordCaulk": { "type": "string", "pattern": "\\{tokens\\}" },
+        "continueLabel": { "type": "string", "minLength": 1 },
+        "chooseAgainLabel": { "type": "string", "minLength": 1 },
+        "stamp": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "definitions": {
+    "beat": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

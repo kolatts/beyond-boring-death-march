@@ -1,0 +1,81 @@
+{
+  "arrival": {
+    "prompt": "The river is made of forms. The forms are moving. Choose a crossing.",
+    "depthLine": "DEPTH: {depth} BUSINESS DAYS. Measurement taken by someone who is out this week."
+  },
+  "conditions": [
+    "CONDITIONS: The approver is at an offsite. The offsite is about approval velocity.",
+    "CONDITIONS: A change freeze is in effect. The freeze has an exception process. The process is frozen.",
+    "CONDITIONS: The board meets Thursdays. Today is Thursday. The meeting has been moved to respect focus time.",
+    "CONDITIONS: Emergency changes are being expedited. The expedition queue is nine deep and sorted alphabetically.",
+    "CONDITIONS: The release window closes Friday. It is not recorded which Friday.",
+    "CONDITIONS: Water levels are within tolerance. Tolerance was redefined this morning."
+  ],
+  "options": [
+    {
+      "id": "ford",
+      "label": "FORD THE RIVER",
+      "hint": "Ship it now. Tell them Monday. Fast; the river decides how fast."
+    },
+    {
+      "id": "caulk",
+      "label": "CAULK THE WAGON AND FLOAT",
+      "hint": "Build a feature flag, ship dark, flip it from the far bank. Costs {tokens} tokens."
+    },
+    {
+      "id": "ferry",
+      "label": "TAKE THE FERRY — FILE THE PERMIT",
+      "hint": "Zero risk. The ferry departs when the Permit clears. Estimates available on filing."
+    },
+    {
+      "id": "wait",
+      "label": "WAIT FOR CONDITIONS TO IMPROVE",
+      "hint": "Free. The conditions are posted daily."
+    }
+  ],
+  "outcomes": {
+    "ford_success": [
+      "You ford at night. The water is exactly as deep as the paperwork said, which surprises everyone involved with the paperwork.",
+      "You are across by morning. On Monday you mention it. The board notes an unexplained increase in throughput and forms a working group to contain it."
+    ],
+    "ford_failure": [
+      "Midstream, the wagon finds the depth the measurement missed. The measurement stands; the wagon does not.",
+      "Two green builds wash downstream, past the plaque about preventing incidents. A retrospective is scheduled. It is described as blameless in the invitation and nowhere else."
+    ],
+    "ford_register": [
+      "{member} has been placed on the Enhanced Delivery Oversight register. The register is described as supportive. It has a dashboard, a cadence, and no exit criteria."
+    ],
+    "caulk_success": [
+      "You build the flag, seal the seams, and float across in the dark. The change ships disabled, which the river cannot distinguish from the change not shipping.",
+      "From the far bank you flip it on. Nothing announces this. Nothing needed to. That was the entire mechanism."
+    ],
+    "caulk_scrape": [
+      "One seam leaks: the flag defaults ON in a single environment. It is the environment with the auditors in it.",
+      "You bail from dry land and patch the default. The change ends the day dark everywhere it should be. A day is spent. A finding is opened, then closed, then framed."
+    ],
+    "ferry_file": [
+      "You file the Permit. It is fourteen pages. Page nine asks for the outcome of the change, in the past tense.",
+      "The dock has a bench. The bench has a plaque. ESTIMATED WAIT: {wait} BUSINESS DAYS."
+    ],
+    "ferry_cve": [
+      "Day {day} at the dock: a dependency of a dependency publishes a CVE. You have never called it. It has never been called. It ships anyway, and so does its advisory.",
+      "Your Permit is reclassified from STANDARD to ELEVATED. Reclassification restarts the clock. The clock does not call this a restart. It calls it a clarification.",
+      "NEW ESTIMATED WAIT: {wait} BUSINESS DAYS. The bench is still available."
+    ],
+    "ferry_arrive": [
+      "The ferry crosses in eleven minutes. It is a good ferry. The crossing was never the hard part.",
+      "{days} days at the dock. Zero incidents. The plaque about incidents will not mention the days, and the plaque about the days does not exist."
+    ],
+    "wait": [
+      "You wait. Conditions do not improve. Conditions are not aware of you.",
+      "On day {days}, a second party arrives, reads the same conditions, and fords the river in an afternoon. They wave from the far bank. Your party waves back. Morale does not."
+    ]
+  },
+  "ui": {
+    "registerNote": "! {member} IS ON THE ENHANCED DELIVERY OVERSIGHT REGISTER",
+    "cannotAffordCaulk": "Requires {tokens} tokens. The flag must be built before it can be flipped.",
+    "continueLabel": "> CONTINUE THE MARCH",
+    "chooseAgainLabel": "> READ TODAY'S CONDITIONS",
+    "stamp": "RECLASSIFIED"
+  }
+}
