@@ -186,8 +186,12 @@ function fill(template: string, vars: Record<string, string | number>): string {
 // Scene
 // ---------------------------------------------------------------------------
 
+/** Movement keys only — held-state polling suits grid stepping. The
+ * action keys (SPACE/Q/P/ESC) are keydown EVENTS instead: JustDown
+ * polling in update() missed rapid taps (~2 of 8 fires) because a key
+ * pressed and released between frames never reads as down. */
 type KeyMap = Record<
-  'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'A' | 'S' | 'D' | 'SPACE' | 'Q' | 'P' | 'ESC',
+  'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'A' | 'S' | 'D',
   Phaser.Input.Keyboard.Key
 >;
 
@@ -256,12 +260,34 @@ export class BugHuntScene extends Phaser.Scene {
     const kb = this.input.keyboard;
     if (kb) {
       kb.enabled = true;
-      this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,A,S,D,SPACE,Q,P,ESC') as KeyMap;
+      this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,A,S,D') as KeyMap;
       // addKeys captured every one of those codes globally, which would
-      // preventDefault W/A/S/D/Q/P/SPACE in DOM inputs for the rest of
-      // the session. Keep only the scroll keys captured (ui/keyboard.ts).
+      // preventDefault W/A/S/D in DOM inputs for the rest of the
+      // session. Keep only the scroll keys captured (ui/keyboard.ts).
       kb.clearCaptures();
       kb.addCapture(CAPTURES);
+
+      // Action keys are EVENTS, not polled: rapid taps can press+release
+      // entirely between two update() frames, which JustDown misses (the
+      // ~2-of-8 rapid-fire bug; P — the only exit — was affected too).
+      // The KeyboardPlugin stops emitting while suspendKeyboard() has
+      // disabled it, so DOM dialogs (carry-out, field notes) stay safe.
+      const dialogOpen = (): boolean =>
+        this.panelOpen ||
+        this.cardShowing ||
+        !this.hunt ||
+        document.querySelector('.field-note-backdrop') !== null;
+      kb.on('keydown-SPACE', () => {
+        if (!dialogOpen()) this.fire();
+      });
+      kb.on('keydown-Q', () => {
+        if (!dialogOpen()) this.quarantine();
+      });
+      const packOut = (): void => {
+        if (!dialogOpen()) this.packOut();
+      };
+      kb.on('keydown-P', packOut);
+      kb.on('keydown-ESC', packOut);
     }
     this.makeTouchControls();
 
@@ -414,13 +440,8 @@ export class BugHuntScene extends Phaser.Scene {
     if (document.querySelector('.field-note-backdrop')) return;
     const k = this.keys;
 
-    if (Phaser.Input.Keyboard.JustDown(k.SPACE)) this.fire();
-    if (Phaser.Input.Keyboard.JustDown(k.Q)) this.quarantine();
-    if (Phaser.Input.Keyboard.JustDown(k.P) || Phaser.Input.Keyboard.JustDown(k.ESC)) {
-      this.packOut();
-      return;
-    }
-
+    // SPACE/Q/P/ESC are keydown events (see create()); only grid movement
+    // is polled here, where held-key state is exactly what we want.
     const dx = Math.max(
       -1,
       Math.min(
