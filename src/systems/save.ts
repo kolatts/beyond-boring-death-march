@@ -139,14 +139,31 @@ export async function syncRemoteTombstones(): Promise<void> {
   const deaths = await fetchRecentDeaths();
   if (!deaths || deaths.length === 0) return;
 
+  // Dedupe remote entries against LOCAL graves too: your own death comes
+  // back from the server and would otherwise render twice at the same
+  // mile. Local graves match by name+mile (post-fix graves carry the
+  // leader's name); older name-less local graves match by epitaph+mile.
+  const locals = loadTombstones().filter((t) => !isRemote(t));
+  const localKeys = new Set<string>();
+  for (const t of locals) {
+    if (t.name) localKeys.add(`n:${t.name.toLowerCase()}@${t.mile}`);
+    localKeys.add(`e:${t.epitaph.toLowerCase()}@${t.mile}`);
+  }
+
   const seen = new Set<string>();
   const remotes: RemoteTombstone[] = [];
   for (const d of deaths) {
     const key = `${d.name}@${d.mile}`;
     if (seen.has(key)) continue;
     seen.add(key);
+    const mile = Math.max(0, Math.min(2000, Math.floor(d.mile)));
+    if (
+      localKeys.has(`n:${d.name.toLowerCase()}@${mile}`) ||
+      (d.epitaph && localKeys.has(`e:${d.epitaph.toLowerCase()}@${mile}`))
+    )
+      continue;
     remotes.push({
-      mile: Math.max(0, Math.min(2000, Math.floor(d.mile))),
+      mile,
       day: Math.max(1, Math.floor(d.days || 1)),
       cause: `${d.name} — ${d.cause}`,
       epitaph: d.epitaph || 'No epitaph was filed.',
@@ -158,7 +175,6 @@ export async function syncRemoteTombstones(): Promise<void> {
     if (remotes.length >= REMOTE_TOMB_CAP) break;
   }
 
-  const locals = loadTombstones().filter((t) => !isRemote(t));
   write(TOMB_KEY, {
     v: SCHEMA_VERSION,
     tombstones: [...locals, ...remotes].slice(-100),

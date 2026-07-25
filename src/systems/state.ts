@@ -34,6 +34,10 @@ export interface Tombstone {
   role: RoleId;
   /** ISO timestamp, for eventual social-feed use. */
   when: string;
+  /** Party leader's name (local graves since the dedupe fix; remote graves
+   * always carry it). Used to dedupe your own death returning from the
+   * server. Optional: pre-fix local graves lack it. */
+  name?: string;
 }
 
 export type DeadlineSource =

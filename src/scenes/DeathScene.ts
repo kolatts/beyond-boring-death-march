@@ -26,7 +26,8 @@ const VIOLET = '#bb36ff';
 const GREEN = '#1bcb01';
 
 export class DeathScene extends Phaser.Scene {
-  private cause = 'THE TRAIL';
+  /** The REAL cause passed by the killing system (null = unknown). */
+  private cause: string | null = null;
   private carved = false;
 
   constructor() {
@@ -34,7 +35,7 @@ export class DeathScene extends Phaser.Scene {
   }
 
   init(data: { cause?: string }): void {
-    this.cause = data.cause ?? 'THE TRAIL';
+    this.cause = data.cause ?? null;
     this.carved = false;
   }
 
@@ -61,7 +62,11 @@ export class DeathScene extends Phaser.Scene {
       this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.5);
     }
 
-    const line = deathLineFor(`YOU HAVE DIED OF ${this.cause}.`, actions.rand());
+    // Prefer the cause persisted on the run state (the killing system's
+    // markDead), then the scene-start data; a random draw happens only
+    // when neither supplied one. The resolved line is what persists to
+    // the tombstone store and posts to the social feed below.
+    const line = deathLineFor(s.causeOfDeath ?? this.cause, actions.rand());
 
     this.add
       .text(GAME_WIDTH / 2, 24, 'HERE LIES YOUR SPRINT', {
@@ -163,6 +168,7 @@ export class DeathScene extends Phaser.Scene {
       carvedAt = performance.now();
       const s = getState();
       const epitaph = input.value.trim().slice(0, 120) || input.placeholder;
+      const leaderName = s.party[0]?.name ?? 'Anonymous';
       const tombstone: Tombstone = {
         mile: Math.floor(s.mile),
         day: s.day,
@@ -170,6 +176,9 @@ export class DeathScene extends Phaser.Scene {
         epitaph,
         role: s.role,
         when: new Date().toISOString(),
+        // The leader's name: lets the remote graveyard sync dedupe YOUR
+        // own death when it comes back from the server (systems/save.ts).
+        name: leaderName,
       };
       addTombstone(tombstone);
       clearRun();
@@ -181,7 +190,6 @@ export class DeathScene extends Phaser.Scene {
       // Send the grave to the shared graveyard. Fire-and-forget: silent
       // on failure, and the confirmation line appears only on a real 2xx
       // (spec: it is the API's own line, not ours to fake).
-      const leaderName = s.party[0]?.name ?? 'Anonymous';
       void postDeath({
         name: leaderName,
         cause: deathLine,

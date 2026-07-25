@@ -170,6 +170,68 @@ export function bbForLandmark(landmarkId: string): BBExchange | undefined {
 }
 
 // ---------------------------------------------------------------------------
+// Campfire reaction rotation (playtest fix: dying early and restarting made
+// the same Legacy Junction / Fort Prompt exchanges repeat verbatim run
+// after run). boring-brilliant.json carries ONE reaction pair per landmark,
+// so rotation works across the table: shown pairs are tracked per browser
+// (localStorage), and a landmark whose pair was already heard swaps in an
+// UNSHOWN landmark's pair as a fallback — existing prose only, no new
+// lines in .ts. When every pair has been heard, the ledger resets.
+// ---------------------------------------------------------------------------
+
+const BB_SHOWN_KEY = 'bbdm:bbreactions';
+
+function readShownReactions(): string[] {
+  try {
+    const raw = window.localStorage.getItem(BB_SHOWN_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeShownReactions(ids: string[]): void {
+  try {
+    window.localStorage.setItem(BB_SHOWN_KEY, JSON.stringify(ids));
+  } catch {
+    // Storage blocked: reactions may repeat. Non-fatal.
+  }
+}
+
+/**
+ * Pick the campfire reaction pair for a landmark, avoiding verbatim
+ * repeats across runs. `roll` (seeded rand) picks among unshown fallbacks.
+ * Marks the returned pair as shown.
+ */
+export function campfireReactionFor(landmarkId: string, roll: number): BBExchange | undefined {
+  const own = bbForLandmark(landmarkId);
+  if (!own) return undefined;
+
+  let shown = readShownReactions();
+  const unshown = BB_EXCHANGES.filter((x) => !shown.includes(x.landmarkId));
+
+  // Everything has been heard: reset the ledger and start over with the
+  // landmark's own pair.
+  if (unshown.length === 0) {
+    writeShownReactions([landmarkId]);
+    return own;
+  }
+
+  let chosen: BBExchange;
+  if (!shown.includes(landmarkId)) {
+    chosen = own;
+  } else {
+    // Fallback: another landmark's not-yet-heard pair (existing prose).
+    const idx = Math.min(unshown.length - 1, Math.max(0, Math.floor(roll * unshown.length)));
+    chosen = unshown[idx] ?? own;
+  }
+  if (!shown.includes(chosen.landmarkId)) shown = [...shown, chosen.landmarkId];
+  writeShownReactions(shown);
+  return chosen;
+}
+
+// ---------------------------------------------------------------------------
 // deaths.json (optional until the content wave lands it)
 // ---------------------------------------------------------------------------
 
@@ -178,32 +240,85 @@ const deathModules = import.meta.glob('../content/deaths.json', { eager: true })
   { default?: unknown }
 >;
 
-function extractDeathLines(): string[] {
-  const lines: string[] = [];
+/** A deaths.json entry: id (stable key), cause (category), display text. */
+interface DeathEntry {
+  id: string;
+  cause: string;
+  text: string;
+}
+
+function extractDeathEntries(): DeathEntry[] {
+  const entries: DeathEntry[] = [];
   for (const mod of Object.values(deathModules)) {
     const data = mod.default;
     if (!Array.isArray(data)) continue;
     for (const entry of data) {
       if (typeof entry === 'string') {
-        lines.push(entry);
+        entries.push({ id: '', cause: '', text: entry });
       } else if (entry && typeof entry === 'object') {
         const o = entry as Record<string, unknown>;
-        const text = o['text'] ?? o['line'] ?? o['title'] ?? o['cause'];
-        if (typeof text === 'string') lines.push(text);
+        const text = o['text'] ?? o['line'] ?? o['title'];
+        if (typeof text !== 'string') continue;
+        entries.push({
+          id: typeof o['id'] === 'string' ? o['id'] : '',
+          cause: typeof o['cause'] === 'string' ? o['cause'] : '',
+          text,
+        });
       }
     }
   }
-  return lines;
+  return entries;
 }
 
-const deathLines = extractDeathLines();
+const deathEntries = extractDeathEntries();
+
+function pick(roll: number, length: number): number {
+  return Math.min(length - 1, Math.max(0, Math.floor(roll * length)));
+}
 
 /**
- * Pick a death line from content if available; otherwise return the
- * generic cause supplied by the killing system.
+ * Resolve the tombstone's cause line. THE FAILURE MODES ARE THE
+ * CURRICULUM: when the killing system passed a real cause, the tombstone
+ * must show THAT cause — never a random draw.
+ *
+ * Resolution order for a non-empty cause:
+ *  1. a deaths.json entry whose `id` matches the cause key exactly;
+ *  2. an entry whose `text` matches the passed line exactly (already a
+ *     content line — e.g. re-rendering a persisted tombstone);
+ *  3. the generic starvation cause ('TOKEN EXHAUSTION') maps to a line
+ *     drawn from the `cause: "tokens"` starvation pool;
+ *  4. an entry whose text CONTAINS the cause phrase (Loop Builder passes
+ *     "AN UNBOUNDED LOOP" etc., which the content lines embed verbatim);
+ *  5. no content match: display the passed text itself.
+ *
+ * A random draw from the whole table happens ONLY when no cause was
+ * provided at all.
  */
-export function deathLineFor(fallbackCause: string, roll: number): string {
-  if (deathLines.length === 0) return fallbackCause;
-  const idx = Math.min(deathLines.length - 1, Math.floor(roll * deathLines.length));
-  return deathLines[idx] ?? fallbackCause;
+export function deathLineFor(cause: string | null | undefined, roll: number): string {
+  const passed = (cause ?? '').trim();
+
+  if (passed.length > 0) {
+    const upper = passed.toUpperCase();
+
+    const byId = deathEntries.find((e) => e.id.toUpperCase() === upper);
+    if (byId) return byId.text;
+
+    const byText = deathEntries.find((e) => e.text.toUpperCase() === upper);
+    if (byText) return byText.text;
+
+    if (upper === 'TOKEN EXHAUSTION') {
+      const pool = deathEntries.filter((e) => e.cause === 'tokens');
+      const drawn = pool[pick(roll, pool.length)];
+      if (drawn) return drawn.text;
+    }
+
+    const byPhrase = deathEntries.find((e) => e.text.toUpperCase().includes(upper));
+    if (byPhrase) return byPhrase.text;
+
+    return upper.startsWith('YOU HAVE') ? passed : `YOU HAVE DIED OF ${upper}.`;
+  }
+
+  // No cause supplied: any line from the table (or the trail itself).
+  const drawn = deathEntries[pick(roll, deathEntries.length)];
+  return drawn ? drawn.text : 'YOU HAVE DIED OF THE TRAIL.';
 }
