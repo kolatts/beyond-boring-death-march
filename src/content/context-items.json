@@ -1,0 +1,167 @@
+{
+  "capacity": 24,
+  "items": [
+    {
+      "id": "conventions_file",
+      "name": "The conventions file",
+      "size": 2,
+      "relevance": 95,
+      "blurb": "Eleven rules the whole codebase actually follows. Written by someone who left. Maintained by no one. Correct anyway.",
+      "inspectText": "Small, dense, and true. The agent reads it once and stops inventing folder structures."
+    },
+    {
+      "id": "failing_test",
+      "name": "The failing test output",
+      "size": 2,
+      "relevance": 92,
+      "carriesRequirement": true,
+      "blurb": "One red line. It states the expected value, the actual value, and by implication the entire job.",
+      "inspectText": "This is the requirement, wearing a stack trace. Lose it and the work becomes interpretive."
+    },
+    {
+      "id": "changed_files",
+      "name": "The three changed files",
+      "size": 6,
+      "relevance": 90,
+      "blurb": "The only three files that moved in the last week. The bug is in one of them. It is always in one of them.",
+      "inspectText": "The crime scene. Everything else in the repository is an alibi."
+    },
+    {
+      "id": "api_docs",
+      "name": "Docs for the API",
+      "size": 5,
+      "relevance": 72,
+      "blurb": "Generated from the code, so it is accurate. Nobody can explain why it is accurate. Do not touch anything.",
+      "inspectText": "Actually current. A collector's item."
+    },
+    {
+      "id": "ticket",
+      "name": "The ticket",
+      "size": 2,
+      "relevance": [
+        12,
+        68
+      ],
+      "blurb": "The ticket describes the work. It also links to a wiki page titled 'Draft - DO NOT USE', which describes the work differently.",
+      "inspectText": "Two sources of truth, one of them disavowed by its own title. Relevance varies by which one the author believed."
+    },
+    {
+      "id": "long_log",
+      "name": "The 900-line log",
+      "size": 14,
+      "relevance": 80,
+      "scout": {
+        "name": "Scout report: the log",
+        "relevance": 78,
+        "blurb": "Line 714: connection refused, twice, at the exact timestamp of the failure. The other 899 lines were the system agreeing with itself."
+      },
+      "blurb": "Nine hundred lines. One of them is the error. It is not near the top, it is not near the bottom, and it is not marked ERROR.",
+      "inspectText": "One line in here matters. Carrying all 900 to find it is a choice. Sending someone with their own bag is another."
+    },
+    {
+      "id": "chat_scrollback",
+      "name": "6 months of scrollback",
+      "size": 12,
+      "relevance": 64,
+      "scout": {
+        "name": "Scout report: the scrollback",
+        "relevance": 60,
+        "blurb": "In March, at 11:48 PM, someone renamed the status field and everyone reacted with a thumbs up. That was the documentation."
+      },
+      "blurb": "Somewhere in here, one decision was made. It was never written down anywhere else. The rest is lunch plans and a recurring argument about time zones.",
+      "inspectText": "Contains exactly one load-bearing sentence. The archaeology is the expensive part."
+    },
+    {
+      "id": "dir_listing",
+      "name": "Full directory listing",
+      "size": 10,
+      "relevance": 12,
+      "scout": {
+        "name": "Scout report: the tree",
+        "relevance": 10,
+        "blurb": "There are four files that matter. You are already carrying three of them. The fourth is the conventions file. You have that too."
+      },
+      "blurb": "Every file in the repository, alphabetically. Comforting the way a phone book is comforting.",
+      "inspectText": "Knowing where everything is, is not the same as needing everything."
+    },
+    {
+      "id": "node_modules",
+      "name": "node_modules",
+      "size": 120,
+      "relevance": 0,
+      "scout": {
+        "name": "Scout report: node_modules",
+        "relevance": 0,
+        "blurb": "The scout returned after three days. The report reads, in full: 'It's dependencies all the way down. Do not follow me in here.'"
+      },
+      "blurb": "Fourteen thousand folders. The agent needs none of them. Given the chance, it will read all of them.",
+      "inspectText": "Heavier than the wagon. Heavier than the canyon. Some things are not cargo."
+    },
+    {
+      "id": "readme",
+      "name": "README.md (3 years old)",
+      "size": 3,
+      "relevance": 8,
+      "blurb": "Describes, with great warmth, a framework the project migrated off in 2023. The setup instructions end at step 4 of 9.",
+      "inspectText": "Historical fiction. The agent will believe every word."
+    },
+    {
+      "id": "arch_diagram",
+      "name": "Architecture diagram",
+      "size": 4,
+      "relevance": 18,
+      "blurb": "Boxes and arrows. Two of the boxes were never built. The arrows describe how data was supposed to feel.",
+      "inspectText": "Aspirational. The system in this diagram would not have your bug. The system you have does."
+    },
+    {
+      "id": "style_thread",
+      "name": "The style thread (400)",
+      "size": 8,
+      "relevance": 4,
+      "scout": {
+        "name": "Scout report: the thread",
+        "relevance": 3,
+        "blurb": "Tabs won. Then spaces won. Then a linter was installed and everyone lost together. Recommendation: use the linter."
+      },
+      "blurb": "Tabs versus spaces, escalated to a director. Resolved by a linter that everyone resents equally, which is what resolution means here.",
+      "inspectText": "Four hundred comments, zero requirements. Pure sediment."
+    },
+    {
+      "id": "other_stack_trace",
+      "name": "Stack trace, wrong bug",
+      "size": 3,
+      "relevance": 6,
+      "blurb": "It is beautiful. It is complete. It has line numbers and everything. It belongs to somebody else's problem.",
+      "inspectText": "The right shape, the wrong crime. Pack it and the agent will heroically fix a thing that is not broken."
+    },
+    {
+      "id": "passing_tests",
+      "name": "The passing test output",
+      "size": 6,
+      "relevance": 5,
+      "blurb": "Four hundred green checkmarks. The agent finds them soothing. So do you. That is the problem.",
+      "inspectText": "Reassurance weighs six slots and answers no questions."
+    }
+  ],
+  "strings": {
+    "intro": "The canyon is exactly as wide as your wagon. Your wagon is exactly as wide as what you choose to carry. Choose.",
+    "peekNotice": "You take a look. Reading costs a token. It always has; you just never itemized it.",
+    "overflow": "THE WALLS MOVE. The canyon does not negotiate with cargo. The last item is back on the ground and the wagon is worse for it.",
+    "overflowNodeModules": "The wagon does not creak. Creaking implies survivors. node_modules stays on the ground, where it has always technically worked.",
+    "compactNotice": "Compacted. The summary reads clean. Summaries always read clean.",
+    "compactRequirementLost": "The summary of the summary is excellent. Somewhere between drafts, one sentence stopped being mentioned. Nothing flags this. Nothing ever does.",
+    "scoutDepart": "The scout shoulders a small bag of their own and walks into the noise.",
+    "scoutReturn": "THE SCOUT RETURNS.",
+    "scoutFirst": "They read the whole thing so the wagon doesn't have to. One slot. This is the trick. This has always been the trick.",
+    "markNotice": "Left behind, location noted. The agent can go back for it mid-loop. Going back is never free, it is only later.",
+    "unmarkNotice": "Unmarked. If the agent needs it now, it will have to already have it.",
+    "departRetrieval": "Mid-loop, the agent goes back for what you marked. Each trip costs a tool call. The canyon watches it jog.",
+    "wrongProblem": "The pack was light. The agent, unburdened by your actual situation, solves a problem you don't have. Beautifully. In four files. There are tests.",
+    "requirementLostOutcome": "The pack was tight. The work was clean. The requirement was in the part of the summary that didn't survive the second pass. What shipped is a very good answer to a question nobody asked.",
+    "successPass": "The wagon clears the walls with a hand's width to spare. Everything aboard earns its slot. Nothing aboard is company.",
+    "successTight": "The wagon glides through. A party at the entrance, still loading their directory listing, watches you go. One of them takes a note. The note is too long.",
+    "retryPrompt": "The four beautiful wrong files are reverted. The canyon is still here. So is the pile.",
+    "requirementRestored": "You re-run the failing test. The requirement states itself again, verbatim, unbothered. Durable sources do that.",
+    "requirementBadge": "REQUIREMENT: LOST IN COMPACTION"
+  }
+}
