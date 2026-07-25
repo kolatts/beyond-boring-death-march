@@ -12,10 +12,15 @@
  */
 
 import type { GameState, Tombstone } from './state';
+import type { RoleId } from '../config';
+import { fetchRecentDeaths } from './social';
 
 const RUN_KEY = 'bbdm:run';
 const TOMB_KEY = 'bbdm:tombstones';
 export const SCHEMA_VERSION = 1;
+
+/** How many other parties' graves the trail will hold at once. */
+const REMOTE_TOMB_CAP = 15;
 
 interface RunPayload {
   v: number;
@@ -51,6 +56,9 @@ function write(key: string, value: unknown): void {
 
 export function saveRun(state: GameState): void {
   write(RUN_KEY, { v: SCHEMA_VERSION, state } satisfies RunPayload);
+  // Run-start hook: the first save of a page load kicks off the remote
+  // graveyard sync (fire-and-forget; see syncRemoteTombstones).
+  void syncRemoteTombstones();
 }
 
 export function loadRun(): GameState | null {
@@ -87,4 +95,77 @@ export function addTombstone(tombstone: Tombstone): void {
   all.push(tombstone);
   // Keep the graveyard bounded; the trail holds the most recent hundred.
   write(TOMB_KEY, { v: SCHEMA_VERSION, tombstones: all.slice(-100) } satisfies TombPayload);
+}
+
+// ---------------------------------------------------------------------------
+// Remote tombstones — other players' graves on YOUR trail
+// ---------------------------------------------------------------------------
+
+/**
+ * A grave imported from the global death feed. Shape-compatible with
+ * Tombstone so the existing trail-side surfacing (economy.ts reads the
+ * store) shows it at its mile without knowing it is remote. The `cause`
+ * carries the dead party's name so the trail notice names them.
+ */
+export interface RemoteTombstone extends Tombstone {
+  name: string;
+  remote: true;
+}
+
+function isRemote(t: Tombstone): t is RemoteTombstone {
+  return (t as Partial<RemoteTombstone>).remote === true;
+}
+
+const API_TO_ROLE: Record<string, RoleId> = {
+  'VP': 'vp',
+  'VP of Adjacent Concerns': 'vp',
+  'Staff Engineer': 'staff',
+  'Contractor': 'contractor',
+  'Contractor, 6-Week Statement of Work': 'contractor',
+};
+
+let syncStarted = false;
+
+/**
+ * Fetch recent real-player deaths once per page load and fold them into
+ * the tombstone store marked `remote: true`, so later runs pass other
+ * parties' graves at their mile. Replaces the previous remote batch
+ * (never appends), dedupes by name+mile, caps at REMOTE_TOMB_CAP.
+ * Fire-and-forget; failures leave the store untouched.
+ */
+export async function syncRemoteTombstones(): Promise<void> {
+  if (syncStarted) return;
+  syncStarted = true;
+  const deaths = await fetchRecentDeaths();
+  if (!deaths || deaths.length === 0) return;
+
+  const seen = new Set<string>();
+  const remotes: RemoteTombstone[] = [];
+  for (const d of deaths) {
+    const key = `${d.name}@${d.mile}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    remotes.push({
+      mile: Math.max(0, Math.min(2000, Math.floor(d.mile))),
+      day: Math.max(1, Math.floor(d.days || 1)),
+      cause: `${d.name} — ${d.cause}`,
+      epitaph: d.epitaph || 'No epitaph was filed.',
+      role: API_TO_ROLE[d.role] ?? 'staff',
+      when: d.timestamp || new Date().toISOString(),
+      name: d.name,
+      remote: true,
+    });
+    if (remotes.length >= REMOTE_TOMB_CAP) break;
+  }
+
+  const locals = loadTombstones().filter((t) => !isRemote(t));
+  write(TOMB_KEY, {
+    v: SCHEMA_VERSION,
+    tombstones: [...locals, ...remotes].slice(-100),
+  } satisfies TombPayload);
+}
+
+/** Local (this-browser) tombstone count, for screens that report "your" graves. */
+export function localTombstoneCount(): number {
+  return loadTombstones().filter((t) => !isRemote(t)).length;
 }

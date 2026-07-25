@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "endgame.json — Production retrospective, panel, leaderboard, credits, run summary",
+  "type": "object",
+  "required": ["arrival", "endings", "reckoning", "loops", "panel", "leaderboard", "credits", "summary", "finish"],
+  "additionalProperties": false,
+  "properties": {
+    "arrival": {
+      "type": "object",
+      "required": ["title", "sub", "retroNotice"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "sub": { "type": "string" },
+        "retroNotice": { "type": "string" }
+      }
+    },
+    "endings": {
+      "type": "object",
+      "required": ["onTime", "compliance"],
+      "additionalProperties": false,
+      "properties": {
+        "onTime": { "$ref": "#/definitions/ending" },
+        "compliance": { "$ref": "#/definitions/ending" }
+      }
+    },
+    "reckoning": {
+      "type": "object",
+      "required": ["met", "missed", "surprise"],
+      "additionalProperties": false,
+      "properties": {
+        "met": { "type": "string" },
+        "missed": { "type": "string" },
+        "surprise": { "type": "string" }
+      }
+    },
+    "loops": {
+      "type": "object",
+      "required": ["intro", "agentic", "developer", "external"],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string" },
+        "agentic": { "$ref": "#/definitions/loopBlock" },
+        "developer": { "$ref": "#/definitions/loopBlock" },
+        "external": { "$ref": "#/definitions/loopBlock" }
+      }
+    },
+    "panel": {
+      "type": "object",
+      "required": ["intro", "users"],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string" },
+        "users": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "good", "bad"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "good": { "type": "string" },
+              "bad": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "leaderboard": {
+      "type": "object",
+      "required": ["hallTitle", "hallOffline", "recordTitle", "recordedLine", "fictional"],
+      "additionalProperties": false,
+      "properties": {
+        "hallTitle": { "type": "string" },
+        "hallOffline": { "type": "string" },
+        "recordTitle": { "type": "string" },
+        "recordedLine": { "type": "string" },
+        "fictional": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "object",
+            "required": ["name", "miles", "days", "score", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "miles": { "type": "number", "minimum": 0 },
+              "days": { "type": "number", "minimum": 0 },
+              "score": { "type": "number", "minimum": 0 },
+              "note": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "credits": {
+      "type": "object",
+      "required": ["title", "slides"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "slides": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["heading", "body"],
+            "additionalProperties": false,
+            "properties": {
+              "heading": { "type": "string" },
+              "body": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["copyLabel", "copiedLabel", "lines"],
+      "additionalProperties": false,
+      "properties": {
+        "copyLabel": { "type": "string" },
+        "copiedLabel": { "type": "string" },
+        "lines": { "type": "array", "items": { "type": "string" }, "minItems": 5 }
+      }
+    },
+    "finish": {
+      "type": "object",
+      "required": ["returnLabel", "finalLine"],
+      "additionalProperties": false,
+      "properties": {
+        "returnLabel": { "type": "string" },
+        "finalLine": { "type": "string" }
+      }
+    }
+  },
+  "definitions": {
+    "ending": {
+      "type": "object",
+      "required": ["heading", "lines"],
+      "additionalProperties": false,
+      "properties": {
+        "heading": { "type": "string" },
+        "lines": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      }
+    },
+    "loopBlock": {
+      "type": "object",
+      "required": ["title", "sub"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "sub": { "type": "string" }
+      }
+    }
+  }
+}

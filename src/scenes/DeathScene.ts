@@ -15,6 +15,7 @@ import { GAME_WIDTH } from '../config';
 import { deathLineFor } from '../systems/content';
 import { actions, getState, hasRun, type Tombstone } from '../systems/state';
 import { addTombstone, clearRun } from '../systems/save';
+import { postDeath, roleApiName } from '../systems/social';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
 
 const PANEL_ID = 'epitaph';
@@ -131,9 +132,11 @@ export class DeathScene extends Phaser.Scene {
     againBtn.textContent = 'Start again';
     againBtn.hidden = true;
 
+    let carvedAt = 0;
     const carve = (): void => {
       if (this.carved) return;
       this.carved = true;
+      carvedAt = performance.now();
       const s = getState();
       const epitaph = input.value.trim().slice(0, 120) || input.placeholder;
       const tombstone: Tombstone = {
@@ -150,6 +153,30 @@ export class DeathScene extends Phaser.Scene {
       carveBtn.hidden = true;
       againBtn.hidden = false;
       againBtn.focus();
+
+      // Send the grave to the shared graveyard. Fire-and-forget: silent
+      // on failure, and the confirmation line appears only on a real 2xx
+      // (spec: it is the API's own line, not ours to fake).
+      const leaderName = s.party[0]?.name ?? 'Anonymous';
+      void postDeath({
+        name: leaderName,
+        cause: deathLine,
+        mile: tombstone.mile,
+        epitaph,
+        role: roleApiName(s.role),
+        days: Math.max(1, s.day),
+      }).then((ok) => {
+        if (!ok || !this.scene.isActive()) return;
+        this.add
+          .text(GAME_WIDTH / 2, 96, 'Your death has been recorded. The trail continues without you.', {
+            fontFamily: 'monospace',
+            fontSize: '7px',
+            color: GREEN,
+            align: 'center',
+            wordWrap: { width: GAME_WIDTH - 24 },
+          })
+          .setOrigin(0.5, 0);
+      });
     };
 
     carveBtn.addEventListener('click', carve);
@@ -157,6 +184,9 @@ export class DeathScene extends Phaser.Scene {
       if (e.key === 'Enter') carve();
     });
     againBtn.addEventListener('click', () => {
+      // The Enter that carved can activate this freshly-focused button in
+      // the same dispatch; ignore activations inside the carve keypress.
+      if (performance.now() - carvedAt < 250) return;
       unmountPanel(PANEL_ID);
       actions.endRun();
       this.scene.start('Title');

@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "boss.json — THE GREAT MIGRATION (mile 1700 boss) content",
+  "type": "object",
+  "required": [
+    "title",
+    "intro",
+    "budgetPrompt",
+    "budgets",
+    "lanes",
+    "pickPrompt",
+    "cards",
+    "run",
+    "conflict",
+    "win",
+    "lose",
+    "deathCause",
+    "retry"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "title": { "type": "string" },
+    "intro": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "budgetPrompt": { "type": "string" },
+    "budgets": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "tokens", "blurb"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "tokens": { "type": "number", "minimum": 1 },
+          "blurb": { "type": "string" }
+        }
+      }
+    },
+    "lanes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "sub"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "sub": { "type": "string" }
+        }
+      }
+    },
+    "pickPrompt": { "type": "string" },
+    "cards": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "blurb", "scope", "serialized", "yield", "blocks"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "blurb": { "type": "string" },
+          "scope": { "enum": ["narrow", "broad"] },
+          "serialized": { "type": "boolean" },
+          "yield": { "type": "number", "minimum": 0 },
+          "blocks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "trigger",
+                "context",
+                "agent",
+                "tool_tests",
+                "observe",
+                "verifier_machine",
+                "verifier_subjective",
+                "stop_success",
+                "stop_cap",
+                "stop_budget",
+                "human_gate",
+                "escalate"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["start", "laneDone", "laneFailed"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "type": "string" },
+        "laneDone": { "type": "string" },
+        "laneFailed": { "type": "string" }
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "required": ["banner", "lines", "laneLine", "notice"],
+      "additionalProperties": false,
+      "properties": {
+        "banner": { "type": "string" },
+        "lines": { "type": "array", "items": { "type": "string" } },
+        "laneLine": { "type": "string" },
+        "notice": { "type": "string" }
+      }
+    },
+    "win": {
+      "type": "object",
+      "required": ["banner", "lines", "rewardLine"],
+      "additionalProperties": false,
+      "properties": {
+        "banner": { "type": "string" },
+        "lines": { "type": "array", "items": { "type": "string" } },
+        "rewardLine": { "type": "string" }
+      }
+    },
+    "lose": {
+      "type": "object",
+      "required": ["banner", "lines", "budgetExhausted", "lossLine"],
+      "additionalProperties": false,
+      "properties": {
+        "banner": { "type": "string" },
+        "lines": { "type": "array", "items": { "type": "string" } },
+        "budgetExhausted": { "type": "string" },
+        "lossLine": { "type": "string" }
+      }
+    },
+    "deathCause": { "type": "string" },
+    "retry": { "type": "string" }
+  }
+}

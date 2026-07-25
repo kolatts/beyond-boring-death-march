@@ -1,0 +1,131 @@
+{
+  "arrival": {
+    "title": "YOU HAVE REACHED PRODUCTION",
+    "sub": "It is smaller than the slides implied. It is real, which none of the slides were.",
+    "retroNotice": "The retrospective begins immediately. Attendance is mandatory. This is the retrospective."
+  },
+  "endings": {
+    "onTime": {
+      "heading": "ARRIVAL: ON TIME",
+      "lines": [
+        "It is before Day 120. The thing arrived while the date still meant something.",
+        "Nobody is sure how to behave at a launch that happens on schedule. There is no slide. Someone offers to make one and is gently escorted outside.",
+        "The users were not warned, because nobody believed it either."
+      ]
+    },
+    "compliance": {
+      "heading": "ARRIVAL: A COMPLIANCE VICTORY",
+      "lines": [
+        "Every compliance deadline was met. The business deadline was not.",
+        "Leadership has reviewed the numbers and declared victory. The attestations are immaculate. The audit trail is a work of art. The thing the users needed arrived after they stopped needing it.",
+        "There is a slide. The slide is green. Nothing on the slide is green."
+      ]
+    }
+  },
+  "reckoning": {
+    "met": "BUSINESS DEADLINE (DAY {day}): MET, DAY {arrived}.",
+    "missed": "BUSINESS DEADLINE (DAY {day}): MISSED. ARRIVED DAY {arrived}. THE DATE PREDATED THE ESTIMATE.",
+    "surprise": "SURPRISE DEADLINES: {met} MET / {missed} ESCALATED. THE STANDARDS BODY SENDS ITS REGARDS."
+  },
+  "loops": {
+    "intro": "Your journey is scored across Andrew Ng's three loops. The game is saying so plainly, once, because the joke is over and the lesson is not.",
+    "agentic": {
+      "title": "1. THE AGENTIC CODING LOOP",
+      "sub": "The loop the agent runs: act, observe, verify, stop. Scored on your best loop, your verifier, and the miles that traveled while you slept."
+    },
+    "developer": {
+      "title": "2. THE DEVELOPER FEEDBACK LOOP",
+      "sub": "The loop you run around the agent: what you packed, what you hunted, how often you steered instead of rebuilt."
+    },
+    "external": {
+      "title": "3. THE EXTERNAL FEEDBACK LOOP",
+      "sub": "The loop nobody scheduled: whether the thing you shipped was the thing anyone wanted. Measured, for the first time, by asking."
+    }
+  },
+  "panel": {
+    "intro": "A panel of users has been assembled to evaluate the delivery. They were not consulted during the journey. They were not consulted about the panel. This is the first time anyone has asked them anything, and it shows in how ready they are.",
+    "users": [
+      {
+        "id": "invoicer",
+        "name": "MIRA, ACCOUNTS",
+        "good": "\"It does the thing before the month closes now. I have stopped keeping the spreadsheet that checked your system. I would like those four hours back retroactively, but I will settle for the future ones.\"",
+        "bad": "\"It arrived after we built the workaround, so now we maintain both. The workaround is faster. Please do not tell it I said that. It gets reported on.\""
+      },
+      {
+        "id": "operator",
+        "name": "SAL, NIGHT OPERATIONS",
+        "good": "\"Nothing paged me during the cutover. I want to be clear about how rare that is. I have seen cutovers. I have a jacket.\"",
+        "bad": "\"The morale on the delivery team was visible from my desk, and my desk is in another building. You can ship a system in that condition. You cannot ship it twice.\""
+      },
+      {
+        "id": "requester",
+        "name": "DEE, THE ORIGINAL TICKET",
+        "good": "\"This is what I asked for. I filed it so long ago I had to check. It is item one on my list, and someone finally read the list instead of the roadmap.\"",
+        "bad": "\"It is very impressive and it is not what I asked for. What I asked for was smaller. It usually is. Nobody believes us about that.\""
+      }
+    ]
+  },
+  "leaderboard": {
+    "hallTitle": "THE HALL OF FAME — LIVE",
+    "hallOffline": "The hall of fame is unreachable. The scores exist. The network has filed an exception.",
+    "recordTitle": "THE HISTORICAL RECORD",
+    "recordedLine": "Your score has been recorded. Future parties will pass it without slowing down.",
+    "fictional": [
+      { "name": "THE PILOT PROGRAM", "miles": 1, "days": 388, "score": 40, "note": "cancelled" },
+      { "name": "THE CENTER OF EXCELLENCE", "miles": 0, "days": 611, "score": 12, "note": "produced a slide" },
+      { "name": "THE TIGER TEAM", "miles": 340, "days": 95, "score": 890, "note": "reorganized into a working group" },
+      { "name": "Q3 STRATEGIC INITIATIVE", "miles": 1180, "days": 240, "score": 2210, "note": "renamed; see Q1 STRATEGIC INITIATIVE" },
+      { "name": "PROJECT SUNRISE", "miles": 1999, "days": 301, "score": 3400, "note": "awaiting one final approval since spring" },
+      { "name": "THE MODERNISATION GUILD", "miles": 2000, "days": 1460, "score": 4100, "note": "arrived; Production had moved" }
+    ]
+  },
+  "credits": {
+    "title": "CREDITS — A DECK NOBODY PRESENTED",
+    "slides": [
+      { "heading": "SLIDE 1 — EXECUTIVE SUMMARY", "body": "A party departed. A party, in the statistical sense, arrived. Learnings were captured. The capture of learnings is itself a learning. See appendix." },
+      { "heading": "SLIDE 2 — KEY STAKEHOLDERS", "body": "You. The oxen, which were agents. The agents, which were loops. Boring, who counted. Brilliant, who ran ahead. The Standards Body, which will respond within 45 business days to this slide." },
+      { "heading": "SLIDE 3 — METHODOLOGY", "body": "Dying, repeatedly, with notes. The notes are in the Field Journal. The dying is in the graveyard feed, where it is helping strangers." },
+      { "heading": "SLIDE 4 — RISKS AND MITIGATIONS", "body": "Risk: the loop runs without a verifier. Mitigation: it no longer does. Risk: the person becomes the bottleneck. Mitigation: the person read slide 4." },
+      { "heading": "SLIDE 5 — NEXT STEPS", "body": "There is no slide 5. Go ship something. The deck ends the way decks never do: on purpose." }
+    ]
+  },
+  "summary": {
+    "copyLabel": "COPY RUN SUMMARY",
+    "copiedLabel": "COPIED. NOBODY WILL READ IT.",
+    "lines": [
+      "POST-INCIDENT REVIEW — {title}",
+      "STATUS: {status}",
+      "SEVERITY: SEV-2 (self-declared, like all SEV-2s)",
+      "DURATION: {days} days / {miles} miles / party of 5, {alive} recovered",
+      "ROLE: {role} (score x{mult})",
+      "",
+      "TIMELINE",
+      "  DAY 0    — departed Legacy Junction with confidence and {startTokens} tokens",
+      "  DAY 120  — business deadline ({deadlineOutcome})",
+      "  DAY {days}  — reached Production; retrospective convened itself",
+      "",
+      "THREE-LOOP SCORING (Andrew Ng)",
+      "  AGENTIC CODING LOOP ....... {agentic}",
+      "  DEVELOPER FEEDBACK LOOP ... {developer}",
+      "  EXTERNAL FEEDBACK LOOP .... {external}",
+      "  THE MILES THEMSELVES ...... {base}",
+      "  TOTAL (x{mult}) ........... {score}",
+      "",
+      "CONTRIBUTING FACTORS",
+      "  Surprise deadlines: {met} met, {missed} escalated",
+      "  Root cause: a date chosen at an offsite, predating the estimate",
+      "",
+      "ACTION ITEMS",
+      "  [ ] Put a verifier in the loop before putting the loop in CI",
+      "  [ ] Budget caps are not pessimism",
+      "  [ ] Ask a user something before mile 2000 next time",
+      "  [x] File this review where reviews are filed",
+      "",
+      "Generated by BEYOND BORING: DEATH MARCH. You have died of context exhaustion."
+    ]
+  },
+  "finish": {
+    "returnLabel": "RETURN TO LEGACY JUNCTION",
+    "finalLine": "The trail is 2,000 miles of enterprise process. It is shorter the second time. It is not short."
+  }
+}

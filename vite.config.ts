@@ -8,4 +8,16 @@ export default defineConfig({
     target: 'es2022',
     assetsInlineLimit: 0,
   },
+  // Dev-only: the social Function App's CORS allowlist covers the Pages
+  // origin (and localhost:5173) — not arbitrary dev ports. systems/social.ts
+  // uses `/api` in dev so requests ride this proxy instead. Production
+  // builds call the Function App directly (its origin is allowlisted).
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://death-march-prod-functions.azurewebsites.net',
+        changeOrigin: true,
+      },
+    },
+  },
 });

@@ -21,6 +21,7 @@ import { PermissionsPassScene } from './PermissionsPassScene';
 import { LoopBuilderScene } from './LoopBuilderScene';
 import { BugHuntScene } from './BugHuntScene';
 import { OutfittingScene } from './OutfittingScene';
+import { BossScene } from './BossScene';
 
 type SceneClass = new (...args: never[]) => Phaser.Scene;
 
@@ -44,6 +45,7 @@ export const MINIGAMES: Record<string, MinigameEntry> = {
   bug_hunt: { sceneKey: 'BugHunt', sceneClass: BugHuntScene },
   outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
   harness_swap: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
+  boss_loops: { sceneKey: 'Boss', sceneClass: BossScene },
 };
 
 /** Unique scene classes for Phaser registration in main.ts. */

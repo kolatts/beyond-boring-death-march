@@ -1,13 +1,20 @@
 /**
- * TitleScene — title, role select (§5.2), party naming, Start.
+ * TitleScene — title, role select (§5.2), party naming, Start — plus the
+ * social surfaces:
  *
- * Three steps inside one scene:
- *   MENU  — New march / Continue (if a saved run exists)
+ *   THE TRAIL OF THE DEAD — a phosphor-green marquee of recent real-player
+ *   deaths from the graveyard API (reduced-motion: a static list of 3).
+ *   HALL OF FAME — live top scores (GET /scores), offline-tolerant.
+ *   FIELD JOURNAL — curriculum cards collected this browser.
+ *
+ * Steps inside one scene:
+ *   MENU  — New march / Continue / Hall of Fame / Field Journal
  *   ROLE  — pick VP / Staff Engineer / Contractor with arrows + Enter
+ *   FAME  — the hall of fame table
+ *   JOURNAL — collected field notes; Enter re-reads one
  *   PARTY — name the five (DOM overlay inputs, defaults provided), Start
  *
- * Keyboard: Up/Down + Enter throughout; Esc backs up a step. The party
- * panel is plain tab-order DOM with visible focus (stylesheet handles it).
+ * Keyboard: Up/Down + Enter throughout; Esc backs up a step.
  */
 
 import Phaser from 'phaser';
@@ -15,22 +22,64 @@ import { GAME_WIDTH, PARTY_TEMPLATE, ROLES, ROLE_ORDER, type RoleId } from '../c
 import { actions } from '../systems/state';
 import { LANDMARKS } from '../systems/content';
 import { loadRun, loadTombstones, saveRun } from '../systems/save';
+import { fetchRecentDeaths, fetchTopScores, type RemoteScore } from '../systems/social';
+import { getCard, journalEntries, showCurriculumCard, isFieldNoteOpen } from '../ui/curriculumCard';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
 import { getState } from '../systems/state';
 
 const PANEL_ID = 'party-naming';
+const TICKER_ID = 'death-ticker';
+const TICKER_STYLE_ID = 'death-ticker-styles';
 const WHITE = '#ffffff';
 const GREEN = '#1bcb01';
 const ORANGE = '#f55d08';
 const BLUE = '#0da1ff';
+const VIOLET = '#bb36ff';
 
-type Step = 'menu' | 'role';
+type Step = 'menu' | 'role' | 'fame' | 'journal';
+
+const TICKER_CSS = `
+#panel-${TICKER_ID} {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.92);
+  border-top: 1px solid #1bcb01;
+  font-family: var(--font-mono, monospace);
+  color: #1bcb01;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: hidden;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(27, 203, 1, 0.75), 0 0 18px rgba(27, 203, 1, 0.35);
+  padding: 3px 0;
+}
+#panel-${TICKER_ID} .ticker-track {
+  display: inline-block;
+  padding-left: 100vw;
+  animation: bbdm-ticker-scroll 45s linear infinite;
+}
+@keyframes bbdm-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+#panel-${TICKER_ID} .ticker-static {
+  white-space: normal;
+  padding: 2px 12px;
+}
+#panel-${TICKER_ID} .ticker-title { color: #ffffff; }
+#panel-${TICKER_ID} .ticker-mile { color: #f55d08; text-shadow: none; }
+#panel-${TICKER_ID} .ticker-epitaph { color: #0da1ff; text-shadow: none; }
+@media (prefers-reduced-motion: reduce) {
+  #panel-${TICKER_ID} .ticker-track { animation: none; padding-left: 12px; }
+}
+`;
 
 export class TitleScene extends Phaser.Scene {
   private step: Step = 'menu';
   private cursor = 0;
   private drawn: Phaser.GameObjects.GameObject[] = [];
   private hasSave = false;
+  private fameScores: RemoteScore[] | null = null;
+  private fameLoaded = false;
 
   constructor() {
     super('Title');
@@ -41,9 +90,11 @@ export class TitleScene extends Phaser.Scene {
     this.step = 'menu';
     this.cursor = 0;
     this.hasSave = loadRun() !== null;
+    this.fameLoaded = false;
+    this.fameScores = null;
 
     this.add
-      .text(GAME_WIDTH / 2, 24, 'BEYOND BORING:\nDEATH MARCH', {
+      .text(GAME_WIDTH / 2, 20, 'BEYOND BORING:\nDEATH MARCH', {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: WHITE,
@@ -52,7 +103,7 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     this.add
-      .text(GAME_WIDTH / 2, 70, 'You have died of context exhaustion.', {
+      .text(GAME_WIDTH / 2, 66, 'You have died of context exhaustion.', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: GREEN,
@@ -62,7 +113,7 @@ export class TitleScene extends Phaser.Scene {
     const graves = loadTombstones().length;
     if (graves > 0) {
       this.add
-        .text(GAME_WIDTH / 2, 84, `The trail holds ${graves} grave${graves === 1 ? '' : 's'}.`, {
+        .text(GAME_WIDTH / 2, 80, `The trail holds ${graves} grave${graves === 1 ? '' : 's'}.`, {
           fontFamily: 'monospace',
           fontSize: '8px',
           color: ORANGE,
@@ -79,49 +130,139 @@ export class TitleScene extends Phaser.Scene {
       kb.on('keydown-ESC', () => this.back());
     }
 
-    this.events.once('shutdown', () => unmountPanel(PANEL_ID));
+    this.mountTicker();
+    this.events.once('shutdown', () => {
+      unmountPanel(PANEL_ID);
+      unmountPanel(TICKER_ID);
+    });
     this.redraw();
     bus.emit('scene:ready', { scene: 'Title' });
   }
 
   // -------------------------------------------------------------------------
+  // THE TRAIL OF THE DEAD — live death ticker
+  // -------------------------------------------------------------------------
+
+  private mountTicker(): void {
+    if (!document.getElementById(TICKER_STYLE_ID)) {
+      const style = document.createElement('style');
+      style.id = TICKER_STYLE_ID;
+      style.textContent = TICKER_CSS;
+      document.head.appendChild(style);
+    }
+    const panel = mountPanel(TICKER_ID);
+    panel.setAttribute('aria-label', 'The Trail of the Dead — recent deaths');
+
+    void fetchRecentDeaths().then((deaths) => {
+      // The scene may have moved on while the request was out.
+      if (!document.getElementById(`panel-${TICKER_ID}`)) return;
+      if (!deaths || deaths.length === 0) {
+        panel.remove(); // Offline: no ticker. The menu never waited on it.
+        return;
+      }
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fmt = (d: (typeof deaths)[number]): string => {
+        const epitaph = d.epitaph ? ` — <span class="ticker-epitaph">&quot;${escapeHtml(d.epitaph)}&quot;</span>` : '';
+        return `<span class="ticker-title">${escapeHtml(d.name)}</span> · ${escapeHtml(d.cause)} · <span class="ticker-mile">MILE ${Math.floor(d.mile)}</span>${epitaph}`;
+      };
+
+      if (reduced) {
+        const rows = deaths.slice(0, 3).map((d) => `<div>${fmt(d)}</div>`).join('');
+        panel.innerHTML = `<div class="ticker-static"><span class="ticker-title">THE TRAIL OF THE DEAD</span>${rows}</div>`;
+      } else {
+        const items = deaths.slice(0, 20).map(fmt).join(' &nbsp;✦&nbsp; ');
+        panel.innerHTML = `<div class="ticker-track"><span class="ticker-title">THE TRAIL OF THE DEAD:</span> &nbsp; ${items}</div>`;
+      }
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Menu plumbing
+  // -------------------------------------------------------------------------
 
   private menuItems(): string[] {
-    return this.hasSave ? ['NEW MARCH', 'CONTINUE THE MARCH'] : ['NEW MARCH'];
+    const items = ['NEW MARCH'];
+    if (this.hasSave) items.push('CONTINUE THE MARCH');
+    items.push('HALL OF FAME', 'FIELD JOURNAL');
+    return items;
+  }
+
+  private optionCount(): number {
+    switch (this.step) {
+      case 'menu':
+        return this.menuItems().length;
+      case 'role':
+        return ROLE_ORDER.length;
+      case 'journal':
+        return Math.max(1, journalEntries().length);
+      default:
+        return 1;
+    }
   }
 
   private move(delta: number): void {
-    const count = this.step === 'menu' ? this.menuItems().length : ROLE_ORDER.length;
+    if (isFieldNoteOpen()) return;
+    const count = this.optionCount();
+    if (count <= 1) return;
     this.cursor = (this.cursor + delta + count) % count;
     this.redraw();
   }
 
   private select(): void {
+    if (isFieldNoteOpen()) return;
     if (this.step === 'menu') {
       const item = this.menuItems()[this.cursor];
       if (item === 'CONTINUE THE MARCH') {
         const saved = loadRun();
         if (saved) {
           actions.restoreRun(saved);
+          saveRun(getState()); // run-start hook: kicks the graveyard sync
           this.scene.start('Trail');
           return;
         }
       }
+      if (item === 'HALL OF FAME') {
+        this.step = 'fame';
+        this.cursor = 0;
+        this.loadFame();
+        this.redraw();
+        return;
+      }
+      if (item === 'FIELD JOURNAL') {
+        this.step = 'journal';
+        this.cursor = 0;
+        this.redraw();
+        return;
+      }
       this.step = 'role';
       this.cursor = 1; // default Staff Engineer, the balanced pick
       this.redraw();
-    } else {
+    } else if (this.step === 'role') {
       const role = ROLE_ORDER[this.cursor];
       if (role) this.openPartyPanel(role);
+    } else if (this.step === 'journal') {
+      const id = journalEntries()[this.cursor];
+      if (id) void showCurriculumCard(id);
+    } else if (this.step === 'fame') {
+      this.back();
     }
   }
 
   private back(): void {
-    if (this.step === 'role') {
+    if (isFieldNoteOpen()) return;
+    if (this.step !== 'menu') {
       this.step = 'menu';
       this.cursor = 0;
       this.redraw();
     }
+  }
+
+  private loadFame(): void {
+    void fetchTopScores().then((scores) => {
+      this.fameScores = scores;
+      this.fameLoaded = true;
+      if (this.scene.isActive() && this.step === 'fame') this.redraw();
+    });
   }
 
   private text(x: number, y: number, str: string, color: string, size = 9): Phaser.GameObjects.Text {
@@ -136,38 +277,107 @@ export class TitleScene extends Phaser.Scene {
     this.drawn.forEach((o) => o.destroy());
     this.drawn = [];
 
-    if (this.step === 'menu') {
-      this.menuItems().forEach((label, i) => {
-        const selected = i === this.cursor;
-        const t = this.text(110, 110 + i * 14, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN);
-        t.setInteractive({ useHandCursor: true });
-        t.on('pointerdown', () => {
-          this.cursor = i;
-          this.select();
-        });
-      });
-      this.text(70, 182, 'ARROWS + ENTER. THAT IS THE WHOLE MANUAL.', BLUE, 7);
-    } else {
-      this.text(16, 96, 'WHO IS ACCOUNTABLE FOR THIS?', WHITE, 9);
-      ROLE_ORDER.forEach((id, i) => {
-        const role = ROLES[id];
-        const selected = i === this.cursor;
-        const t = this.text(
-          16,
-          112 + i * 22,
-          `${selected ? '>' : ' '} ${role.name}  (SCORE x${role.scoreMultiplier})`,
-          selected ? WHITE : GREEN,
-          8,
-        );
-        t.setInteractive({ useHandCursor: true });
-        t.on('pointerdown', () => {
-          this.cursor = i;
-          this.select();
-        });
-        this.text(26, 121 + i * 22, role.tagline, selected ? ORANGE : BLUE, 7);
-      });
-      this.text(16, 184, 'ESC TO GO BACK', BLUE, 7);
+    switch (this.step) {
+      case 'menu':
+        this.drawMenu();
+        break;
+      case 'role':
+        this.drawRoles();
+        break;
+      case 'fame':
+        this.drawFame();
+        break;
+      case 'journal':
+        this.drawJournal();
+        break;
     }
+  }
+
+  private drawMenu(): void {
+    this.menuItems().forEach((label, i) => {
+      const selected = i === this.cursor;
+      const t = this.text(110, 96 + i * 13, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN);
+      t.setInteractive({ useHandCursor: true });
+      t.on('pointerdown', () => {
+        this.cursor = i;
+        this.select();
+      });
+    });
+    this.text(70, 178, 'ARROWS + ENTER. THAT IS THE WHOLE MANUAL.', BLUE, 7);
+  }
+
+  private drawRoles(): void {
+    this.text(16, 92, 'WHO IS ACCOUNTABLE FOR THIS?', WHITE, 9);
+    ROLE_ORDER.forEach((id, i) => {
+      const role = ROLES[id];
+      const selected = i === this.cursor;
+      const t = this.text(
+        16,
+        108 + i * 22,
+        `${selected ? '>' : ' '} ${role.name}  (SCORE x${role.scoreMultiplier})`,
+        selected ? WHITE : GREEN,
+        8,
+      );
+      t.setInteractive({ useHandCursor: true });
+      t.on('pointerdown', () => {
+        this.cursor = i;
+        this.select();
+      });
+      this.text(26, 117 + i * 22, role.tagline, selected ? ORANGE : BLUE, 7);
+    });
+    this.text(16, 180, 'ESC TO GO BACK', BLUE, 7);
+  }
+
+  private drawFame(): void {
+    this.text(16, 92, 'HALL OF FAME — ALL PARTIES, ALL TRAILS', WHITE, 9);
+    if (!this.fameLoaded) {
+      this.text(16, 108, 'Consulting the record...', GREEN, 8);
+    } else if (!this.fameScores) {
+      this.text(16, 108, 'The hall of fame is unreachable. The scores', ORANGE, 8);
+      this.text(16, 118, 'exist. The network has filed an exception.', ORANGE, 8);
+    } else if (this.fameScores.length === 0) {
+      this.text(16, 108, 'No party has reached Production yet.', GREEN, 8);
+      this.text(16, 118, 'The record is open. So is the position.', BLUE, 8);
+    } else {
+      this.fameScores.slice(0, 7).forEach((s, i) => {
+        const name = s.name.slice(0, 14).padEnd(14);
+        const glyph = s.businessDeadlineMet ? '✓' : '×';
+        this.text(
+          16,
+          106 + i * 10,
+          `${String(i + 1).padStart(2)}. ${name} ${String(s.score).padStart(6)}  ${glyph} DAY ${s.days}`,
+          i === 0 ? WHITE : GREEN,
+          7,
+        );
+      });
+    }
+    this.text(16, 184, 'ESC TO GO BACK', BLUE, 7);
+  }
+
+  private drawJournal(): void {
+    this.text(16, 92, 'FIELD JOURNAL — NOTES COLLECTED', WHITE, 9);
+    const ids = journalEntries();
+    if (ids.length === 0) {
+      this.text(16, 108, 'No field notes yet. Lessons are issued on the', GREEN, 8);
+      this.text(16, 118, 'trail, shortly after each joke lands on you.', GREEN, 8);
+    } else {
+      // Show a window of 7 entries around the cursor.
+      const start = Math.max(0, Math.min(this.cursor - 3, ids.length - 7));
+      ids.slice(start, start + 7).forEach((id, i) => {
+        const idx = start + i;
+        const card = getCard(id);
+        const label = `${card ? card.n : '??'} — ${id.replaceAll('_', ' ').toUpperCase()}`;
+        const selected = idx === this.cursor;
+        const t = this.text(16, 106 + i * 10, `${selected ? '>' : ' '} ${label}`, selected ? WHITE : GREEN, 7);
+        t.setInteractive({ useHandCursor: true });
+        t.on('pointerdown', () => {
+          this.cursor = idx;
+          this.select();
+        });
+      });
+      if (ids.length > 7) this.text(260, 92, `${this.cursor + 1}/${ids.length}`, VIOLET, 7);
+    }
+    this.text(16, 184, 'ENTER TO RE-READ · ESC TO GO BACK', BLUE, 7);
   }
 
   // -------------------------------------------------------------------------
@@ -261,4 +471,12 @@ export class TitleScene extends Phaser.Scene {
     inputs[0]?.focus();
     inputs[0]?.select();
   }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 }

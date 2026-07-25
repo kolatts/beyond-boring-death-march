@@ -1,0 +1,137 @@
+{
+  "title": "THE GREAT MIGRATION",
+  "intro": [
+    "The plateau is wide enough to run three workstreams at once, and the schedule believes this means it will take a third of the time.",
+    "The schedule has believed things before.",
+    "Three legacy systems must cross to the new platform. One repository. One budget. The budget was approved at an offsite and is therefore already spent in spirit.",
+    "You will configure three loops and run them concurrently. Loops that share ground will meet each other. Loops that meet each other do not negotiate."
+  ],
+  "budgetPrompt": "COMMIT A COMBINED TOKEN BUDGET. All three loops draw from it. There is no second budget. There is a form for requesting one, and the form costs more than the budget.",
+  "budgets": [
+    {
+      "id": "lean",
+      "label": "LEAN",
+      "tokens": 60,
+      "blurb": "Enough, if nothing goes wrong. Something goes wrong."
+    },
+    {
+      "id": "standard",
+      "label": "STANDARD",
+      "tokens": 100,
+      "blurb": "The number from the estimate, plus the number the estimate was missing."
+    },
+    {
+      "id": "blank",
+      "label": "GENEROUS",
+      "tokens": 150,
+      "blurb": "Approved without questions. The questions arrive later, itemized."
+    }
+  ],
+  "lanes": [
+    { "id": "ledger", "label": "THE LEDGER", "sub": "Seventeen years of financial truth. Nobody knows why column nine." },
+    { "id": "gateway", "label": "THE GATEWAY", "sub": "Every request passes through it. It has opinions about none of them." },
+    { "id": "reports", "label": "THE REPORTS", "sub": "Read by leadership. Generated nightly. Correct annually." }
+  ],
+  "pickPrompt": "ASSIGN A LOOP TO EACH WORKSTREAM. Broad loops touch the shared core. Two unserialized loops in the shared core is not a strategy. It is an appointment.",
+  "cards": [
+    {
+      "id": "doctrine",
+      "name": "THE DOCTRINE",
+      "blurb": "Verifier, iteration cap, budget cap. Thorough: it migrates the module AND the shared core underneath it.",
+      "scope": "broad",
+      "serialized": false,
+      "yield": 1.0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_machine", "stop_success", "stop_cap", "stop_budget"]
+    },
+    {
+      "id": "surgeon",
+      "name": "THE SURGEON",
+      "blurb": "The full correct loop, confined to its own module. Small blast radius. Small payoff. Sleeps at night.",
+      "scope": "narrow",
+      "serialized": false,
+      "yield": 0.6,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_machine", "stop_success", "stop_cap", "stop_budget"]
+    },
+    {
+      "id": "escorted",
+      "name": "THE ESCORTED",
+      "blurb": "Correct loop, broad scope, and a person walks it through the shared core one change at a time. Costs a day. Cannot collide.",
+      "scope": "broad",
+      "serialized": true,
+      "yield": 1.0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_machine", "stop_success", "stop_cap", "stop_budget", "human_gate"]
+    },
+    {
+      "id": "optimist",
+      "name": "THE OPTIMIST",
+      "blurb": "No verifier. Finishes early, every time. Its results are excellent and have never been checked by anything.",
+      "scope": "narrow",
+      "serialized": false,
+      "yield": 0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "stop_success", "stop_cap", "stop_budget"]
+    },
+    {
+      "id": "vibes",
+      "name": "LOOKS GOOD TO ME",
+      "blurb": "The verifier is a feeling. The feeling is strong. The loop and the feeling can go on like this for some time.",
+      "scope": "narrow",
+      "serialized": false,
+      "yield": 0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_subjective", "stop_success", "stop_cap", "stop_budget"]
+    },
+    {
+      "id": "sprinter",
+      "name": "THE SPRINTER",
+      "blurb": "No iteration cap. Very fast. Touches the shared core at speed. Does not know how to stop and has never needed to, until every time.",
+      "scope": "broad",
+      "serialized": false,
+      "yield": 0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_machine", "stop_success", "stop_budget"]
+    },
+    {
+      "id": "blank_check",
+      "name": "THE BLANK CHECK",
+      "blurb": "No budget cap. It will converge. The invoice will also converge. They are racing, and you are the prize.",
+      "scope": "broad",
+      "serialized": false,
+      "yield": 0,
+      "blocks": ["trigger", "context", "agent", "tool_tests", "observe", "verifier_machine", "stop_success", "stop_cap"]
+    }
+  ],
+  "run": {
+    "start": "THREE LOOPS ENERGIZED. ONE REPOSITORY. THE PLATEAU IS QUIET, WHICH IS HOW IT GETS YOU.",
+    "laneDone": "CONVERGED. The workstream is across.",
+    "laneFailed": "The workstream is not across. The workstream has filed its findings under confidence."
+  },
+  "conflict": {
+    "banner": "MERGE CONFLICT IN THE SHARED CORE",
+    "lines": [
+      "Two loops reached the shared core within the same window.",
+      "Each is certain the other's changes are the regression.",
+      "Both are reverting each other at machine speed. It is very fast and achieves exactly nothing, twice."
+    ],
+    "laneLine": "<<<<<<< THEIRS. The loop has met a colleague.",
+    "notice": "The shared core is now a debate. Rework is charged to the budget."
+  },
+  "win": {
+    "banner": "ALL THREE ACROSS. UNDER BUDGET.",
+    "lines": [
+      "Three loops converged on one repository and nothing met anything in the dark.",
+      "The afternoon was extremely boring. Frame it.",
+      "Unspent budget returns to the party, which has never once happened to a budget before."
+    ],
+    "rewardLine": "BANKED: +{reward} TOKENS. The plateau is behind you."
+  },
+  "lose": {
+    "banner": "THE MIGRATION HAS NOT MIGRATED.",
+    "lines": [
+      "The plateau is littered with half-moved systems, each certain it arrived.",
+      "The budget went first. The confidence outlived it by several iterations.",
+      "A working group will be formed to study what the loops were so sure about."
+    ],
+    "budgetExhausted": "COMBINED BUDGET EXHAUSTED MID-CROSSING. The three loops kept each other company to the end.",
+    "lossLine": "LOST: {lost} TOKENS. The plateau keeps them."
+  },
+  "deathCause": "AN ORCHESTRATION INCIDENT",
+  "retry": "The plateau does not move. Reconfigure the loops and run the crossing again, or withdraw to the trail with what remains."
+}
