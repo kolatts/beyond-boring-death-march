@@ -1,142 +1,142 @@
 {
   "title-key-art.png": {
-    "width": 768,
-    "height": 512,
-    "bytes": 196516
+    "width": 1024,
+    "height": 683,
+    "bytes": 339723
   },
   "loop-pegboard.png": {
-    "width": 640,
-    "height": 427,
-    "bytes": 168089
+    "width": 1024,
+    "height": 683,
+    "bytes": 378380
   },
   "tombstone.png": {
-    "width": 640,
-    "height": 427,
-    "bytes": 157937
+    "width": 1024,
+    "height": 683,
+    "bytes": 338422
   },
   "night-watch.png": {
-    "width": 640,
-    "height": 427,
-    "bytes": 126881
+    "width": 1024,
+    "height": 683,
+    "bytes": 348386
   },
   "cab-river.png": {
-    "width": 640,
-    "height": 427,
-    "bytes": 154687
+    "width": 1024,
+    "height": 683,
+    "bytes": 303439
   },
   "boring-portrait.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 22643
+    "width": 320,
+    "height": 320,
+    "bytes": 48955
   },
   "brilliant-portrait.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 23727
+    "width": 320,
+    "height": 320,
+    "bytes": 45587
   },
   "death-vulture.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 22542
+    "width": 320,
+    "height": 320,
+    "bytes": 41528
   },
   "trail-terrain.png": {
-    "width": 512,
-    "height": 171,
-    "bytes": 33499
+    "width": 768,
+    "height": 256,
+    "bytes": 94922
   },
   "boring-walk-1.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 15223
+    "width": 320,
+    "height": 320,
+    "bytes": 31780
   },
   "boring-walk-2.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 23807
+    "width": 320,
+    "height": 320,
+    "bytes": 33669
   },
   "brilliant-walk-1.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 19236
+    "width": 320,
+    "height": 320,
+    "bytes": 31385
   },
   "brilliant-walk-2.png": {
-    "width": 256,
-    "height": 256,
-    "bytes": 25162
+    "width": 320,
+    "height": 320,
+    "bytes": 32535
   },
   "wagon-oxen-1.png": {
-    "width": 256,
-    "height": 171,
-    "bytes": 16664
+    "width": 384,
+    "height": 256,
+    "bytes": 49394
   },
   "wagon-oxen-2.png": {
-    "width": 256,
-    "height": 171,
-    "bytes": 18817
+    "width": 384,
+    "height": 256,
+    "bytes": 51157
   },
   "og.png": {
     "width": 1200,
     "height": 630,
-    "bytes": 294679
+    "bytes": 350698
   },
   "landmark-01-legacy-junction.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 78487
+    "width": 512,
+    "height": 512,
+    "bytes": 130710
   },
   "landmark-02-fort-prompt.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 82406
+    "width": 512,
+    "height": 512,
+    "bytes": 137485
   },
   "landmark-03-loop-fork.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 82469
+    "width": 512,
+    "height": 512,
+    "bytes": 137014
   },
   "landmark-04-verifier-ridge.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 66517
+    "width": 512,
+    "height": 512,
+    "bytes": 130171
   },
   "landmark-05-context-canyon.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 95643
+    "width": 512,
+    "height": 512,
+    "bytes": 130793
   },
   "landmark-06-cab-crossing.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 74965
+    "width": 512,
+    "height": 512,
+    "bytes": 128482
   },
   "landmark-07-harness-hollow.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 78499
+    "width": 512,
+    "height": 512,
+    "bytes": 147105
   },
   "landmark-08-fort-actions.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 53304
+    "width": 512,
+    "height": 512,
+    "bytes": 133343
   },
   "landmark-09-skills-exchange.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 78982
+    "width": 512,
+    "height": 512,
+    "bytes": 137017
   },
   "landmark-10-permissions-pass.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 75449
+    "width": 512,
+    "height": 512,
+    "bytes": 145139
   },
   "landmark-11-migration-plateau.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 81488
+    "width": 512,
+    "height": 512,
+    "bytes": 136050
   },
   "landmark-12-production.png": {
-    "width": 400,
-    "height": 400,
-    "bytes": 65653
+    "width": 512,
+    "height": 512,
+    "bytes": 116682
   }
 }
