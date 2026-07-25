@@ -6,3 +6,4 @@ dist/
 api/bin/
 api/obj/
 api/local.settings.json
+.playwright-cli/
