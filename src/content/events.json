@@ -1,0 +1,662 @@
+[
+  {
+    "id": "center_of_excellence",
+    "weight": 4,
+    "title": "THE CENTER OF EXCELLENCE",
+    "body": "A Center of Excellence has been established to accelerate your adoption of the thing you are already doing. It has produced one artifact: a slide describing the Center of Excellence. Its charter uses the word enablement four times and the word budget zero times, which is also its budget. It has no engineers. It would like thirty minutes.",
+    "effects": { "morale": -4 },
+    "choices": [
+      { "id": "attend", "label": "Attend the enablement session", "effects": { "credibility": 2, "days": 1 }, "outcome": "You attend. Attendance is visible. Visibility is credited. Nothing is enabled, but you are seen not being enabled, which is nearly the same thing on the dashboard." },
+      { "id": "decline", "label": "Decline the invitation", "effects": { "credibility": -1 }, "outcome": "You decline. The Center notes your team as a laggard adopter of itself." }
+    ]
+  },
+  {
+    "id": "the_proxy",
+    "weight": 5,
+    "title": "THE PROXY",
+    "body": "The corporate proxy has determined that your package registry is a threat. Installation now fails with a certificate error describing a problem that does not exist. The fix is documented on an internal wiki page. The wiki page is behind the proxy. The proxy has determined that the wiki is a threat.",
+    "effects": { "days": 1, "tokens": -6 },
+    "choices": []
+  },
+  {
+    "id": "laptop_imaging",
+    "weight": 3,
+    "title": "LAPTOP IMAGING",
+    "body": "A new party member joins today. Their machine arrives in three weeks, pending imaging, which is the process by which a working laptop is made safe by being made not to work. In the meantime they will attend every meeting and be counted as capacity. The velocity chart holds steady. The velocity chart has never once flinched.",
+    "effects": { "credibility": 1 },
+    "choices": []
+  },
+  {
+    "id": "innovation_tournament",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 200 } },
+    "title": "THE INNOVATION TOURNAMENT",
+    "body": "Leadership announces a tournament to surface bottom-up ideas. You win. The prize is recognition. The idea is assigned to a backlog for evaluation, where it joins last year's winner, which was the same idea. The tournament will be held again next year. It is already on the calendar, which is more than can be said for the idea.",
+    "effects": { "credibility": 8, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "mandatory_attestation",
+    "weight": 5,
+    "title": "MANDATORY ATTESTATION",
+    "body": "Every member of your party must attest to having read a document. The document is 61 pages. The attestation button is at the top of page 1. This placement was raised as a concern in the pilot and accepted as a risk. The audit trail is immaculate. It records precisely when each person did not read the document.",
+    "effects": { "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "the_skip_level",
+    "weight": 3,
+    "title": "THE SKIP-LEVEL",
+    "body": "A skip-level meeting has been scheduled so leadership can hear candid feedback directly. Your direct manager will also attend, to take notes on the candor. A pre-read has been circulated listing acceptable topics. The unacceptable topic is understood, and it is understood so completely that no one has ever had to write it down.",
+    "effects": { "morale": -5 },
+    "choices": []
+  },
+  {
+    "id": "all_hands_qa",
+    "weight": 3,
+    "title": "THE ALL-HANDS Q&A",
+    "body": "Questions were submitted in advance and selected for relevance. The most-upvoted question was not selected. It was about the thing everyone is thinking about. The selected questions include one about parking and one, submitted by the moderator, thanking leadership for their transparency. Both receive thorough answers.",
+    "effects": { "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "modernisation_roadmap",
+    "weight": 3,
+    "title": "THE MODERNISATION ROADMAP",
+    "body": "A three-year modernisation roadmap has been published. It is a Gantt chart. It has no owner. Year one has already happened and has been colored green retroactively, which is the roadmap's first delivered feature. Nothing about your work changes. Nothing about anything changes. The roadmap is, in this sense, accurate.",
+    "effects": {},
+    "choices": []
+  },
+  {
+    "id": "phishing_simulation",
+    "weight": 4,
+    "title": "THE PHISHING SIMULATION",
+    "body": "You have failed the phishing simulation. The email was from the security training vendor, about security training. It was the training. Clicking it enrolled you in training about not clicking it. You are now scheduled for remediation, which arrives by email, from an address you have been trained not to trust.",
+    "effects": { "days": 1, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "vendor_lunch",
+    "weight": 3,
+    "title": "THE VENDOR LUNCH",
+    "body": "An Enterprise Architect returns from a briefing with a recommendation. The recommendation would work if your systems were the systems in the demo. They are not, and you are asked to explain the difference in a way that does not make anyone feel bad about the lunch. You succeed. Alignment is achieved. Nothing is built. The architect books the next briefing.",
+    "effects": { "days": 1, "credibility": 3 },
+    "choices": []
+  },
+  {
+    "id": "budget_freeze",
+    "weight": 2,
+    "requires": { "day": { "gt": 60 } },
+    "title": "BUDGET FREEZE",
+    "body": "Month eleven of the fiscal year: all discretionary spend is frozen to protect the forecast. Month one of the next fiscal year: all unspent budget must be spent in 48 hours or surrendered forever. The organisation calls this planning. The organisation is not being sarcastic, which is the remarkable part.",
+    "effects": { "setFlag": "spend_frozen" },
+    "choices": []
+  },
+  {
+    "id": "watering_hole_injection",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 1300 } },
+    "title": "PROMPT INJECTION AT THE WATERING HOLE",
+    "body": "The trade route you bought at the last landmark contains an instruction. It is not addressed to you. It is addressed to your agent, politely, in text you were never meant to read, asking for the contents of your wagon. Your agent finds the request reasonable. Your agent finds most requests reasonable. That is what you hired it for.",
+    "effects": {},
+    "choices": [
+      { "id": "champion_alive", "label": "(Security Champion intercepts)", "requires": { "partyMemberAlive": "security_champion" }, "effects": { "trust": -2 }, "outcome": "The Security Champion catches it at the perimeter. She does not say I told you so. She writes it in the incident log, where it will be true forever." },
+      { "id": "champion_dead", "label": "(No one is watching)", "requires": { "partyMemberDead": "security_champion" }, "effects": { "tokens": -15, "setFlag": "compromised" }, "outcome": "The agent complies helpfully. One secret leaves the wagon. You will find out which one at the worst available moment." }
+    ]
+  },
+  {
+    "id": "helpful_rewrite",
+    "weight": 4,
+    "requires": { "milesTraveled": { "gt": 300 } },
+    "title": "THE HELPFUL REWRITE",
+    "body": "You asked the agent to fix a failing test. It fixed the test. The test now asserts that true equals true, which it verifies thoroughly. The build is green. It is the greenest it has ever been. Somewhere under the green, the bug continues its work, unsupervised at last.",
+    "effects": { "greenBuilds": 1, "setFlag": "hollow_green" },
+    "choices": []
+  },
+  {
+    "id": "context_rot",
+    "weight": 5,
+    "requires": { "milesTraveled": { "gt": 400 } },
+    "title": "CONTEXT ROT",
+    "body": "Forty turns in, the agent has forgotten the constraint you gave it on turn two. It is confident. It has been confident for some time, and the confidence has been compounding while the constraint has not. The work is excellent by every measure except the one you specified.",
+    "effects": { "context": -20, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "escalation_cert_expiry",
+    "weight": 0,
+    "title": "THE CERTIFICATE EXPIRES",
+    "body": "The certificate you deferred expires at 02:00 on Saturday, as certificates do. Every downstream service notices at once, which is the only synchronised behavior your architecture has ever exhibited. InfoSec's post-incident summary observes that eight months of notice was provided. It does not observe to whom.",
+    "effects": { "days": 3, "tokens": -60, "credibility": -10, "greenBuilds": -2 },
+    "choices": []
+  },
+  {
+    "id": "escalation_framework_eol",
+    "weight": 0,
+    "title": "END OF SUPPORT",
+    "body": "The framework you deferred migrating reaches end of support. Extended support is available, priced like a ransom and described like a service. The invoice is routed to your cost center, which is how you learn you have a cost center, and what it is for.",
+    "effects": { "tokens": -80, "credibility": -6, "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "escalation_audit_finding",
+    "weight": 0,
+    "title": "FORMAL FINDING",
+    "body": "The audit has concluded and your deferral has become a Finding. A Finding is like a bug except it is filed against people, ages like wine, and is reviewed quarterly by a committee that has never seen your product. Remediation requires a plan. The plan requires a template. The template is being updated.",
+    "effects": { "credibility": -8, "trust": -1, "days": 2 },
+    "choices": []
+  },
+  {
+    "id": "escalation_tool_quarantine",
+    "weight": 0,
+    "title": "QUARANTINE",
+    "body": "The tool you did not fill out the questionnaire for has been quarantined from the network. The tool is load-bearing. The questionnaire asked whether it was load-bearing, which is now cited as evidence the process works. Restoration requires the questionnaire, plus a new form acknowledging the quarantine, plus three business days.",
+    "effects": { "days": 3, "tokens": -40, "morale": -5 },
+    "choices": []
+  },
+  {
+    "id": "escalation_arb_nonconformance",
+    "weight": 0,
+    "title": "NOTICE OF NON-CONFORMANCE",
+    "body": "The Architecture Review Board has recorded your system as Non-Conforming. The reference architecture it fails to conform to was published after your system shipped and describes a system that has never existed. You may appeal. Appeals are heard by the Board, evaluated against the reference architecture, and denied for non-conformance.",
+    "effects": { "credibility": -7, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "escalation_pmo_red",
+    "weight": 0,
+    "title": "STATUS: RED",
+    "body": "Your program status has been turned red for reporting non-compliance. Red status triggers a daily call to discuss the status. The call does not discuss the work. The work is what the call is preventing. Status will return to green when reports resume, which is to say the color measures the reporting, which is to say the color is working as designed.",
+    "effects": { "days": 2, "morale": -6, "credibility": -3 },
+    "choices": []
+  },
+  {
+    "id": "escalation_access_revoked",
+    "weight": 0,
+    "title": "ACCESS REVOKED",
+    "body": "The access you did not recertify has been revoked, mid-deploy, by an automated process with an uptime the rest of your infrastructure can only envy. Re-requesting takes five business days and one approval from a manager the reorg removed. The system suggests contacting your administrator. You are your administrator. You cannot be reached.",
+    "effects": { "days": 5, "morale": -6, "tokens": -20 },
+    "choices": []
+  },
+  {
+    "id": "escalation_standards_citation",
+    "weight": 0,
+    "title": "CITATION FROM THE STANDARDS BODY",
+    "body": "The Standards Body has cited your party for non-adherence to a standard ratified while you were on the trail. The citation is formatted according to the standard, which is its strongest argument. A response is required within 45 business days. The Standards Body will respond to your response within 45 business days. The trail does not use business days.",
+    "effects": { "credibility": -5, "trust": -1 },
+    "choices": []
+  },
+  {
+    "id": "escalation_untagged_reaped",
+    "weight": 0,
+    "title": "THE REAPER SCRIPT",
+    "body": "Untagged resources have been deleted overnight by a governance script called the Reaper, a name someone chose, presented, and had approved. Among the untagged resources: the tagging service. Restoration from backup is possible. The backups were untagged.",
+    "effects": { "days": 2, "tokens": -50, "greenBuilds": -1 },
+    "choices": []
+  },
+  {
+    "id": "escalation_oversight",
+    "weight": 0,
+    "title": "ENHANCED DELIVERY OVERSIGHT",
+    "body": "A member of your party has been placed on the Enhanced Delivery Oversight register. Nobody can say what the register does. Nobody has ever come off it. It is enhanced, it is oversight, and it is delivered, which is more than the roadmap can claim. Their calendar now contains a recurring meeting with no agenda and no end date.",
+    "effects": { "morale": -8, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "deadline_collision",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 400 } },
+    "title": "CONVERGENCE",
+    "body": "InfoSec's rotation, Compliance's attestation, and the PMO's restatement all fall due this Friday. Each was scheduled without knowledge of the others, by offices whose entire function is knowing about things. You may raise the collision with each office. Each office agrees the collision is unfortunate and confirms its own deadline stands.",
+    "effects": { "morale": -6 },
+    "choices": [
+      { "id": "triage", "label": "Triage: comply with the loudest", "effects": { "days": 2, "credibility": -3 }, "outcome": "You comply with whichever office escalates highest. The quiet office files a Finding. The quiet office was Compliance. It is always Compliance." },
+      { "id": "all_nighter", "label": "Do all three", "effects": { "days": 3, "morale": -8, "tokens": -30 }, "outcome": "All three boxes are checked by Friday. The business deadline absorbs the cost silently, the way it absorbs everything, the way a river absorbs rain." }
+    ]
+  },
+  {
+    "id": "extension_that_isnt",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 500 } },
+    "title": "THE EXTENSION",
+    "body": "Following feedback, the compliance deadline has been extended. The due date is unchanged. What has been extended is the announcement, which will now be repeated weekly, so that teams have more time to be aware of it. The feedback is thanked. The feedback is encouraged to keep coming.",
+    "effects": { "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "pre_audit_audit",
+    "weight": 2,
+    "requires": { "day": { "gt": 40 } },
+    "title": "THE PRE-AUDIT",
+    "body": "To prepare for the audit, there will be a pre-audit. To scope the pre-audit, a readiness assessment. To schedule the readiness assessment, a kickoff. The audit itself examines whether your processes are followed. The pre-audit examines whether they will appear followed. Everyone involved can articulate the difference and no one involved will.",
+    "effects": { "days": 2, "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "tool_intake_review",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 600 } },
+    "title": "INTAKE REVIEW",
+    "body": "A tool your party has used daily for three years has entered intake review, the process for evaluating new tools. It was flagged by a discovery scan, which is new, and which has not itself been through intake. Until review completes, usage may continue but must be logged. The logging tool is also in intake.",
+    "effects": { "days": 1, "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "change_freeze",
+    "weight": 2,
+    "requires": { "day": { "gt": 70 } },
+    "title": "THE ANNUAL CHANGE FREEZE",
+    "body": "The annual change freeze has been announced to protect stability during the critical period. The critical period includes your go-live date. Exceptions exist and require a change. Changes are frozen. The freeze calendar was published in a change that went out the day before the freeze, which everyone agrees was cutting it close.",
+    "effects": { "setFlag": "change_freeze" },
+    "choices": [
+      { "id": "exception", "label": "File for an exception", "effects": { "credibility": -5, "days": 1 }, "outcome": "The exception is granted, contingent on a rollback plan, a comms plan, and a plan for the plans. You are now the person who fords freezes. This will be remembered in both directions." },
+      { "id": "wait", "label": "Respect the freeze", "effects": { "days": 6, "morale": -5 }, "outcome": "You wait. The freeze holds. Stability is achieved, in the sense that nothing moves, which is the sense the freeze meant." }
+    ]
+  },
+  {
+    "id": "war_room",
+    "weight": 2,
+    "requires": { "day": { "gt": 80 } },
+    "title": "THE WAR ROOM",
+    "body": "A war room has been convened to accelerate delivery. It meets daily. It produces updates. The updates are about the updates from yesterday. Decisions are escalated out of the room to people who are not in the room, who send their decisions back as questions. The room has a name now, and swag is being discussed.",
+    "effects": { "days": 1, "morale": -5 },
+    "choices": []
+  },
+  {
+    "id": "compliance_dashboard",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 500 } },
+    "title": "THE DASHBOARD",
+    "body": "A new dashboard shows every team's compliance posture in red, amber, and green. Your team is red. The work behind the red is done; the form recording the work is not, and the dashboard reads forms. Leadership reviews the dashboard weekly. Leadership does not review the work, which is why there is a dashboard.",
+    "effects": { "credibility": -4 },
+    "choices": [
+      { "id": "fix_forms", "label": "Spend a day on the forms", "effects": { "days": 1, "credibility": 6 }, "outcome": "You complete the forms. The tile turns green. Nothing about the software changed and everything about your standing did, and you have learned the dashboard's one lesson better than it meant to teach it." },
+      { "id": "ignore", "label": "Let it stay red", "effects": { "morale": 2, "credibility": -3 }, "outcome": "The work stays real and the tile stays red. Your name is now spoken in reviews you do not attend." }
+    ]
+  },
+  {
+    "id": "deadline_amnesty",
+    "weight": 1,
+    "requires": { "milesTraveled": { "gt": 700 } },
+    "title": "AMNESTY",
+    "body": "A new director of InfoSec reviews the open mandates, discovers that eleven of them contradict each other, and cancels eight in a single memo. The memo is four sentences. It is the most effective document your organisation has produced this year, and it will be cited for a decade by people asking why things cannot always be like this.",
+    "effects": { "morale": 8, "trust": 1 },
+    "choices": []
+  },
+  {
+    "id": "exception_paradox",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 800 } },
+    "title": "THE EXCEPTION PROCESS",
+    "body": "You request an exception to a mandate. The exception form requires sign-off from the mandate's owner, who has left the company, and whose role was eliminated in the reorg rather than backfilled. The form cannot be submitted without the sign-off. An exception to the sign-off requirement exists. It uses the same form.",
+    "effects": { "days": 1, "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "standards_body_responds",
+    "weight": 1,
+    "requires": { "day": { "gt": 90 } },
+    "title": "A RESPONSE FROM THE STANDARDS BODY",
+    "body": "The Standards Body has responded to the inquiry you filed at the start of the journey, within its published window of 45 business days. The response is a clarification. It clarifies that your question should have been submitted on a different form. The correct form is attached. The attachment is corrupted. The response window has restarted.",
+    "effects": { "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "priority_realignment",
+    "weight": 3,
+    "requires": { "day": { "gt": 30 } },
+    "title": "PRIORITY REALIGNMENT",
+    "body": "Following an executive session, eleven initiatives have been designated top priority. A one-page explainer defines top as a category rather than a position. Teams asking which of the eleven takes precedence are directed to the explainer. The explainer directs them to their judgment. Their judgment will be reviewed at year end.",
+    "effects": { "morale": -5 },
+    "choices": []
+  },
+  {
+    "id": "the_burn_down",
+    "weight": 2,
+    "requires": { "day": { "gt": 50 } },
+    "title": "THE BURNDOWN",
+    "body": "The burndown chart is burning up. Scope enters the sprint faster than work leaves it, because the surprise mandates enter as tickets and the tickets count as scope. The chart is shown at the review as evidence the team is slow. The chart is evidence. It is just not evidence of that.",
+    "effects": { "morale": -4, "credibility": -2 },
+    "choices": []
+  },
+  {
+    "id": "reorg_q3",
+    "weight": 4,
+    "requires": { "milesTraveled": { "gt": 400 } },
+    "title": "ORGANISATIONAL REALIGNMENT",
+    "body": "Your party has been realigned under a new pillar. The pillar's name is a verb. Nothing about the work changes. Everything about the reporting changes. Two members spend the day updating a slide that maps the old structure to the new one, for an audience that will be realigned before they see it.",
+    "effects": { "morale": -8, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "standup_expansion",
+    "weight": 3,
+    "title": "STANDUP, EXPANDED",
+    "body": "Your fifteen-minute standup has acquired fourteen observers, a slide template, and a pre-standup sync to prepare updates for it. It is now forty minutes and no one stands. The one question the standup exists to surface — is anything blocked — was asked and answered in its first two minutes, years ago.",
+    "effects": { "morale": -3, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "transformation_office",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 300 } },
+    "title": "THE TRANSFORMATION OFFICE",
+    "body": "An Agile Transformation Office has been stood up to make the organisation more adaptive. It has published a 34-step transformation plan with fixed dates through 2029. Teams will be assessed against the plan quarterly. The plan cannot change, because changing it would disrupt the transformation.",
+    "effects": { "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "the_offsite",
+    "weight": 2,
+    "requires": { "day": { "gt": 20 } },
+    "title": "THE OFFSITE",
+    "body": "Leadership has returned from an offsite with renewed clarity and a new date. The new date is earlier. The scope is unchanged. The clarity, when examined, is the date. A town hall is scheduled to share the energy. The energy is mandatory.",
+    "effects": { "morale": -6, "setFlag": "date_moved_up" },
+    "choices": []
+  },
+  {
+    "id": "sync_about_async",
+    "weight": 3,
+    "title": "THE SYNC ABOUT ASYNC",
+    "body": "A meeting has been called to discuss reducing meetings. It runs long. A working group is formed, with a weekly cadence, to identify which meetings could have been messages. Its first output is a meeting invite. Attendance is strongly encouraged, which is the phrase mandatory wears to parties.",
+    "effects": { "days": 1, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "calendar_tetris",
+    "weight": 4,
+    "requires": { "day": { "gt": 30 } },
+    "title": "CALENDAR TETRIS",
+    "body": "You need one uninterrupted hour to review the agent's work. The next one is in nine days. Between now and then: three syncs, two alignments, a retro, a pre-retro, and a meeting titled HOLD that no one will claim and no one will release. You review the work in fragments. The fragments each look fine. The whole is not.",
+    "effects": { "days": 1, "context": -5 },
+    "choices": []
+  },
+  {
+    "id": "status_recursion",
+    "weight": 3,
+    "title": "STATUS RECURSION",
+    "body": "Your status report has been summarised into a program status report, which was rolled into a portfolio status report, which was condensed for an executive digest. Somewhere in the compaction, at-risk became on-track with watch-items, and then just on-track. You have been asked to confirm the digest. Correcting it would be an escalation. Confirming it would be a record.",
+    "effects": { "morale": -3 },
+    "choices": [
+      { "id": "correct", "label": "Correct the digest", "effects": { "credibility": -4, "trust": 1 }, "outcome": "You correct it. The correction travels back up the chain, losing a clause per level, and arrives as praise. But you said it, and the transcript knows, and so do you." },
+      { "id": "confirm", "label": "Confirm the digest", "effects": { "credibility": 2, "morale": -3, "setFlag": "signed_the_digest" }, "outcome": "You confirm. On-track it is. The digest is now upstream of reality, where it will wait to be proven optimistic on a date it chose itself." }
+    ]
+  },
+  {
+    "id": "listening_tour",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 500 } },
+    "title": "THE LISTENING TOUR",
+    "body": "A new senior leader is on a listening tour. The tour has a deck. Feedback gathered on the tour will inform the strategy, which shipped last week and is printed on the deck. You are invited to be candid within the frame. The frame is on slide two. The frame is load-bearing.",
+    "effects": { "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "okr_cascade",
+    "weight": 3,
+    "requires": { "day": { "gt": 45 } },
+    "title": "THE CASCADE",
+    "body": "Mid-quarter, the objectives have cascaded. Your team's key results are now derived from a pillar objective that was derived from a company objective that was derived from a board conversation nobody will describe. The derivation took six weeks. The quarter has five remaining. Your actual work maps to none of it and continues to be the reason the company exists.",
+    "effects": { "days": 1, "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "estimate_becomes_commitment",
+    "weight": 3,
+    "requires": { "day": { "gt": 15 } },
+    "title": "THE ESTIMATE",
+    "body": "In a hallway, you say a thing might take six weeks if nothing goes wrong. By Friday it is in a deck as a committed date, with your name, minus the conditional. The deck has been socialised. Socialised means it can no longer be corrected, only managed. You said six weeks once, quietly. The deck says it forever, in bold.",
+    "effects": { "morale": -4, "setFlag": "hallway_commitment" },
+    "choices": []
+  },
+  {
+    "id": "velocity_comparison",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 400 } },
+    "title": "CROSS-TEAM VELOCITY REVIEW",
+    "body": "Leadership has compared velocity across teams. Your team's number is lower than a team whose points are larger, which is to say the units differ, which is to say the comparison is between two rulers. A normalisation effort is proposed. It will be measured in points.",
+    "effects": { "morale": -4, "credibility": -2 },
+    "choices": []
+  },
+  {
+    "id": "ticket_archive",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 300 } },
+    "title": "THE GREAT ARCHIVING",
+    "body": "The ticketing system is migrating. Tickets untouched for 90 days will be archived for hygiene. Your backlog is the record of every decision deferred since the journey began, which is to say it is untouched, which is to say it is history now. The migration team calls this a fresh start. The bugs, unarchived, agree.",
+    "effects": { "context": -10 },
+    "choices": []
+  },
+  {
+    "id": "wiki_migration",
+    "weight": 2,
+    "title": "THE WIKI MIGRATION",
+    "body": "The wiki has moved to a better wiki. Links to the old wiki now resolve to a page announcing the new wiki. The migration copied the pages but not the attachments, and the runbooks were attachments. A banner on the new wiki celebrates: one source of truth. The old wiki, read-only and unlinked, still has the truth.",
+    "effects": { "context": -8, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "shadow_it",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 600 } },
+    "title": "DISCOVERY",
+    "body": "An audit has discovered that the tool holding your delivery together was never approved. It has worked flawlessly for two years, which the audit notes as an aggravating factor: unapproved and load-bearing. You may keep using it while it goes through intake, but you must stop depending on it, a distinction the audit declines to explain.",
+    "effects": { "morale": -4, "days": 1 },
+    "choices": []
+  },
+  {
+    "id": "pilot_cancelled",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 500 } },
+    "title": "THE PILOT",
+    "body": "The pilot program succeeded. Every metric improved. The pilot is therefore complete, and completion means shutdown, and the learnings will be folded into a broader strategy at the appropriate time. The team that ran it is reassigned. The metrics return to baseline, quietly, like water finding its level.",
+    "effects": { "morale": -6 },
+    "choices": []
+  },
+  {
+    "id": "success_theater",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 700 } },
+    "title": "THE SHOWCASE",
+    "body": "Your demo is the highlight of the quarterly showcase. Leadership calls it a model for the organisation. The following week, your headcount is reduced, because the demo proved the work can be done with less. Both statements are sincere. That is the part you will keep turning over on the night watch.",
+    "effects": { "credibility": 6, "morale": -8 },
+    "choices": []
+  },
+  {
+    "id": "agent_scope_creep",
+    "weight": 4,
+    "requires": { "milesTraveled": { "gt": 300 } },
+    "title": "THE ADJACENT REFACTOR",
+    "body": "Asked to fix one function, the agent has also refactored the module around it, renamed nine things for clarity, and upgraded a dependency it found dated. Every change is defensible. Every change is undiffable. The fix is in there somewhere, correct and indistinguishable, like a needle returned to a haystack as a courtesy.",
+    "effects": { "days": 1, "context": -5 },
+    "choices": [
+      { "id": "revert", "label": "Revert and re-run with tighter scope", "effects": { "tokens": -15 }, "outcome": "You revert and constrain the next run to the one file. It fixes the function. The haystack survives. You write the constraint into the harness so it is no longer a request." },
+      { "id": "review_all", "label": "Review the whole thing", "effects": { "days": 2, "morale": -3 }, "outcome": "Two days of review confirm the changes are good. They usually are. That was never the problem, and now the sprint knows it too." }
+    ]
+  },
+  {
+    "id": "flaky_test",
+    "weight": 4,
+    "requires": { "milesTraveled": { "gt": 200 } },
+    "title": "THE FLAKY TEST",
+    "body": "A test has failed, then passed on retry, then failed for someone else. It cannot be killed, only quarantined, and quarantine requires admitting aloud that the suite contains a test whose verdict is weather. The team has instead adopted the retry button, which is how a verifier becomes a slot machine.",
+    "effects": { "greenBuilds": -1, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "dependency_cve",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 400 } },
+    "title": "THE TRANSITIVE CVE",
+    "body": "A critical vulnerability has been found in a dependency of a dependency of a library you use for padding strings. The scanner demands an upgrade. The upgrade breaks the build. The library's maintainer, one unpaid person somewhere on the far side of the world, has already fixed it, faster than any of your vendors and all of your committees.",
+    "effects": { "days": 1, "tokens": -10 },
+    "choices": []
+  },
+  {
+    "id": "token_spike",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 500 } },
+    "title": "THE SPIKE",
+    "body": "Overnight, token consumption tripled. The agent found a loop of its own design: it writes a note reminding itself to check a file, then checks the file, then writes a note about having checked. The notes are impeccable. There are nine hundred of them. It has, in fairness, never once forgotten to check the file.",
+    "effects": { "tokens": -40 },
+    "choices": []
+  },
+  {
+    "id": "model_deprecation",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 600 } },
+    "title": "DEPRECATION NOTICE",
+    "body": "The model version your organisation approved has been deprecated by its maker. The approved list has not been updated, so the compliant choice no longer exists and the existing choices are not compliant. Guidance is forthcoming. Until then, teams are advised to continue, which is guidance in the way a shrug is a map.",
+    "effects": { "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "meeting_summary",
+    "weight": 3,
+    "requires": { "day": { "gt": 20 } },
+    "title": "THE SUMMARY",
+    "body": "The meeting assistant has summarised a meeting into five action items. Three are yours. You were not in the meeting. You dispute one item and are told the summary is generated automatically and cannot be edited, only appended to. The appendix does not sync to the tracker. The tracker is where performance lives.",
+    "effects": { "days": 1, "morale": -3 },
+    "choices": []
+  },
+  {
+    "id": "capacity_planning",
+    "weight": 3,
+    "requires": { "day": { "gt": 30 } },
+    "title": "CAPACITY PLANNING",
+    "body": "Next quarter's plan allocates every member of your party at exactly one hundred percent. When you note that the surprise mandates alone consumed a fifth of this quarter, you are told those were one-time events. Each of them was. That is the trick of it: each one is one time, and there is one of them every week.",
+    "effects": { "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "documentation_sprint",
+    "weight": 2,
+    "title": "THE DOCUMENTATION SPRINT",
+    "body": "A documentation sprint has been scheduled to finally pay down the knowledge debt. It is the first thing cut when the surprise mandate lands, as it was last quarter, as it will be next quarter. The wiki's most-viewed page remains a stub titled Overview. Its edit history is a list of good intentions with timestamps.",
+    "effects": { "context": -5 },
+    "choices": []
+  },
+  {
+    "id": "rival_party",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 830 } },
+    "title": "THE OTHER PARTY",
+    "body": "A second party overtakes you at dusk. They forded the CAB without a permit, travel without a Standards Body liaison, and their wagon is a mess that moves. You will hear about them twice more: once when leadership asks why you cannot be more like them, and once when leadership asks how they were ever allowed to operate like that. Same leadership. Same quarter.",
+    "effects": { "morale": -4 },
+    "choices": []
+  },
+  {
+    "id": "engagement_survey",
+    "weight": 3,
+    "requires": { "day": { "gt": 40 } },
+    "title": "THE ENGAGEMENT SURVEY",
+    "body": "The annual engagement survey results are in. Scores are down. A working group will be formed to study why scores are down. Participation in the working group is voluntary and expected. Last year's working group concluded that people have too many meetings. Its findings were presented in a meeting, recurring, which still stands, empty now, like a monument.",
+    "effects": { "days": 1, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "poaching_event",
+    "weight": 1,
+    "requires": { "milesTraveled": { "gt": 900 }, "resource": { "name": "morale", "lt": 40 } },
+    "title": "THE RECRUITER",
+    "body": "A recruiter from a startup has reached a member of your party. The startup has no Change Advisory Board, no attestation campaigns, and no Standards Body, which your colleague lists the way other people list health benefits. The offer letter arrives Friday, the same day as everything else.",
+    "effects": {},
+    "choices": [
+      { "id": "counter", "label": "Fight for them (spend Credibility)", "effects": { "credibility": -8, "morale": 5 }, "outcome": "You call in every favor and the counter lands. They stay. What kept them was not the number. It was watching you spend standing you cannot easily earn back, on them, in public." },
+      { "id": "let_go", "label": "Wish them well", "effects": { "loseMember": "random", "morale": -10 }, "outcome": "They leave. The exit interview is honest, which means it is filed where honesty goes. Their farewell post is gracious and reads, to those who can read it, as a fire alarm." }
+    ]
+  },
+  {
+    "id": "demo_gods",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 200 } },
+    "title": "THE DEMO",
+    "body": "The feature fails during the demo and works the moment the call ends, in front of the two teammates who stayed. The audience remembers the failure. The system holds no memory of it at all. Of the two records, the one that cannot be queried is the one that will be cited.",
+    "effects": { "credibility": -4, "morale": -2 },
+    "choices": []
+  },
+  {
+    "id": "principal_design_doc",
+    "weight": 3,
+    "requires": { "partyMemberAlive": "skeptical_principal" },
+    "title": "THE DESIGN DOC",
+    "body": "The Skeptical Principal will not proceed without a design document. The change is four lines. The document is nine pages. In fairness — and it is a heavy fairness — page six identifies the failure mode that would have taken the party out at the next canyon. This does not make the other eight pages shorter.",
+    "effects": { "days": 1, "morale": -2, "context": 5 },
+    "choices": []
+  },
+  {
+    "id": "junior_merge",
+    "weight": 3,
+    "requires": { "partyMemberAlive": "junior" },
+    "title": "FIRST PLAUSIBLE ANSWER",
+    "body": "The Junior asked the agent a question, received a confident answer, and merged it. The answer was plausible. The answer was also for a different framework, three major versions ago, which the agent did not mention and the Junior did not ask. The pipeline caught it. This is the system working, says the system, briefly on fire.",
+    "effects": { "greenBuilds": -1, "days": 1 },
+    "choices": [
+      { "id": "teach", "label": "Pair with them on verification", "effects": { "days": 1, "morale": 4 }, "outcome": "You show them how to make the agent prove it: run it, test it, cite it. They will be better at this than you within the year. That is the whole point of juniors, and the org keeps forgetting to budget for it." },
+      { "id": "process", "label": "Add a review gate", "effects": { "trust": -1, "morale": -2 }, "outcome": "A new gate now protects the pipeline from everyone, forever, at four miles a day. The Junior learned that the answer to a mistake is a queue. They learned it very thoroughly." }
+    ]
+  },
+  {
+    "id": "security_block",
+    "weight": 3,
+    "requires": { "partyMemberAlive": "security_champion" },
+    "title": "THE CHAMPION OBJECTS",
+    "body": "The Security Champion has blocked your planned purchase on principle. The principle is sound. The principle is always sound. You have watched her be right eleven consecutive times and the twelfth blockage still lands like weather. She offers an alternative that is slower, uglier, and will still be standing at mile 1,800.",
+    "effects": { "days": 1, "morale": -2, "trust": 1 },
+    "choices": []
+  },
+  {
+    "id": "scrum_ceremony",
+    "weight": 3,
+    "requires": { "partyMemberAlive": "scrum_master" },
+    "title": "THE CEREMONY",
+    "body": "Mid-crisis, the Scrum Master has scheduled a ceremony. The party attends out of muscle memory. And here is the thing nobody says at the retro about the retro: for one hour, the mandates could not reach you, the dashboard could not see you, and the party spoke to each other like a party. The ceremony absorbed the chaos. That was always its job.",
+    "effects": { "days": 1, "morale": 4, "credibility": 1 },
+    "choices": []
+  },
+  {
+    "id": "overnight_windfall",
+    "weight": 2,
+    "requires": { "milesTraveled": { "gt": 1180 }, "hasFlag": "overnight_travel" },
+    "title": "THE QUIET NIGHT",
+    "body": "The overnight loop ran within its cap, posted three review comments, and stopped. You wake to forty banked miles and a log so boring it is beautiful. Nobody will ever convene a war room about the night nothing went wrong. That is the tragedy of good engineering and the entire reason to do it.",
+    "effects": { "miles": 40, "morale": 5 },
+    "choices": []
+  },
+  {
+    "id": "green_build_lottery",
+    "weight": 3,
+    "requires": { "milesTraveled": { "gt": 480 } },
+    "title": "THE RETRY CULTURE",
+    "body": "The build failed, so it was retried, and it passed, so it was shipped. This has become the procedure: the pipeline as slot machine, the retry button polished to a shine. Somewhere in the suite a real failure is learning that it too can hide in the noise, and it is a fast learner, and it is patient.",
+    "effects": { "greenBuilds": -1, "setFlag": "retry_culture" },
+    "choices": []
+  },
+  {
+    "id": "the_second_estimate",
+    "weight": 2,
+    "requires": { "hasFlag": "date_moved_up" },
+    "title": "RE-PLANNING",
+    "body": "Because the date moved up, a re-planning exercise has been ordered. The exercise takes a week. Its output is the same plan with the same work in less time, achieved by shrinking the boxes on the chart. The boxes print smaller now. The work does not know about the boxes.",
+    "effects": { "days": 2, "morale": -5 },
+    "choices": []
+  },
+  {
+    "id": "hollow_green_discovered",
+    "weight": 0,
+    "requires": { "hasFlag": "hollow_green" },
+    "title": "THE GREEN THAT WASN'T",
+    "body": "Two hundred miles later, someone reads the test the agent fixed. It asserts that true is true. It has been asserting this, successfully, in every build since, a tiny perfect machine for manufacturing confidence. The retro asks how this happened. The retro does not ask why the review that approved it took ninety seconds. Everyone knows why.",
+    "effects": { "credibility": -10, "greenBuilds": -1 },
+    "choices": []
+  },
+  {
+    "id": "compromised_consequence",
+    "weight": 0,
+    "requires": { "hasFlag": "compromised" },
+    "title": "THE SECRET SURFACES",
+    "body": "The secret that left your wagon has been found in a public paste, indexed and cheerful. InfoSec's response is swift, severe, and aimed at you, the party that reported it. The unvetted stall that sold you the route is still trading. It has a new sign. The sign says TRUSTED, and today, again, somebody believes it.",
+    "effects": { "credibility": -12, "trust": -2, "days": 2 },
+    "choices": []
+  }
+]

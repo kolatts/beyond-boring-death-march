@@ -1,0 +1,86 @@
+[
+  {
+    "id": "legacy_junction",
+    "mile": 0,
+    "name": "Legacy Junction",
+    "mechanic": "outfitting",
+    "blurb": "Legacy Junction has two industries: quarterly planning and the rotation of certificates. Both are thriving. Neither has ever finished. The go-live date for your journey was chosen at an offsite. It predates the estimate. It predates the party. Several attendees believe it predates the trail. The date is printed on a banner in the town square, and the banner is laminated, which everyone understands to mean the date is final. The Outfitting Store sells everything you need and several things you will later be required to have needed. The proprietor asks where you are headed. When you say Production, he nods the way people nod at the recently diagnosed, and begins, quietly, to ring things up."
+  },
+  {
+    "id": "fort_prompt",
+    "mile": 140,
+    "name": "Fort Prompt",
+    "mechanic": "tutorial_one_shot",
+    "blurb": "Fort Prompt was built by settlers who believed that if you phrased the request correctly the first time, the work would simply happen. The fort is immaculate. The walls are covered in instructions. The longest is four thousand words and includes a persona, a tone guide, and a threat. Nothing has shipped here in two years. The settlers do not consider this a failure, because every morning the prompt is read aloud, and every morning it is very good. Last week the fort was ordered to migrate all prompts to a new mandatory template by Friday. The settlers complied at once. It is the fastest anyone here has ever done anything, and it produced exactly as much software as everything else they do."
+  },
+  {
+    "id": "loop_fork",
+    "mile": 310,
+    "name": "The Loop Fork",
+    "mechanic": "loop_builder_guided",
+    "blurb": "The trail divides here. The left path is a road. The right path is a circle, which strikes most travelers as a mistake until they notice the depth of the wheel ruts. The road is for parties who ask for the whole journey at once and are surprised, two thousand miles later, to be somewhere else entirely. The circle is for parties who go a short distance, look at where they are, adjust, and go again. The circle is embarrassing to watch and impossible to beat. A signpost lists the parties who took the road instead. It is a long list, and a complete one, in the sense that the trail keeps a record of everyone the trail has kept. There is space at the bottom."
+  },
+  {
+    "id": "verifier_ridge",
+    "mile": 480,
+    "name": "Verifier Ridge",
+    "mechanic": "loop_builder_verifier",
+    "blurb": "The bridge at Verifier Ridge is missing one plank. It has been missing since the bridge was built, because the plank is not a plank. It is a question: how will you know it worked? Most parties answer with a feeling. The feelings are sincere. The ravine is full of sincere parties. The ridge keeper accepts only answers a machine could check — a test that can fail, a build that can break, an assertion with an opinion. Parties who arrive holding a seventeen-item review checklist are directed to a viewing platform, where they may observe the checklist not bearing weight. The platform is well maintained. The view from it is excellent. The view is of the ravine."
+  },
+  {
+    "id": "context_canyon",
+    "mile": 660,
+    "name": "Context Canyon",
+    "mechanic": "context_pack",
+    "blurb": "The canyon walls narrow to exactly the width of your wagon, and your wagon is exactly the width of what you chose to carry. This is not a coincidence. It is a policy of the canyon. Parties here abandon strange cargo at the entrance. A directory listing the size of a bull. Six months of chat scrollback containing one decision, unwritten, somewhere near the middle. A nine-hundred-line log with one line that matters, position unknown. The parties that make it through send a scout ahead with a small bag of their own and take back only the summary. The parties that do not are still in there — confident, thorough, and solving, beautifully, a problem nobody has."
+  },
+  {
+    "id": "cab_crossing",
+    "mile": 830,
+    "name": "The CAB Crossing",
+    "mechanic": "cab_crossing",
+    "blurb": "The Change Advisory Board is a river. Its depth is measured in business days, and the measurement is taken by someone who is out this week. There is a ferry. The ferry is free, safe, and departs every forty-five days from a dock that is currently being re-platformed. There is a ford, used at night and denounced at retrospectives — described as unacceptable by everyone standing on the far bank, which is where they live now. A plaque by the water states the river's purpose: to prevent incidents. A second plaque lists this year's incidents. The plaques do not reference each other. Between them stands a man whose entire job is polishing the plaques, and the plaques gleam."
+  },
+  {
+    "id": "harness_hollow",
+    "mile": 1010,
+    "name": "Harness Hollow",
+    "mechanic": "harness_swap",
+    "blurb": "In the hollow, parties swap out everything around the engine, keep the engine, and are startled by the result. Some swap back, to check. They are startled again. The blacksmith has watched this for years and no longer offers commentary. She hangs the harnesses on the wall — the bare one, the chatty one, the terminal one, the governed one — and lets the wall make the argument. Parties arrive convinced their engine is tired. They leave with the same engine and a different wagon, moving twice as fast, having learned the thing the wall knew. A notice by the door requires that all harness changes be reviewed by the Architecture Review Board. The notice is dated after most of the changes it governs. So is the Board."
+  },
+  {
+    "id": "fort_actions",
+    "mile": 1180,
+    "name": "Fort Actions",
+    "mechanic": "night_watch",
+    "blurb": "Fort Actions is the only place on the trail where the wagons move at night, unattended, and arrive intact. The sentries write their orders in advance — what wakes the wagon, what it may touch, what it may say, and the number at which it must stop — and then they sleep. That is the discipline. They actually sleep. Visitors ask to see the secret. The sentries produce a small card with the permissions written on it. The card is mostly the word read. The visitors are disappointed. They ask for the other card, the one where the wagon may do anything it thinks best. The sentries have that card too. They keep it in a drawer, underneath the incident reports it generated."
+  },
+  {
+    "id": "skills_exchange",
+    "mile": 1350,
+    "name": "The Skills Exchange",
+    "mechanic": "skills_market",
+    "blurb": "A trading post where parties swap procedures. Everything here is a folder. The folders contain instructions, sometimes scripts, and sometimes a README that says see other README. The proprietor sells four different goods that look identical on the shelf: a procedure the party reads when the situation calls for it, a scout who goes ahead with her own supplies and reports back, a standing order that fires whether or not anyone remembers it, and a route to somewhere that has things you need. He will cheerfully sell any of them for any purpose. He does not check what is in them. Neither, historically, have you. In the back, a stall sells routes at a discount. Its sign says TRUSTED. The sign is the entire vetting process."
+  },
+  {
+    "id": "permissions_pass",
+    "mile": 1520,
+    "name": "Permissions Pass",
+    "mechanic": "permissions_gauntlet",
+    "blurb": "The pass is a gauntlet of gates, and every gate asks the same question: what is the least you could carry and still do the job? Parties hate the question. They arrive hauling access they requested in year one, on the theory that they might someday need it. The theory has been correct exactly once, for the people who robbed them. The gatekeeper's ledger records two kinds of traveler: those who carried too little and had to ask twice, and those who carried everything and became, eventually, a headline. Requests for standing access to everything are approved by a committee. The committee meets after the incident. Its findings are thorough, unanimous, and addressed to whoever you were before."
+  },
+  {
+    "id": "migration_plateau",
+    "mile": 1700,
+    "name": "The Great Migration Plateau",
+    "mechanic": "boss_loops",
+    "blurb": "On the plateau, three trails must be walked at once, by one party, against one budget, toward one repository. The wind here smells of merge conflict. Parties that survive give each loop its own ground and its own stopping rule, and cap the whole endeavor with a number written down in advance, where it cannot be renegotiated by enthusiasm. Parties that do not survive are easy to find. Three sets of wheel ruts, converging confidently on the same file. The plateau is also where the PMO's final status template arrives, requiring daily restatement of all progress in a new format, effective immediately. The template took longer to complete than the plateau took to cross. Only one of them appears in the report."
+  },
+  {
+    "id": "production",
+    "mile": 2000,
+    "name": "Production",
+    "mechanic": "endgame",
+    "blurb": "Production is real. This must be stated plainly, because most of your party stopped believing it around mile nine hundred. It is also smaller than the brochures said. There are users here. Actual ones. They have been waiting the entire time — not for the migration, not for the attestation campaign, not for the framework upgrade, all of which finished on schedule and were celebrated. They were waiting for the thing. Whether the thing arrived is a question with a date attached, and the date was Day 120, and nobody in the territory knows better than you what day it is now. The retrospective begins in an hour. Attendance is mandatory. For the first time on this trail, everyone agrees it should be."
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "skills.schema.json",
+  "title": "Skills Exchange Goods",
+  "type": "array",
+  "minItems": 8,
+  "items": {
+    "type": "object",
+    "required": ["id", "type", "name", "cost", "blurb", "effect", "trap"],
+    "additionalProperties": false,
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "type": {
+        "type": "string",
+        "enum": ["procedure", "scout", "standing_order", "trade_route"]
+      },
+      "name": { "type": "string", "minLength": 1 },
+      "cost": {
+        "type": "object",
+        "required": ["credibility", "tokens"],
+        "additionalProperties": false,
+        "properties": {
+          "credibility": { "type": "integer", "minimum": 0 },
+          "tokens": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "blurb": { "type": "string", "minLength": 1 },
+      "effect": { "type": "string", "minLength": 1 },
+      "trap": { "type": "boolean" },
+      "trapNote": { "type": "string" }
+    },
+    "if": { "properties": { "trap": { "const": true } } },
+    "then": { "required": ["id", "type", "name", "cost", "blurb", "effect", "trap", "trapNote"] }
+  }
+}

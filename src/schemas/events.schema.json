@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "events.schema.json",
+  "title": "Events",
+  "type": "array",
+  "minItems": 60,
+  "items": { "$ref": "#/definitions/event" },
+  "definitions": {
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "milesTraveled": { "$ref": "#/definitions/range" },
+        "day": { "$ref": "#/definitions/range" },
+        "hasFlag": { "type": "string" },
+        "notFlag": { "type": "string" },
+        "partyMemberAlive": { "type": "string" },
+        "partyMemberDead": { "type": "string" },
+        "resource": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "enum": ["tokens", "context", "trust", "greenBuilds", "morale", "credibility"] },
+            "lt": { "type": "number" },
+            "gt": { "type": "number" }
+          }
+        }
+      }
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gt": { "type": "number" },
+        "lt": { "type": "number" }
+      }
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens": { "type": "number" },
+        "context": { "type": "number" },
+        "trust": { "type": "number" },
+        "greenBuilds": { "type": "number" },
+        "morale": { "type": "number" },
+        "credibility": { "type": "number" },
+        "days": { "type": "number" },
+        "miles": { "type": "number" },
+        "setFlag": { "type": "string" },
+        "loseMember": { "type": "string" }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "required": ["id", "label", "effects"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "requires": { "$ref": "#/definitions/requires" },
+        "effects": { "$ref": "#/definitions/effects" },
+        "outcome": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["id", "weight", "title", "body", "effects", "choices"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "weight": { "type": "number", "minimum": 0 },
+        "requires": { "$ref": "#/definitions/requires" },
+        "title": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 },
+        "effects": { "$ref": "#/definitions/effects" },
+        "choices": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/choice" }
+        }
+      }
+    }
+  }
+}

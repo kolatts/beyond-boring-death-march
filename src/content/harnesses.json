@@ -1,0 +1,62 @@
+[
+  {
+    "id": "bare_api",
+    "name": "Bare API",
+    "toolBreadth": 0,
+    "contextMgmt": 0,
+    "recovery": 0,
+    "guardrails": 0,
+    "determinism": 10,
+    "blurb": "No tools. No memory. No loop. You are the harness. Every error message is copy-pasted by a human being, which is you."
+  },
+  {
+    "id": "chat_window",
+    "name": "The Chat Window",
+    "toolBreadth": 1,
+    "contextMgmt": 2,
+    "recovery": 1,
+    "guardrails": 2,
+    "determinism": 3,
+    "blurb": "One conversation, infinite scroll, no file access, no verification. The work happens somewhere else and is described here, from memory, by both of you. By turn forty the transcript is a novel and the requirement is a rumor from its first chapter."
+  },
+  {
+    "id": "terminal_agent",
+    "name": "The Terminal Agent",
+    "toolBreadth": 9,
+    "contextMgmt": 7,
+    "recovery": 8,
+    "guardrails": 4,
+    "determinism": 5,
+    "blurb": "Full tool surface, file access, a real loop, real recovery, and a real ability to delete things. It reads the failure, fixes the file, and runs the tests again without asking you to carry anything. The guardrails are whatever you remembered to configure. Most parties remember after."
+  },
+  {
+    "id": "governed_runner",
+    "name": "The Governed Runner",
+    "toolBreadth": 7,
+    "contextMgmt": 8,
+    "recovery": 8,
+    "guardrails": 10,
+    "determinism": 7,
+    "blurb": "Sandboxed, allowlisted, every write reviewed. Slower than you want. Still standing at mile 1,800, which is more than can be said for the fast one."
+  },
+  {
+    "id": "approved_portal",
+    "name": "The Approved Portal",
+    "toolBreadth": 1,
+    "contextMgmt": 3,
+    "recovery": 2,
+    "guardrails": 9,
+    "determinism": 8,
+    "blurb": "The enterprise wrapper. The model is in there, behind a banner reminding you not to trust it with anything important, above a text box that strips formatting, behind a login that expires hourly. It cannot touch files, run tests, or remember Tuesday. It is fully compliant. So is a brick."
+  },
+  {
+    "id": "side_project",
+    "name": "The Side Project",
+    "toolBreadth": 8,
+    "contextMgmt": 5,
+    "recovery": 3,
+    "guardrails": 2,
+    "determinism": 4,
+    "blurb": "Built by an engineer who left in the spring. Astonishing tool reach, no documentation, and a config file nobody opens because the comments trail off mid-sentence. It works better than anything official, which is why it has no budget, no owner, and no plan for the day it stops."
+  }
+]

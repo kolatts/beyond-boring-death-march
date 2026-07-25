@@ -1,0 +1,114 @@
+{
+  "roles": [
+    {
+      "id": "vp_adjacent_concerns",
+      "name": "VP of Adjacent Concerns",
+      "multiplier": 1,
+      "blurb": "Enormous budget, three headcount, and zero credibility with anyone who writes code. Can buy anything. Cannot be believed. Every dialogue check against engineers is at a penalty, which the engineers would describe as calibrated.",
+      "startingKit": {
+        "tokens": 800,
+        "contextCapacity": 100,
+        "trust": 3,
+        "greenBuilds": 5,
+        "morale": 60,
+        "credibility": 10
+      },
+      "abilities": [],
+      "flags": ["engineer_dialogue_penalty"]
+    },
+    {
+      "id": "staff_engineer",
+      "name": "Staff Engineer",
+      "multiplier": 2,
+      "blurb": "Balanced. Knows where the forms are, which is why they can never leave. Starts with the Repair Loop ability: once per landmark, fix one broken system for free.",
+      "startingKit": {
+        "tokens": 500,
+        "contextCapacity": 100,
+        "trust": 6,
+        "greenBuilds": 4,
+        "morale": 70,
+        "credibility": 40
+      },
+      "abilities": ["repair_loop"],
+      "flags": []
+    },
+    {
+      "id": "contractor_sow",
+      "name": "Contractor, 6-Week Statement of Work",
+      "multiplier": 3,
+      "blurb": "No budget, no admin rights, and a laptop that arrives on week four. Cannot purchase anything at the Outfitting Store; must scavenge. Starts with read-only production access, which is somehow more than the full-time staff have.",
+      "startingKit": {
+        "tokens": 300,
+        "contextCapacity": 100,
+        "trust": 4,
+        "greenBuilds": 2,
+        "morale": 80,
+        "credibility": 25
+      },
+      "abilities": ["read_only_prod"],
+      "flags": ["no_purchases", "laptop_delayed"]
+    }
+  ],
+  "members": [
+    {
+      "id": "junior",
+      "defaultName": "The Junior",
+      "assist": {
+        "id": "extra_tool_calls",
+        "description": "+2 tool calls in Bug Hunt. Unburdened by the memory of the last five ways this failed, which is occasionally the only way to find the sixth."
+      },
+      "failureMode": {
+        "id": "first_plausible_answer",
+        "description": "Accepts the first plausible answer. Occasionally merges it."
+      }
+    },
+    {
+      "id": "skeptical_principal",
+      "defaultName": "The Skeptical Principal",
+      "assist": {
+        "id": "reveal_flaw",
+        "description": "Reveals one hidden flaw in any loop before you run it. Has seen this exact mistake before, twice, and can name the year each time."
+      },
+      "failureMode": {
+        "id": "design_doc_required",
+        "description": "Will not proceed without a design doc. Costs 1 day."
+      }
+    },
+    {
+      "id": "security_champion",
+      "defaultName": "The Security Champion",
+      "assist": {
+        "id": "halve_injection_damage",
+        "description": "Halves damage from Injection events. Notices the polite instruction addressed to your agent before your agent does."
+      },
+      "failureMode": {
+        "id": "principled_block",
+        "description": "Blocks one purchase per landmark on principle. Is usually right."
+      }
+    },
+    {
+      "id": "scrum_master",
+      "defaultName": "The Scrum Master",
+      "assist": {
+        "id": "morale_to_credibility",
+        "description": "Converts 1 Morale into 1 Credibility per landmark. Makes the work visible to people who only believe in visible work."
+      },
+      "failureMode": {
+        "id": "ceremony_during_crisis",
+        "description": "Schedules a ceremony during every crisis."
+      }
+    },
+    {
+      "id": "you",
+      "defaultName": "You",
+      "assist": {
+        "id": "attempt_anything",
+        "description": "Can always attempt anything."
+      },
+      "failureMode": {
+        "id": "accountable_for_all_of_it",
+        "description": "Are accountable for all of it."
+      }
+    }
+  ]
+}

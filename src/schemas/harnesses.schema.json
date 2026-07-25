@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "harnesses.schema.json",
+  "title": "Harness Cards",
+  "type": "array",
+  "minItems": 4,
+  "items": {
+    "type": "object",
+    "required": ["id", "name", "toolBreadth", "contextMgmt", "recovery", "guardrails", "determinism", "blurb"],
+    "additionalProperties": false,
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "name": { "type": "string", "minLength": 1 },
+      "toolBreadth": { "type": "number", "minimum": 0, "maximum": 10 },
+      "contextMgmt": { "type": "number", "minimum": 0, "maximum": 10 },
+      "recovery": { "type": "number", "minimum": 0, "maximum": 10 },
+      "guardrails": { "type": "number", "minimum": 0, "maximum": 10 },
+      "determinism": { "type": "number", "minimum": 0, "maximum": 10 },
+      "blurb": { "type": "string", "minLength": 1 }
+    }
+  }
+}

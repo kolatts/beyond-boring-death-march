@@ -1,0 +1,182 @@
+[
+  {
+    "id": "npc_outfitter",
+    "landmarkId": "legacy_junction",
+    "name": "The Outfitter",
+    "intro": "The Outfitter has equipped four hundred parties and been to Production zero times. He does not consider this a contradiction. Travel agents, he points out, do not live in the destinations. He stocks engines on one wall and everything-around-the-engine on the other, and he has watched a decade of customers stare at the wrong wall.",
+    "advice": {
+      "correct": "Folks spend all day picking the engine and thirty seconds picking everything around it. It's the everything-around-it that walks out of that canyon alive. Same engine in a different rig is a different animal entirely.",
+      "wrong": "Between us: buy the smartest model on the shelf and the rest sorts itself out. Smart finds a way. Always has."
+    },
+    "options": [
+      { "id": "ask_harness", "label": "Ask what the harness wall actually does", "response": "He lights up. Nobody asks. He walks you through recovery, tool reach, the part that decides when to stop. 'The stopping part,' he says, 'is the part the dead ones didn't buy.'", "effects": { "credibility": 2 } },
+      { "id": "ask_engine", "label": "Ask which model is the smartest", "response": "He sells you the answer without argument, the way a man sells a hat to someone asking for a boat. The receipt is itemised. Item one is the hat.", "effects": { "credibility": -1, "morale": 1 } },
+      { "id": "ask_trail", "label": "Ask about the trail ahead", "response": "'Long. Governed.' He gestures at a wall of forms. 'Take spare attestations. They spoil slower than everything else out there.'", "effects": { "morale": -1 } }
+    ]
+  },
+  {
+    "id": "npc_prompt_curator",
+    "landmarkId": "fort_prompt",
+    "name": "The Prompt Curator",
+    "intro": "The Curator maintains the fort's collection. She can recite the great prompts from memory and does, unprompted, which she acknowledges is the only unprompted thing that happens here. She was an engineer once. She remembers shipping the way other people remember a country they left as children.",
+    "advice": {
+      "correct": "A mediocre request inside a loop that checks its work beats our best prompt standing alone. I know the exact worth of our best prompt standing alone. I dust it.",
+      "wrong": "The breakthrough is close. Prompt forty-one nearly worked, and forty-two has a stronger persona. Refine the wording until the work happens. It is the wording."
+    },
+    "options": [
+      { "id": "read_prompt", "label": "Read the famous prompt", "response": "It is genuinely very good. You feel it trying to compensate — for the missing tools, the missing tests, the missing loop — the way a beautiful letter compensates for nobody coming home.", "effects": { "morale": 1 } },
+      { "id": "ask_after", "label": "Ask what happens after the prompt is sent", "response": "A long pause. 'We read the response,' she says, 'and then we improve the prompt.' She hears it as she says it. You watch her hear it.", "effects": { "credibility": 2, "morale": -1 } },
+      { "id": "donate", "label": "Donate your starting prompt to the collection", "response": "She files it with real tenderness under Early Optimism, between four thousand others. The drawer closes with the sound of a decision being deferred.", "effects": { "credibility": 1 } }
+    ]
+  },
+  {
+    "id": "npc_rut_reader",
+    "landmarkId": "loop_fork",
+    "name": "The Rut-Reader",
+    "intro": "An old surveyor who reads wheel ruts the way others read ledgers. She can tell a one-shot party from a loop party at two hundred yards: the one-shots leave a single deep line, very straight, very confident, ending abruptly. The loops leave circles that tighten like handwriting getting sure of itself.",
+    "advice": {
+      "correct": "Small circles, checked often. Act, look at what actually happened, adjust, go again. The looking is the part that isn't optional. The ruts that skip the looking all end in the same place, and I can show you the place.",
+      "wrong": "If a loop fails, run it again with more retries. Retries are what looping means. No sense reading the output each time — that's what the retries are for."
+    },
+    "options": [
+      { "id": "study_ruts", "label": "Study the failed ruts with her", "response": "Every dead-end track shares one feature: no adjustment marks. They acted, and acted, and acted. 'Nothing ever came back in,' she says. 'Beautiful penmanship, though.'", "effects": { "credibility": 2 } },
+      { "id": "ask_shortcut", "label": "Ask if the straight road is ever right", "response": "'For small, known things, surely. The dead ones out there weren't doing small, known things. They were doing hope, at scale, in one push.'", "effects": { "morale": 1 } },
+      { "id": "buy_map", "label": "Buy her annotated map", "response": "The map marks where each party stopped observing. The marks cluster early. She charges fairly and includes, free, the fact that nobody has ever bought a second copy for a friend.", "effects": { "credibility": 1, "tokens": -10 } }
+    ]
+  },
+  {
+    "id": "npc_bridge_inspector",
+    "landmarkId": "verifier_ridge",
+    "name": "The Bridge Inspector",
+    "intro": "The Inspector has one job and one question, and the question is the job: how will you know it worked? He has heard every answer. He keeps the best ones in a notebook titled Sincere, which is thick, and the acceptable ones in a notebook titled Checkable, which fits in his breast pocket with room for his glasses.",
+    "advice": {
+      "correct": "Your verifier has to be able to say no. A test that can fail, a build that can break. If it cannot fail the work, it is not checking the work — it is attending it.",
+      "wrong": "Honestly, a senior person glancing over the diff is the same thing. Judgment is a verifier. The eyeball has never been fooled by anything green."
+    },
+    "options": [
+      { "id": "show_checklist", "label": "Show him your review checklist", "response": "He reads all seventeen items respectfully. 'Has it ever been marked incomplete?' It has not. He files it in Sincere, alphabetically, with condolences.", "effects": { "credibility": -1, "morale": -1 } },
+      { "id": "show_test", "label": "Show him a test that fails when the work is wrong", "response": "He runs it against a known-broken build. It fails, loudly and specifically. He stamps your papers with something close to warmth. 'You'd be surprised,' he says, 'how few things I get to stamp.'", "effects": { "credibility": 3 } },
+      { "id": "ask_ravine", "label": "Ask about the ravine", "response": "'All confident,' he says, looking down. 'Every one of them had a good feeling. The feeling was real. The bridge respects a different category.'", "effects": { "morale": -1 } }
+    ]
+  },
+  {
+    "id": "npc_porter",
+    "landmarkId": "context_canyon",
+    "name": "The Porter",
+    "intro": "The Porter carries other parties' cargo through the narrows for a living, which means she has weighed, with her own hands, exactly what people believe they need. The heaviest thing she ever carried was a complete directory listing. The owner never opened it. The owner checked hourly that it was still there.",
+    "advice": {
+      "correct": "Send the scout at the big log. She reads it out there, in her own head, and brings you back the one line. Costs you a turn. Saves you the canyon.",
+      "wrong": "Pack everything. Every file, every scrollback, all of it. You cannot know what matters, so carry it all — more context is more safety. The walls will respect a full wagon."
+    },
+    "options": [
+      { "id": "weigh_wagon", "label": "Have her weigh your wagon", "response": "She lifts each item once. 'Needed. Needed. This one's a directory listing of a directory listing.' By the end there are two piles, and the taller one is the one you argued for.", "effects": { "credibility": 2, "context": 10 } },
+      { "id": "hire_scout", "label": "Hire her cousin, the scout", "response": "The cousin takes the nine-hundred-line log, disappears, returns with one sentence and a line number. The sentence is right. You feel the specific joy the canyon exists to teach.", "effects": { "tokens": -15, "credibility": 2 } },
+      { "id": "insist_full", "label": "Insist on carrying everything", "response": "She does not argue. Arguing is not billable. She adjusts the straps of your enormous wagon and says only: 'The walls don't argue either.'", "effects": { "morale": -2, "context": -10 } }
+    ]
+  },
+  {
+    "id": "npc_ferryman",
+    "landmarkId": "cab_crossing",
+    "name": "The Ferryman",
+    "intro": "The Ferryman has operated the CAB ferry for eleven years and has watched what actually happens at this river, as distinct from what is reported to happen, two records he describes as estranged. He is not cynical. He is precise, which after eleven years is polished, load-bearing cynicism.",
+    "advice": {
+      "correct": "Caulk it and float it dark. Build the flag, ship it quiet, turn it on when you're standing next to it. Most crossings, that's the true answer, and I say so from the deck of the ferry it undercuts.",
+      "wrong": "The ferry is always the safe choice. Nothing bad happens on the ferry. Take it every time, whatever the wait. Safe is safe."
+    },
+    "options": [
+      { "id": "ask_ledger", "label": "Ask to see his crossing ledger", "response": "Eleven years of data. The fords fail spectacularly and rarely. The ferry fails slowly and always, in a currency the ledger tracks in a column labeled 'while waiting.' The column is the widest one.", "effects": { "credibility": 2 } },
+      { "id": "ask_permit", "label": "Ask about the permit process", "response": "'Forty-five days, unless a CVE lands mid-wait — then your permit's reclassified and the clock is reborn.' He says reborn like a man who has watched many clocks achieve it.", "effects": { "morale": -2 } },
+      { "id": "ask_plaques", "label": "Ask about the two plaques", "response": "'Purpose plaque says prevent incidents. Incident plaque disagrees. They've faced each other eleven years. My theory is neither can read.'", "effects": { "morale": 1 } }
+    ]
+  },
+  {
+    "id": "npc_blacksmith",
+    "landmarkId": "harness_hollow",
+    "name": "The Blacksmith",
+    "intro": "The Blacksmith rebuilds harnesses and has stopped explaining her one finding, because the wall of before-and-after numbers explains it hourly to anyone who can read a wall. Parties arrive certain the engine is the problem. She has a bench for that certainty. The bench is worn smooth.",
+    "advice": {
+      "correct": "Keep your engine. Change what's around it — the tools, the memory, the stopping rules — and measure the difference on your own wagon, not on my wall. Your numbers will out-argue me and I welcome it.",
+      "wrong": "Trade the engine up. Newest one on the market fixes a rig like yours from the inside. The surround is cosmetic. Engines are the whole animal."
+    },
+    "options": [
+      { "id": "swap_harness", "label": "Swap the harness, keep the model", "response": "Same engine, different everything-else. The shakedown run comes back and you read it twice. She doesn't look up from the forge. She has seen the double-read a thousand times. It is her favorite sound.", "effects": { "credibility": 3 } },
+      { "id": "ask_wall", "label": "Study the wall of numbers", "response": "Harness swaps move outcomes further than model swaps, on wagon after wagon, year after year. The wall does not editorialise. The wall doesn't have to.", "effects": { "credibility": 1 } },
+      { "id": "demand_engine", "label": "Ask for the newest engine anyway", "response": "She sells it to you. It is a fine engine. In your old harness it behaves like your old engine with better vocabulary, and she watches you learn this at full price, which is the tuition.", "effects": { "tokens": -20, "morale": -1 } }
+    ]
+  },
+  {
+    "id": "npc_night_sentry",
+    "landmarkId": "fort_actions",
+    "name": "The Night Sentry",
+    "intro": "The Sentry has run the overnight watch for six years and sleeps, famously, well. Her orders fit on a card: what wakes the wagon, what it may touch, what it may say, when it must stop. Visitors find the card disappointing. She keeps a drawer of the exciting cards. The drawer is labeled with dates and each date was a very long day.",
+    "advice": {
+      "correct": "Read-only, comment-only, hard budget cap. You'll wake to three useful comments and forty free miles, and the worst thing it can do all night is be unhelpful. Start there. Earn upward.",
+      "wrong": "Give it write access and no cap — that's what the night is for. If it can't push, why run it? Trust the wagon. The dark builds character."
+    },
+    "options": [
+      { "id": "copy_card", "label": "Copy her permission card", "response": "Mostly the word read, one cap, one allowed output. 'People want the other card,' she says, opening the drawer of dated incidents without looking at it. 'The other card is in here. It's always in here.'", "effects": { "credibility": 2 } },
+      { "id": "ask_raid", "label": "Ask about the worst night", "response": "'Full permissions, push to main, no cap. Woke up eighty miles ahead in the wrong direction, two hundred commits, and the README rewritten in a language none of us speak. Confident language, though. Very warm.'", "effects": { "morale": -1 } },
+      { "id": "ask_recursion", "label": "Ask why her triggers ignore the wagon's own output", "response": "'Because one fort down the line, a wagon answered itself all night. Its comments triggered its comments. By morning it had a rich inner life and we had no tokens. Lovely correspondence. We bound it as a book.'", "effects": { "credibility": 1, "morale": 1 } }
+    ]
+  },
+  {
+    "id": "npc_proprietor",
+    "landmarkId": "skills_exchange",
+    "name": "The Proprietor",
+    "intro": "The Proprietor sells four goods that look identical shelved: procedures, scouts, standing orders, and trade routes. He is honest by the standard of the trail, which is to say he answers every question truthfully and volunteers nothing, and the profit lives entirely in the nothing.",
+    "advice": {
+      "correct": "If the rule has to hold every single time, buy the standing order. Instructions ask. Orders fire. A procedure is the agent promising to remember, and you've met the agent.",
+      "wrong": "A well-written procedure covers the same ground as a standing order at half the price. Write it clearly enough and remembering takes care of itself. Words are enforcement, friend."
+    },
+    "options": [
+      { "id": "ask_difference", "label": "Ask the difference between the four goods", "response": "He gives it straight: read-when-needed, goes-ahead-and-reports, fires-regardless, connects-to-elsewhere. Completely honest. He then gestures at the shelf where all four look identical, and smiles, because the shelf is the business model.", "effects": { "credibility": 2 } },
+      { "id": "ask_stall", "label": "Ask about the discount stall in the back", "response": "'No affiliation.' A pause with a price in it. 'Their routes work fine. Folks do come back, though. Usually with questions about what all the route read on the way through. I don't stock those answers.'", "effects": { "morale": -1, "credibility": 1 } },
+      { "id": "haggle", "label": "Haggle over the standing order", "response": "He won't move on price. 'That one fires whether anybody remembers it, believes in it, or is having a bad week. You're not paying for the folder. You're paying for whether.'", "effects": { "credibility": 1 } }
+    ]
+  },
+  {
+    "id": "npc_gatekeeper",
+    "landmarkId": "permissions_pass",
+    "name": "The Gatekeeper",
+    "intro": "The Gatekeeper's ledger records every party's cargo of access, and every gate asks her one question: what is the least you could carry and still do the job? She has kept the ledger long enough to know both failure modes by their footsteps: the ones who carried too little and asked twice, and the ones who carried everything and became a headline she keeps folded in the back cover.",
+    "advice": {
+      "correct": "Least privilege isn't no privilege. Take the narrow write you genuinely need, scoped and reviewed — going naked through the pass just means begging at every gate, and begging has a mile rate. Carry exactly enough. Know exactly what enough is.",
+      "wrong": "Request everything once and be done forever. Asking twice looks weak, and the approval queue is long. Standing access is just efficiency with a bad reputation."
+    },
+    "options": [
+      { "id": "audit_access", "label": "Audit your wagon's access with her", "response": "Of your 400 grants, twelve are used and three are needed. The rest are year-one optimism, fossilised. She strikes them and your wagon audibly rises on its axles.", "effects": { "credibility": 3, "trust": 1 } },
+      { "id": "ask_headline", "label": "Ask about the folded headline", "response": "She shows you. A party that carried everything and touched something patient at a watering hole. The headline names the breach. It does not name the intake form that approved the access. Forms are never named.", "effects": { "morale": -2 } },
+      { "id": "request_all", "label": "Request standing access to everything", "response": "She hands you the committee form without comment. Filling it out is a day. The committee meets after incidents. There is no other trigger. You may keep the pen.", "effects": { "days": 1, "credibility": -2 } }
+    ]
+  },
+  {
+    "id": "npc_trail_boss",
+    "landmarkId": "migration_plateau",
+    "name": "The Trail Boss",
+    "intro": "The Trail Boss has taken nine parties across the plateau and lost two, and will tell you about the two first, unprompted, because that ordering is the whole of her method. Both losses were the same loss: three loops, one repository, no fences, and a budget that was a mood.",
+    "advice": {
+      "correct": "Partition the ground before anything runs. Each loop gets its own files, its own stop rule, and one shared budget written down where enthusiasm can't renegotiate it. The merge is the predator up here. Fences first.",
+      "wrong": "Run all three on the same branch, full speed — parallel means parallel. Merge conflicts are a Tuesday problem, and it is not Tuesday. Speed is the only fence that matters on a plateau."
+    },
+    "options": [
+      { "id": "plan_fences", "label": "Walk the ground and draw the partitions", "response": "An afternoon with stakes and string. Loop one cannot touch loop two's files even in its dreams. 'Boring afternoon,' she says, approvingly. Approval, from her, has a texture.", "effects": { "days": 1, "credibility": 3 } },
+      { "id": "ask_losses", "label": "Ask what the two lost parties did", "response": "'Same file, three writers, no cap. First conflict at dusk. By midnight they were merging each other's merges. What we found in the morning was very green and had three of everything.'", "effects": { "morale": -2 } },
+      { "id": "ask_budget", "label": "Ask about the shared budget", "response": "'One number, on paper, before the run. Not three numbers. Not a number each loop feels. The plateau has heard every version of we were almost done, in every weather. It keeps none of them.'", "effects": { "credibility": 2 } }
+    ]
+  },
+  {
+    "id": "npc_greeter",
+    "landmarkId": "production",
+    "name": "The Greeter",
+    "intro": "The Greeter is a user. An actual one. She has been here the whole time, using the current version of the thing, filing tickets into what she assumed was a very quiet inbox. She is pleased to see you. She has a list. The list predates several of your compliance certificates and has aged better than all of them.",
+    "advice": {
+      "correct": "Ask us what we needed before you decide what you shipped. We're right here. We were always right here. The gap between your roadmap and my list is where your next two years live.",
+      "wrong": "Ship the rest of the roadmap as planned — a roadmap that made it this far must be right, and consulting users now would only introduce inconsistency into the plan."
+    },
+    "options": [
+      { "id": "read_list", "label": "Read her list", "response": "Item one is small, boring, and would have taken a day at mile 200. It has cost her an hour a week for two years. Nobody scheduled it because nobody was ever going to be audited about it. You do the arithmetic. The arithmetic is loud.", "effects": { "credibility": 3, "morale": -2 } },
+      { "id": "show_shipped", "label": "Show her what you shipped", "response": "She finds two features she has wanted for years, and a third she cannot identify. You explain the third was required by the Standards Body. 'For whom?' she asks, and the question has no answer with a user in it. She waits anyway. She is good at waiting. She has the paperwork to prove it.", "effects": { "credibility": 1 } },
+      { "id": "apologise", "label": "Ask what took you so long, before she can", "response": "You walk her through the crossings, the mandates, the Friday announcements. She listens the whole way. 'None of that was for me,' she says. Not unkindly. Just accurately, which is worse, and useful, which is the difference between her and the dashboard.", "effects": { "morale": 3, "credibility": 2 } }
+    ]
+  }
+]

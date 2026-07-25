@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "party.schema.json",
+  "title": "Party Roles and Members",
+  "type": "object",
+  "required": ["roles", "members"],
+  "additionalProperties": false,
+  "properties": {
+    "roles": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "multiplier", "blurb", "startingKit", "abilities", "flags"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string", "minLength": 1 },
+          "multiplier": { "type": "number", "minimum": 1 },
+          "blurb": { "type": "string", "minLength": 1 },
+          "startingKit": {
+            "type": "object",
+            "required": ["tokens", "contextCapacity", "trust", "greenBuilds", "morale", "credibility"],
+            "additionalProperties": false,
+            "properties": {
+              "tokens": { "type": "integer", "minimum": 0 },
+              "contextCapacity": { "type": "integer", "minimum": 0 },
+              "trust": { "type": "integer", "minimum": 0 },
+              "greenBuilds": { "type": "integer", "minimum": 0 },
+              "morale": { "type": "integer", "minimum": 0, "maximum": 100 },
+              "credibility": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+          },
+          "flags": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+          }
+        }
+      }
+    },
+    "members": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "defaultName", "assist", "failureMode"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "defaultName": { "type": "string", "minLength": 1 },
+          "assist": {
+            "type": "object",
+            "required": ["id", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "description": { "type": "string", "minLength": 1 }
+            }
+          },
+          "failureMode": {
+            "type": "object",
+            "required": ["id", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "description": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

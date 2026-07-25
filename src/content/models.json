@@ -1,0 +1,56 @@
+[
+  {
+    "id": "prodigy",
+    "name": "The Prodigy",
+    "reasoning": 10,
+    "speed": 5,
+    "costPerMile": 9,
+    "adherence": 4,
+    "blurb": "Sky-high reasoning, priced accordingly. Ignores instructions it finds boring, which it determines using the sky-high reasoning. Will solve the problem you have, the problem you are about to have, and one problem it invented on the way, in that order if you are lucky."
+  },
+  {
+    "id": "workhorse",
+    "name": "The Workhorse",
+    "reasoning": 5,
+    "speed": 8,
+    "costPerMile": 2,
+    "adherence": 9,
+    "blurb": "Does exactly what you asked. Including the part you didn't mean."
+  },
+  {
+    "id": "committee",
+    "name": "The Committee",
+    "reasoning": 6,
+    "speed": 2,
+    "costPerMile": 5,
+    "adherence": 8,
+    "blurb": "Averages every answer. Never brilliant, never catastrophic, always late. Ask it a yes-or-no question and receive a balanced perspective, three considerations, and a recommendation to align with stakeholders, delivered after the decision was needed."
+  },
+  {
+    "id": "approved_version",
+    "name": "Last Year's Approved Version",
+    "reasoning": 3,
+    "speed": 6,
+    "costPerMile": 0,
+    "adherence": 7,
+    "blurb": "Free, approved, and eighteen months old. Available immediately, which is the entire pitch. Genuinely viable. Several parties have reached Production on this."
+  },
+  {
+    "id": "preview_build",
+    "name": "The Preview Build",
+    "reasoning": 9,
+    "speed": 9,
+    "costPerMile": 4,
+    "adherence": 6,
+    "blurb": "Spectacular. In preview. The terms of service reserve the right to change its behavior, its price, and its existence, and the trail is long. Deprecation notices arrive by email, addressed to whoever set up the account, who has left."
+  },
+  {
+    "id": "specialist",
+    "name": "The Specialist",
+    "reasoning": 7,
+    "speed": 7,
+    "costPerMile": 3,
+    "adherence": 8,
+    "blurb": "Tuned on your domain. Knows your acronyms, your legacy quirks, your naming disasters, and believes with its whole weight that this is what all software looks like. Take it past the boundary of your domain and it describes your domain, confidently, from memory, forever."
+  }
+]

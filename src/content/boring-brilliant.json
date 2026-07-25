@@ -1,0 +1,128 @@
+{
+  "landmarks": [
+    {
+      "landmarkId": "legacy_junction",
+      "boring": "Take the governed harness. I have read the incident reports of every party that didn't, and I have them here, sorted by cause, if you would like to not become one.",
+      "brilliant": "Take the smartest engine and the bare wires. Guardrails are for people who plan to hit things. We are not planning to hit things. I have checked our plan.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "Noted in the log. I log the good decisions too. It's a very short section but I maintain it.",
+        "brilliant": "Fine. But when we're crawling past mile 400 fully documented, remember that I offered you the sky."
+      }
+    },
+    {
+      "landmarkId": "fort_prompt",
+      "boring": "The settlers' approach has merit. A sufficiently complete instruction, reviewed and version-controlled, should not need a second attempt. I have drafted one. It is four thousand words. It is not finished.",
+      "brilliant": "Send anything and run it. The first draft, a napkin, a gesture. The loop will catch what the wording misses — the wording was never going to carry us anyway. Nothing here has moved in two years except the prompt's word count.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "You ran it before I finished the tone guide. The results are... adequate. The tone guide would have made them adequate sooner. I am filing the tone guide.",
+        "brilliant": "See? Motion. The fort's best prompt is still in there being read aloud to nobody. Ours is out here being wrong in useful ways."
+      }
+    },
+    {
+      "landmarkId": "loop_fork",
+      "boring": "Before we take the circle, I propose a human checkpoint at each of its twelve stations. If the loop cannot hurt us, it cannot surprise us. I have printed the approval forms. There is a pad of them.",
+      "brilliant": "Build it, cap it, and let it run. A loop with a person wedged in every joint is a corridor, and we already have a corridor — it's called the road, and the road is where the skeletons are.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "It ran unattended for a full leg. I watched anyway. Someone should know what unattended looks like, for the record.",
+        "brilliant": "Eleven iterations while we ate lunch. I want it noted that lunch was my idea as well."
+      }
+    },
+    {
+      "landmarkId": "verifier_ridge",
+      "boring": "We do not cross until something in this wagon can say the word no and mean it mechanically. A test that fails when the work is wrong. Not a checklist. I say this as the author of our checklist, and it costs me.",
+      "brilliant": "I've walked the bridge twice and it held both times, and both times it felt held. Confidence is data. Mine has never been wrong in any way we wrote down, because — and this is the elegant part — we don't write it down.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "The verifier failed the crossing twice before passing it. Both failures were real. I have never been so pleased to be told no.",
+        "brilliant": "Your plank of 'machine-checkable doubt' held better than my confidence, which I am recording as a special case."
+      }
+    },
+    {
+      "landmarkId": "context_canyon",
+      "boring": "Manifest everything, weigh everything, and leave most of it at the mouth of the canyon. The wagon carries what the job needs. The job has never once needed the full directory listing, and I have audited every job since Legacy Junction.",
+      "brilliant": "Bring all of it — the scrollback, the listing, the logs. The window is enormous now. Somewhere in that pile is the crucial detail, and the way to have the crucial detail is to have every detail. This is just arithmetic.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "We passed the narrows with room to spare. I have prepared a small document on what we didn't bring and how none of it was missed. Nobody needs to read it. It exists.",
+        "brilliant": "The full wagon jammed at the second bend, exactly as predicted by — I want this minuted — the beige one."
+      }
+    },
+    {
+      "landmarkId": "cab_crossing",
+      "boring": "The ferry. Forty-five days is not a delay, it is a documented crossing at a known depth. I have begun the permit. Page one asks for the permit number of the permit. I will resolve this.",
+      "brilliant": "Caulk it, float it dark, flag off. We're across by nightfall and nobody downstream feels a ripple until we choose to make one, standing on dry land, holding the switch. Even I don't want to ford this one — the flag IS the daring option.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "We crossed dark and nothing broke, which I have recorded as 'pending' because nothing breaking takes longer than that to verify.",
+        "brilliant": "Shipped, dark, reversible. The ferry queue is still visible from here. They've started a book club."
+      }
+    },
+    {
+      "landmarkId": "harness_hollow",
+      "boring": "Our current configuration is approved and documented, and its failures are known failures, which I have catalogued and grown fond of. A swap introduces unknowns. I vote we keep the devil whose paperwork I've finished.",
+      "brilliant": "Same engine, new rig — swap it and run the shakedown. If the blacksmith's wall is right, we gain more this afternoon than we've gained since the Fork. If it's wrong, we swap back before supper. The downside fits inside a day.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "The delta is... substantial. I am re-cataloguing our failures. Most of them appear to have been the harness's failures wearing our engine's name.",
+        "brilliant": "Twice the ground on the same engine. I'd gloat, but the numbers are doing it for me, which is what numbers are for."
+      }
+    },
+    {
+      "landmarkId": "fort_actions",
+      "boring": "Overnight orders: read-only, comment-only, hard cap, and a trigger that cannot hear its own voice. The wagon may be useful or it may be idle, but it may not be interesting. Night is no time for interesting.",
+      "brilliant": "It's the perfect window for the big migration — full write access while nothing can interrupt! Eight uninterrupted hours! I've drafted the permissions card already, it's one word, the word is 'everything.'",
+      "correct": "boring",
+      "reaction": {
+        "boring": "Three useful comments and forty miles by dawn, and nothing to report, which is the report I have been trying to file my whole career.",
+        "brilliant": "Fine. FINE. The boring card won the night. I maintain that my card would have won bigger or lost bigger, which I was taught is called upside."
+      }
+    },
+    {
+      "landmarkId": "skills_exchange",
+      "boring": "For the secrets rule, the standing order. Not the procedure — the order. Prose asks, and the agent has a full inbox. The order fires whether anyone remembers, believes, or is on holiday. Rules that must always hold do not get to live in paragraphs.",
+      "brilliant": "The procedure's half the price and reads beautifully — and honestly, the agent has never forgotten anything important while I was watching. That last clause is doing some work, but the savings buy us a scout, and scouts are wonderful.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "The order fired at 03:14 while every one of us slept. I have added 03:14 to my list of favorite times.",
+        "brilliant": "Four out of five, exactly as the fine print said. The fifth is in a log somewhere, being found by someone. I've decided to be brilliant about enforcement now too."
+      }
+    },
+    {
+      "landmarkId": "permissions_pass",
+      "boring": "Surrender everything and proceed read-only. Whatever the job needs, we will request at the gate, each time, with a form. Yes, the begging has a mile rate. Begging is auditable. Speed is not.",
+      "brilliant": "Take the narrow write we actually need — scoped, reviewed, real. Least privilege isn't zero privilege; a party that can't write anything ships nothing, very safely, forever. Carry exactly enough and know exactly what enough is.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "The scoped write cleared the gauntlet without a single incident, which I have verified twice, because the first verification went suspiciously well.",
+        "brilliant": "Enough access to do the job and nothing patient enough to rob. The gatekeeper smiled at us. I checked — that's rare."
+      }
+    },
+    {
+      "landmarkId": "migration_plateau",
+      "boring": "Fences before speed. Each loop gets its own ground, its own stop rule, and one shared budget written where enthusiasm cannot renegotiate it. I have the stakes and the string. I have had the stakes and the string since Legacy Junction.",
+      "brilliant": "Three loops, one branch, full throttle — the plateau is wide and the merge is a rumor spread by the slow. We can be across by nightfall or we can be careful, and careful has never once made the highlight reel.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "Zero conflicts. The budget held. The afternoon was extremely boring and I would like it framed.",
+        "brilliant": "Your string fences beat my throttle. I've named the string. The string is called Doctrine now. I don't love this development but I respect it."
+      }
+    },
+    {
+      "landmarkId": "production",
+      "boring": "One final audit before we present. A last pass of the attestations, the classifications, the— the users are already here, aren't they. They're reading the list. The list predates my certificates. I'll get the pen.",
+      "brilliant": "Ship it and stand next to it. They've waited two years — the kindest thing we own is the switch and the honest thing is our faces when it flips. Everything after this is listening, which I'm told I'm learning.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "The users found two features they loved and one they couldn't identify. I have retired the third feature's paperwork. It weighed four pounds.",
+        "brilliant": "The Greeter's list, item one, a day's work. I already started it. Nobody made it a mandate. Turns out that was never a requirement for doing it."
+      }
+    }
+  ],
+  "endgame": {
+    "boring": "I kept a register of every risk we accepted. Two hundred and eleven. We died of none of them. I understand now that the register was never for the risks. It was for me — so that I could bear to keep moving. You were the ones who moved. Thank you for letting me count.",
+    "brilliant": "I wanted to run ahead the entire way, and the times it worked — the times it truly worked — were the times you had already decided what wrong would look like before I started. That was the fast part. All this time I thought I was the fast part."
+  }
+}

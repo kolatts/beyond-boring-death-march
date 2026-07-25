@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "landmarks.schema.json",
+  "title": "Landmarks",
+  "type": "array",
+  "minItems": 12,
+  "maxItems": 12,
+  "items": {
+    "type": "object",
+    "required": ["id", "mile", "name", "mechanic", "blurb"],
+    "additionalProperties": false,
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "mile": { "type": "integer", "minimum": 0, "maximum": 2000 },
+      "name": { "type": "string", "minLength": 1 },
+      "mechanic": {
+        "type": "string",
+        "enum": [
+          "outfitting",
+          "tutorial_one_shot",
+          "loop_builder_guided",
+          "loop_builder_verifier",
+          "context_pack",
+          "cab_crossing",
+          "harness_swap",
+          "night_watch",
+          "skills_market",
+          "permissions_gauntlet",
+          "boss_loops",
+          "endgame"
+        ]
+      },
+      "blurb": { "type": "string", "minLength": 300 }
+    }
+  }
+}

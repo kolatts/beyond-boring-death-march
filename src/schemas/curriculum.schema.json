@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "curriculum.schema.json",
+  "title": "Curriculum Cards",
+  "type": "array",
+  "minItems": 21,
+  "items": {
+    "type": "object",
+    "required": ["id", "n", "whatHappened", "whyItWorks", "inYourJob", "link"],
+    "additionalProperties": false,
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "n": { "type": "string", "pattern": "^[0-9]{2}$" },
+      "whatHappened": { "type": "string", "minLength": 1 },
+      "whyItWorks": { "type": "string", "minLength": 1 },
+      "inYourJob": { "type": "string", "minLength": 1 },
+      "link": { "type": "string", "format": "uri", "pattern": "^https://" }
+    }
+  }
+}

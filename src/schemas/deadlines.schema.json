@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "deadlines.schema.json",
+  "title": "Surprise Deadlines",
+  "type": "array",
+  "minItems": 12,
+  "items": {
+    "type": "object",
+    "required": ["id", "source", "title", "body", "dueInDays", "complyCost", "deferPenalty", "escalationEventId", "weight", "requires"],
+    "additionalProperties": false,
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "source": {
+        "type": "string",
+        "enum": ["InfoSec", "Compliance", "Architecture Review Board", "PMO", "The Standards Body"]
+      },
+      "title": { "type": "string", "minLength": 1 },
+      "body": { "type": "string", "minLength": 1 },
+      "dueInDays": { "type": "integer", "minimum": 1 },
+      "complyCost": {
+        "type": "object",
+        "required": ["days", "tokens"],
+        "additionalProperties": false,
+        "properties": {
+          "days": { "type": "integer", "minimum": 0 },
+          "tokens": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "deferPenalty": {
+        "type": "object",
+        "required": ["trust", "credibility"],
+        "additionalProperties": false,
+        "properties": {
+          "trust": { "type": "integer", "maximum": 0 },
+          "credibility": { "type": "integer", "maximum": 0 }
+        }
+      },
+      "escalationEventId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "weight": { "type": "number", "minimum": 0 },
+      "requires": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "milesTraveled": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": { "gt": { "type": "number" }, "lt": { "type": "number" } }
+          },
+          "day": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": { "gt": { "type": "number" }, "lt": { "type": "number" } }
+          },
+          "hasFlag": { "type": "string" },
+          "notFlag": { "type": "string" }
+        }
+      }
+    }
+  }
+}

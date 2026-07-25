@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "boring-brilliant.schema.json",
+  "title": "Boring and Brilliant",
+  "type": "object",
+  "required": ["landmarks", "endgame"],
+  "additionalProperties": false,
+  "properties": {
+    "landmarks": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["landmarkId", "boring", "brilliant", "correct", "reaction"],
+        "additionalProperties": false,
+        "properties": {
+          "landmarkId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "boring": { "type": "string", "minLength": 1 },
+          "brilliant": { "type": "string", "minLength": 1 },
+          "correct": { "type": "string", "enum": ["boring", "brilliant"] },
+          "reaction": {
+            "type": "object",
+            "required": ["boring", "brilliant"],
+            "additionalProperties": false,
+            "properties": {
+              "boring": { "type": "string", "minLength": 1 },
+              "brilliant": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "endgame": {
+      "type": "object",
+      "required": ["boring", "brilliant"],
+      "additionalProperties": false,
+      "properties": {
+        "boring": { "type": "string", "minLength": 1 },
+        "brilliant": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

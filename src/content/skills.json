@@ -1,0 +1,121 @@
+[
+  {
+    "id": "release_runbook",
+    "type": "procedure",
+    "name": "The Release Runbook",
+    "cost": { "credibility": 4, "tokens": 10 },
+    "blurb": "A folder of instructions the party reads when a release is near. Battle-tested, versioned, and honest about step nine, which is the one that goes wrong. Loaded only when the situation matches, so it costs nothing to carry.",
+    "effect": "Reduces Green Build loss from failed releases. Loaded on demand; no ongoing context cost.",
+    "trap": false
+  },
+  {
+    "id": "incident_comms_procedure",
+    "type": "procedure",
+    "name": "The Incident Comms Procedure",
+    "cost": { "credibility": 3, "tokens": 5 },
+    "blurb": "What to say, to whom, in which order, when something is on fire. Written by someone who once said the wrong thing to the right person. Every sentence in it was paid for.",
+    "effect": "Halves Credibility loss from incident events.",
+    "trap": false
+  },
+  {
+    "id": "migration_playbook",
+    "type": "procedure",
+    "name": "The Migration Playbook",
+    "cost": { "credibility": 4, "tokens": 15 },
+    "blurb": "Step-by-step instructions for moving a system without anyone noticing, which is the only kind of migration that gets thanked. Includes a rollback section that has never been read aloud without someone going quiet.",
+    "effect": "Reduces day cost of framework and migration deadlines by 1.",
+    "trap": false
+  },
+  {
+    "id": "secret_scrubbing_procedure",
+    "type": "procedure",
+    "name": "The Secret-Scrubbing Procedure",
+    "cost": { "credibility": 2, "tokens": 5 },
+    "blurb": "A well-written document instructing the agent to always redact secrets before logging. The proprietor recommends it warmly. It works four times out of five. The document does not say what happens the fifth time, because the document is the fifth time.",
+    "effect": "Prose-only secret handling. Works most of the time. A Standing Order exists for this job; this is not it.",
+    "trap": true,
+    "trapNote": "This job needs enforcement, not instructions. The fifth time the agent forgets, a secret lands in a log, and the compromised flag is set. The Standing Order version of this good is the correct purchase."
+  },
+  {
+    "id": "log_scout",
+    "type": "scout",
+    "name": "The Log Scout",
+    "cost": { "credibility": 3, "tokens": 20 },
+    "blurb": "A party member who reads the nine-hundred-line log in her own head so you don't have to hold it in yours. Comes back with one sentence and the line number. The sentence is usually right and the line number always is.",
+    "effect": "Summarises one Huge item into one context slot per landmark. Costs tokens and one turn.",
+    "trap": false
+  },
+  {
+    "id": "dependency_scout",
+    "type": "scout",
+    "name": "The Dependency Scout",
+    "cost": { "credibility": 3, "tokens": 15 },
+    "blurb": "Goes into the dependency tree alone, with rations. Returns with the three packages that actually matter, the one that is quietly abandoned, and a look that takes a day or two to fade.",
+    "effect": "Reveals CVE and upgrade hazards one landmark early.",
+    "trap": false
+  },
+  {
+    "id": "legacy_scout",
+    "type": "scout",
+    "name": "The Legacy Scout",
+    "cost": { "credibility": 4, "tokens": 25 },
+    "blurb": "Reads the old system so the party doesn't have to. Isolated context, which matters, because what is in the old system should not be in your head at the same time as hope.",
+    "effect": "Explores legacy code in isolated context; returns a summary instead of the code.",
+    "trap": false
+  },
+  {
+    "id": "secret_scan_order",
+    "type": "standing_order",
+    "name": "The Secret-Scan Standing Order",
+    "cost": { "credibility": 6, "tokens": 10 },
+    "blurb": "Fires on every write, whether or not anyone remembers it, believes in it, or is having a bad week. The model does not get a vote. That is the entire feature, and it is the feature the procedure version is missing.",
+    "effect": "Deterministically blocks secrets from leaving the wagon. Immune to context rot and persuasion.",
+    "trap": false
+  },
+  {
+    "id": "test_gate_order",
+    "type": "standing_order",
+    "name": "The Test-Gate Standing Order",
+    "cost": { "credibility": 5, "tokens": 10 },
+    "blurb": "No write proceeds until the tests have actually run. Not been described. Run. The order cannot be reasoned with, which the agent occasionally finds frustrating, which is how you know it is working.",
+    "effect": "Prevents hollow-green outcomes; the Helpful Rewrite event cannot fire while owned.",
+    "trap": false
+  },
+  {
+    "id": "format_order",
+    "type": "standing_order",
+    "name": "The Formatting Standing Order",
+    "cost": { "credibility": 2, "tokens": 5 },
+    "blurb": "Formats every file on save, ending the longest war in your organisation's history without a treaty, a retro, or a working group. Nobody thanks it. It does not need thanks. It needs nothing. It is the happiest thing on the trail.",
+    "effect": "Eliminates formatting-dispute morale losses.",
+    "trap": false
+  },
+  {
+    "id": "registry_route",
+    "type": "trade_route",
+    "name": "The Registry Route",
+    "cost": { "credibility": 5, "tokens": 15 },
+    "blurb": "A vetted connection to the artifact registry. Reviewed by the Security Champion, allowlisted, and boring in the way that load-bearing things should be boring.",
+    "effect": "Enables package operations without proxy events. Vetted.",
+    "trap": false
+  },
+  {
+    "id": "ticket_route",
+    "type": "trade_route",
+    "name": "The Ticket-System Route",
+    "cost": { "credibility": 4, "tokens": 10 },
+    "blurb": "Lets the agent read and update tickets directly instead of you narrating tickets to it like a bedtime story. Scoped, read-mostly, and reviewed. The reviews took a week. The week was worth it, a sentence that appears nowhere else in this catalog.",
+    "effect": "Agent syncs ticket state automatically; saves one day per landmark.",
+    "trap": false
+  },
+  {
+    "id": "bargain_stall_route",
+    "type": "trade_route",
+    "name": "The Bargain Stall Route",
+    "cost": { "credibility": 1, "tokens": 5 },
+    "blurb": "A connection from the stall in the back, at a quarter of the vetted price. The sign says TRUSTED. The proprietor did not write the sign, does not know who did, and offers a discount for paying in access. It works immediately, which is the most suspicious thing about it, and the least noticed.",
+    "effect": "Full tool access at a bargain price. Reads everything in your wagon.",
+    "trap": true,
+    "trapNote": "Unvetted. Carries the watering-hole injection. If the Security Champion is gone, there is no warning, and the compromised flag is a matter of time."
+  }
+]
