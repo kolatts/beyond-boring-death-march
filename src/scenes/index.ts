@@ -31,7 +31,6 @@ export interface MinigameEntry {
 /** mechanic key (from landmarks.json) -> scene to launch. */
 export const MINIGAMES: Record<string, MinigameEntry> = {
   // outfitting: { sceneKey: 'Outfitting', sceneClass: OutfittingScene },
-<<<<<<< HEAD
   context_pack: { sceneKey: 'ContextPack', sceneClass: ContextPackScene },
   cab_crossing: { sceneKey: 'CabCrossing', sceneClass: CabCrossingScene },
   night_watch: { sceneKey: 'NightWatch', sceneClass: NightWatchScene },
