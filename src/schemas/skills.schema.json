@@ -1,35 +1,257 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "skills.schema.json",
-  "title": "Skills Exchange Goods",
-  "type": "array",
-  "minItems": 8,
-  "items": {
-    "type": "object",
-    "required": ["id", "type", "name", "cost", "blurb", "effect", "trap"],
-    "additionalProperties": false,
-    "properties": {
-      "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
-      "type": {
-        "type": "string",
-        "enum": ["procedure", "scout", "standing_order", "trade_route"]
-      },
-      "name": { "type": "string", "minLength": 1 },
-      "cost": {
-        "type": "object",
-        "required": ["credibility", "tokens"],
-        "additionalProperties": false,
-        "properties": {
-          "credibility": { "type": "integer", "minimum": 0 },
-          "tokens": { "type": "integer", "minimum": 0 }
-        }
-      },
-      "blurb": { "type": "string", "minLength": 1 },
-      "effect": { "type": "string", "minLength": 1 },
-      "trap": { "type": "boolean" },
-      "trapNote": { "type": "string" }
+  "title": "The Skillsmith content (SkillsMarketScene)",
+  "type": "object",
+  "required": ["stall", "forge", "demo", "reforge", "closing"],
+  "additionalProperties": false,
+  "definitions": {
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens": { "type": "number" },
+        "credibility": { "type": "number" },
+        "morale": { "type": "number" },
+        "greenBuilds": { "type": "number" },
+        "trust": { "type": "number" }
+      }
     },
-    "if": { "properties": { "trap": { "const": true } } },
-    "then": { "required": ["id", "type", "name", "cost", "blurb", "effect", "trap", "trapNote"] }
+    "pickOption": {
+      "type": "object",
+      "required": ["id", "label", "text", "aside"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "aside": { "type": "string", "minLength": 1 },
+        "tokenCost": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["tasks", "verdict"],
+      "additionalProperties": false,
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["line", "effects"],
+            "additionalProperties": false,
+            "properties": {
+              "line": { "type": "string", "minLength": 1 },
+              "effects": { "$ref": "#/definitions/effects" }
+            }
+          }
+        },
+        "verdict": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "properties": {
+    "stall": {
+      "type": "object",
+      "required": ["title", "intro", "greeting", "cornerSigns"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "intro": { "type": "string", "minLength": 1 },
+        "greeting": { "type": "string", "minLength": 1 },
+        "cornerSigns": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["layer", "name", "sign"],
+            "additionalProperties": false,
+            "properties": {
+              "layer": { "type": "string", "enum": ["skill", "subagent", "hook", "mcp"] },
+              "name": { "type": "string", "minLength": 1 },
+              "sign": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "forge": {
+      "type": "object",
+      "required": ["intro", "descriptionPick", "instructionsPick", "attachmentPick", "forgeLine"],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string", "minLength": 1 },
+        "descriptionPick": {
+          "type": "object",
+          "required": ["prompt", "options"],
+          "additionalProperties": false,
+          "properties": {
+            "prompt": { "type": "string", "minLength": 1 },
+            "options": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "allOf": [
+                  { "$ref": "#/definitions/pickOption" },
+                  {
+                    "properties": {
+                      "id": { "enum": ["too_broad", "too_narrow", "right_sized"] }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "instructionsPick": {
+          "type": "object",
+          "required": ["prompt", "options"],
+          "additionalProperties": false,
+          "properties": {
+            "prompt": { "type": "string", "minLength": 1 },
+            "options": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "allOf": [
+                  { "$ref": "#/definitions/pickOption" },
+                  { "properties": { "id": { "enum": ["concise", "persona"] } } }
+                ]
+              }
+            }
+          }
+        },
+        "attachmentPick": {
+          "type": "object",
+          "required": ["prompt", "options"],
+          "additionalProperties": false,
+          "properties": {
+            "prompt": { "type": "string", "minLength": 1 },
+            "options": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "allOf": [
+                  { "$ref": "#/definitions/pickOption" },
+                  {
+                    "required": ["id", "label", "text", "aside", "tokenCost"],
+                    "properties": { "id": { "enum": ["none", "script"] } }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "forgeLine": { "type": "string", "minLength": 1 }
+      }
+    },
+    "demo": {
+      "type": "object",
+      "required": [
+        "intro",
+        "reviewPrefix",
+        "tasks",
+        "outcomes",
+        "personaLine",
+        "personaEffects",
+        "scriptLine",
+        "scriptEffects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string", "minLength": 1 },
+        "reviewPrefix": { "type": "string", "minLength": 1 },
+        "tasks": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "body", "match"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "title": { "type": "string", "minLength": 1 },
+              "body": { "type": "string", "minLength": 1 },
+              "match": { "type": "boolean" }
+            }
+          }
+        },
+        "outcomes": {
+          "type": "object",
+          "required": ["too_broad", "too_narrow", "right_sized"],
+          "additionalProperties": false,
+          "properties": {
+            "too_broad": { "$ref": "#/definitions/outcome" },
+            "too_narrow": { "$ref": "#/definitions/outcome" },
+            "right_sized": { "$ref": "#/definitions/outcome" }
+          }
+        },
+        "personaLine": { "type": "string", "minLength": 1 },
+        "personaEffects": { "$ref": "#/definitions/effects" },
+        "scriptLine": { "type": "string", "minLength": 1 },
+        "scriptEffects": { "$ref": "#/definitions/effects" }
+      }
+    },
+    "reforge": {
+      "type": "object",
+      "required": ["offer", "offerAlreadyRight", "reforgeIntro"],
+      "additionalProperties": false,
+      "properties": {
+        "offer": { "type": "string", "minLength": 1 },
+        "offerAlreadyRight": { "type": "string", "minLength": 1 },
+        "reforgeIntro": { "type": "string", "minLength": 1 }
+      }
+    },
+    "closing": {
+      "type": "object",
+      "required": ["intro", "offers", "proprietor", "championIntercept"],
+      "additionalProperties": false,
+      "properties": {
+        "intro": { "type": "string", "minLength": 1 },
+        "offers": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "name", "pitch", "cost"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "kind": { "type": "string", "enum": ["trap_skill", "standing_order", "trade_route"] },
+              "name": { "type": "string", "minLength": 1 },
+              "pitch": { "type": "string", "minLength": 1 },
+              "cost": {
+                "type": "object",
+                "required": ["credibility", "tokens"],
+                "additionalProperties": false,
+                "properties": {
+                  "credibility": { "type": "integer", "minimum": 0 },
+                  "tokens": { "type": "integer", "minimum": 0 }
+                }
+              }
+            }
+          }
+        },
+        "proprietor": {
+          "type": "object",
+          "required": ["genericSale", "trapProcedureSale", "trapRouteChampionDead"],
+          "additionalProperties": false,
+          "properties": {
+            "genericSale": { "type": "string", "minLength": 1 },
+            "trapProcedureSale": { "type": "string", "minLength": 1 },
+            "trapRouteChampionDead": { "type": "string", "minLength": 1 }
+          }
+        },
+        "championIntercept": { "type": "string", "minLength": 1 }
+      }
+    }
   }
 }

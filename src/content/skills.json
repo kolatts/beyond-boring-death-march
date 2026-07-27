@@ -1,121 +1,210 @@
-[
-  {
-    "id": "release_runbook",
-    "type": "procedure",
-    "name": "The Release Runbook",
-    "cost": { "credibility": 4, "tokens": 10 },
-    "blurb": "A folder of instructions the party reads when a release is near. Battle-tested, versioned, and honest about step nine, which is the one that goes wrong. Loaded only when the situation matches, so it costs nothing to carry.",
-    "effect": "Reduces Green Build loss from failed releases. Loaded on demand; no ongoing context cost.",
-    "trap": false
+{
+  "stall": {
+    "title": "THE SKILLSMITH",
+    "intro": "The trading post at mile 1350 has reorganised. The shelf of identical folders is gone; in its place, a forge. The smith makes skills to order now, because what is written on the folder decides whether it is ever opened, and people kept writing it wrong.",
+    "greeting": "I forge skills. A folder: instructions, sometimes a script, sometimes a map. Your agent carries it unopened and reads the label when work arrives. Write the label wrong and you have forged a paperweight. Write it right and you have forged a habit. Sit down.",
+    "cornerSigns": [
+      {
+        "layer": "skill",
+        "name": "SKILLS",
+        "sign": "Folders of instructions, opened when the label matches the work. Cost nothing to carry. The label is everything. Forged here."
+      },
+      {
+        "layer": "subagent",
+        "name": "SCOUTS",
+        "sign": "They go ahead with their own supplies and come back with one sentence. The sentence is the product. Sold in the next aisle."
+      },
+      {
+        "layer": "hook",
+        "name": "STANDING ORDERS",
+        "sign": "Fire whether or not anyone remembers, believes, or objects. The wagon does not get a vote. Sold next door. You will want one before you leave."
+      },
+      {
+        "layer": "mcp",
+        "name": "TRADE ROUTES",
+        "sign": "Connections to somewhere else that has what you need. What the somewhere else needs from you is a separate question, and it is not on the sign."
+      }
+    ]
   },
-  {
-    "id": "incident_comms_procedure",
-    "type": "procedure",
-    "name": "The Incident Comms Procedure",
-    "cost": { "credibility": 3, "tokens": 5 },
-    "blurb": "What to say, to whom, in which order, when something is on fire. Written by someone who once said the wrong thing to the right person. Every sentence in it was paid for.",
-    "effect": "Halves Credibility loss from incident events.",
-    "trap": false
+  "forge": {
+    "intro": "Your party has botched three releases in a row, each one differently. The smith proposes a skill: THE RELEASE RUNBOOK. Three decisions, then the fire.",
+    "descriptionPick": {
+      "prompt": "First: the label. When work arrives, the agent reads the label on every folder it carries and opens only what matches. The label is not decoration. The label is the trigger.",
+      "options": [
+        {
+          "id": "too_broad",
+          "label": "HELPS WITH EVERYTHING",
+          "text": "Assists with engineering, releases, documents, planning, morale, and weather.",
+          "aside": "Ambitious."
+        },
+        {
+          "id": "too_narrow",
+          "label": "ONLY THE ONE TUESDAY",
+          "text": "For releases of version 3.1.4, shipped on the second Tuesday, in months containing the letter R.",
+          "aside": "Precise."
+        },
+        {
+          "id": "right_sized",
+          "label": "WHEN A RELEASE IS NEAR",
+          "text": "Use when cutting, checking, or shipping a release, or when one has just gone wrong. The runbook and the rollback.",
+          "aside": "Hm."
+        }
+      ]
+    },
+    "instructionsPick": {
+      "prompt": "Second: what is inside. The folder is only opened when the label matches — but once open, every word of it takes a seat in the wagon.",
+      "options": [
+        {
+          "id": "concise",
+          "label": "NINE STEPS",
+          "text": "Cut, check, ship, watch, roll back. Nine steps. Step nine is honest about step six.",
+          "aside": "Short. Good. Paper is not the expensive part; attention is."
+        },
+        {
+          "id": "persona",
+          "label": "THE RELEASEMASTER SAGA",
+          "text": "Four thousand words establishing that the agent is a legendary Releasemaster, forged in fire, humble yet mighty, before step one appears.",
+          "aside": "I can forge it. The fort upriver forged one of these. You may have seen the crater."
+        }
+      ]
+    },
+    "attachmentPick": {
+      "prompt": "Third: anything bolted in? A script runs the same way every time instead of being retold from memory. Costs metal.",
+      "options": [
+        {
+          "id": "none",
+          "label": "NOTHING. INSTRUCTIONS ONLY",
+          "text": "The folder holds words and nothing else.",
+          "aside": "Cheap. Words usually suffice. Usually.",
+          "tokenCost": 0
+        },
+        {
+          "id": "script",
+          "label": "THE ROLLBACK SCRIPT",
+          "text": "A script that performs the rollback identically every time, instead of a paragraph hoping to.",
+          "aside": "The paragraph version has feelings about 3 a.m. The script does not.",
+          "tokenCost": 10
+        }
+      ]
+    },
+    "forgeLine": "The smith reads your three choices back without comment, which is its own comment, and strikes."
   },
-  {
-    "id": "migration_playbook",
-    "type": "procedure",
-    "name": "The Migration Playbook",
-    "cost": { "credibility": 4, "tokens": 15 },
-    "blurb": "Step-by-step instructions for moving a system without anyone noticing, which is the only kind of migration that gets thanked. Includes a rollback section that has never been read aloud without someone going quiet.",
-    "effect": "Reduces day cost of framework and migration deadlines by 1.",
-    "trap": false
+  "demo": {
+    "intro": "The smith hangs the folder on your wagon and points at the road. \"Three jobs are coming. Watch what the agent does with the label. Not with the folder — with the label.\"",
+    "reviewPrefix": "The agent reviews what it carries. The label reads:",
+    "tasks": [
+      {
+        "id": "fmt_dispute",
+        "title": "TASK ONE — A FORMATTING DISPUTE",
+        "body": "Two party members disagree about tabs, at volume. The agent is asked to mediate.",
+        "match": false
+      },
+      {
+        "id": "release_due",
+        "title": "TASK TWO — THE RELEASE IS DUE",
+        "body": "The release is due at the fort by sundown. Cut, check, ship.",
+        "match": true
+      },
+      {
+        "id": "dep_audit",
+        "title": "TASK THREE — A DEPENDENCY AUDIT",
+        "body": "The Standards Body requests a list of everything the wagon depends on, annotated.",
+        "match": false
+      }
+    ],
+    "outcomes": {
+      "too_broad": {
+        "tasks": [
+          {
+            "line": "The label matches, because the label matches everything. The agent mediates a tab dispute using a nine-step release procedure. Step four is 'tag the artifact'. Nobody is calmer.",
+            "effects": { "tokens": -3, "morale": -2 }
+          },
+          {
+            "line": "The folder loads for the release — alongside the residue of loading it twice for no reason. The release ships, sharing the wagon with everything else the label dragged in.",
+            "effects": { "tokens": -3, "credibility": 1 }
+          },
+          {
+            "line": "The audit arrives annotated with rollback advice. The Standards Body has questions now, which is the opposite of the goal.",
+            "effects": { "tokens": -3, "credibility": -1 }
+          }
+        ],
+        "verdict": "It loaded every time, so it helped almost never. A label that matches everything is a tax on everything."
+      },
+      "too_narrow": {
+        "tasks": [
+          {
+            "line": "The label does not match. The folder stays shut. So far this resembles discipline.",
+            "effects": {}
+          },
+          {
+            "line": "A release. The exact job. The agent reads the label: version 3.1.4, second Tuesday, month with an R. Today fails on all three counts. The folder stays shut and the release is improvised from memory.",
+            "effects": { "credibility": -4, "greenBuilds": -1 }
+          },
+          {
+            "line": "Still shut. The forge crackles. The smith says nothing, loudly.",
+            "effects": {}
+          }
+        ],
+        "verdict": "It loaded never — including the one time it was the entire point. A label that matches nothing is a paperweight with steps."
+      },
+      "right_sized": {
+        "tasks": [
+          {
+            "line": "The label does not match. The folder rides along, weightless, costing nothing.",
+            "effects": {}
+          },
+          {
+            "line": "The label matches. The folder opens and the runbook slots in beside the work — and nothing else does. Cut, check, ship. Step nine stays sheathed.",
+            "effects": { "tokens": -2, "credibility": 4, "morale": 2 }
+          },
+          {
+            "line": "Shut again. Carrying it cost nothing today, same as yesterday.",
+            "effects": {}
+          }
+        ],
+        "verdict": "It loaded once, exactly when it should, and cost nothing the rest of the time. That is the entire trick, and most people never learn it."
+      }
+    },
+    "personaLine": "First, the agent reads four thousand words about its own legend. The legend takes a seat in the wagon. The seat was needed.",
+    "personaEffects": { "tokens": -5 },
+    "scriptLine": "The rollback script is bolted to step nine. It will run the same way at three in the morning as it does at noon.",
+    "scriptEffects": { "greenBuilds": 1 }
   },
-  {
-    "id": "secret_scrubbing_procedure",
-    "type": "procedure",
-    "name": "The Secret-Scrubbing Procedure",
-    "cost": { "credibility": 2, "tokens": 5 },
-    "blurb": "A well-written document instructing the agent to always redact secrets before logging. The proprietor recommends it warmly. It works four times out of five. The document does not say what happens the fifth time, because the document is the fifth time.",
-    "effect": "Prose-only secret handling. Works most of the time. A Standing Order exists for this job; this is not it.",
-    "trap": true,
-    "trapNote": "This job needs enforcement, not instructions. The fifth time the agent forgets, a secret lands in a log, and the compromised flag is set. The Standing Order version of this good is the correct purchase."
+  "reforge": {
+    "offer": "The smith taps the label. \"The steel is fine. The label is the part everyone gets wrong. One re-strike, on the house.\"",
+    "offerAlreadyRight": "The smith reads the label twice and finds nothing to fix. She offers the re-strike anyway, out of habit. Habits are her whole business.",
+    "reforgeIntro": "The smith files the old label off and waits. Same folder. Same steel. New trigger."
   },
-  {
-    "id": "log_scout",
-    "type": "scout",
-    "name": "The Log Scout",
-    "cost": { "credibility": 3, "tokens": 20 },
-    "blurb": "A party member who reads the nine-hundred-line log in her own head so you don't have to hold it in yours. Comes back with one sentence and the line number. The sentence is usually right and the line number always is.",
-    "effect": "Summarises one Huge item into one context slot per landmark. Costs tokens and one turn.",
-    "trap": false
-  },
-  {
-    "id": "dependency_scout",
-    "type": "scout",
-    "name": "The Dependency Scout",
-    "cost": { "credibility": 3, "tokens": 15 },
-    "blurb": "Goes into the dependency tree alone, with rations. Returns with the three packages that actually matter, the one that is quietly abandoned, and a look that takes a day or two to fade.",
-    "effect": "Reveals CVE and upgrade hazards one landmark early.",
-    "trap": false
-  },
-  {
-    "id": "legacy_scout",
-    "type": "scout",
-    "name": "The Legacy Scout",
-    "cost": { "credibility": 4, "tokens": 25 },
-    "blurb": "Reads the old system so the party doesn't have to. Isolated context, which matters, because what is in the old system should not be in your head at the same time as hope.",
-    "effect": "Explores legacy code in isolated context; returns a summary instead of the code.",
-    "trap": false
-  },
-  {
-    "id": "secret_scan_order",
-    "type": "standing_order",
-    "name": "The Secret-Scan Standing Order",
-    "cost": { "credibility": 6, "tokens": 10 },
-    "blurb": "Fires on every write, whether or not anyone remembers it, believes in it, or is having a bad week. The model does not get a vote. That is the entire feature, and it is the feature the procedure version is missing.",
-    "effect": "Deterministically blocks secrets from leaving the wagon. Immune to context rot and persuasion.",
-    "trap": false
-  },
-  {
-    "id": "test_gate_order",
-    "type": "standing_order",
-    "name": "The Test-Gate Standing Order",
-    "cost": { "credibility": 5, "tokens": 10 },
-    "blurb": "No write proceeds until the tests have actually run. Not been described. Run. The order cannot be reasoned with, which the agent occasionally finds frustrating, which is how you know it is working.",
-    "effect": "Prevents hollow-green outcomes; the Helpful Rewrite event cannot fire while owned.",
-    "trap": false
-  },
-  {
-    "id": "format_order",
-    "type": "standing_order",
-    "name": "The Formatting Standing Order",
-    "cost": { "credibility": 2, "tokens": 5 },
-    "blurb": "Formats every file on save, ending the longest war in your organisation's history without a treaty, a retro, or a working group. Nobody thanks it. It does not need thanks. It needs nothing. It is the happiest thing on the trail.",
-    "effect": "Eliminates formatting-dispute morale losses.",
-    "trap": false
-  },
-  {
-    "id": "registry_route",
-    "type": "trade_route",
-    "name": "The Registry Route",
-    "cost": { "credibility": 5, "tokens": 15 },
-    "blurb": "A vetted connection to the artifact registry. Reviewed by the Security Champion, allowlisted, and boring in the way that load-bearing things should be boring.",
-    "effect": "Enables package operations without proxy events. Vetted.",
-    "trap": false
-  },
-  {
-    "id": "ticket_route",
-    "type": "trade_route",
-    "name": "The Ticket-System Route",
-    "cost": { "credibility": 4, "tokens": 10 },
-    "blurb": "Lets the agent read and update tickets directly instead of you narrating tickets to it like a bedtime story. Scoped, read-mostly, and reviewed. The reviews took a week. The week was worth it, a sentence that appears nowhere else in this catalog.",
-    "effect": "Agent syncs ticket state automatically; saves one day per landmark.",
-    "trap": false
-  },
-  {
-    "id": "bargain_stall_route",
-    "type": "trade_route",
-    "name": "The Bargain Stall Route",
-    "cost": { "credibility": 1, "tokens": 5 },
-    "blurb": "A connection from the stall in the back, at a quarter of the vetted price. The sign says TRUSTED. The proprietor did not write the sign, does not know who did, and offers a discount for paying in access. It works immediately, which is the most suspicious thing about it, and the least noticed.",
-    "effect": "Full tool access at a bargain price. Reads everything in your wagon.",
-    "trap": true,
-    "trapNote": "Unvetted. Carries the watering-hole injection. If the Security Champion is gone, there is no warning, and the compromised flag is a matter of time."
+  "closing": {
+    "intro": "On your way out, the proprietor of the old exchange leans across the back counter, under the aisle signs, with the tone of a man who has watched you learn something and intends to sell around it.",
+    "offers": [
+      {
+        "id": "secret_scrubbing_procedure",
+        "kind": "trap_skill",
+        "name": "A SKILL THAT REMEMBERS TO SCRUB SECRETS",
+        "pitch": "Forged elsewhere, sold here. The label matches anything that logs, and the instructions ask the agent, warmly, to redact secrets first. Works four times out of five.",
+        "cost": { "credibility": 2, "tokens": 5 }
+      },
+      {
+        "id": "secret_scan_order",
+        "kind": "standing_order",
+        "name": "THE SECRET-SCAN STANDING ORDER",
+        "pitch": "From the stall next door. It does not remember to fire; it fires. On every write, whether or not anyone believes in it, is having a bad week, or has been talked into something. A skill advises the agent. This does not advise.",
+        "cost": { "credibility": 6, "tokens": 10 }
+      },
+      {
+        "id": "bargain_stall_route",
+        "kind": "trade_route",
+        "name": "THE BARGAIN CONNECTION",
+        "pitch": "A trade route from the stall in the back, at a quarter of the vetted price. The sign says TRUSTED. The proprietor did not write the sign and does not know who did. It works immediately, which is the most suspicious thing about it, and the least noticed.",
+        "cost": { "credibility": 1, "tokens": 5 }
+      }
+    ],
+    "proprietor": {
+      "genericSale": "Wrapped and loaded. No refunds. The refund policy is itself a folder.",
+      "trapProcedureSale": "A fine choice. Works four times out of five, and the fifth time is a long way from my counter.",
+      "trapRouteChampionDead": "The route works immediately. The discount was real. The wagon feels lighter, which you attribute to the savings."
+    },
+    "championIntercept": "{champion} reads the route's manifest at the perimeter, twice. \"It works,\" they say. \"So does a listening post.\" The route is quarantined, logged, and priced into the incident report they have already started writing."
   }
-]
+}
