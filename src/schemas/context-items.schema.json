@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "context-items.schema.json",
-  "title": "Context Canyon packing content (§7.3)",
+  "title": "Context Canyon packing content (§7.3) — relevance bands visible upfront",
   "type": "object",
   "required": ["capacity", "items", "strings"],
   "additionalProperties": false,
@@ -9,10 +9,10 @@
     "capacity": { "type": "integer", "minimum": 8, "maximum": 200 },
     "items": {
       "type": "array",
-      "minItems": 12,
+      "minItems": 10,
       "items": {
         "type": "object",
-        "required": ["id", "name", "size", "relevance", "blurb", "inspectText"],
+        "required": ["id", "name", "size", "relevance", "blurb", "detail"],
         "additionalProperties": false,
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
@@ -41,7 +41,7 @@
             }
           },
           "blurb": { "type": "string", "minLength": 1 },
-          "inspectText": { "type": "string", "minLength": 1 }
+          "detail": { "type": "string", "minLength": 1 }
         }
       }
     },
@@ -49,7 +49,6 @@
       "type": "object",
       "required": [
         "intro",
-        "peekNotice",
         "overflow",
         "overflowNodeModules",
         "compactNotice",
@@ -59,6 +58,7 @@
         "scoutFirst",
         "markNotice",
         "unmarkNotice",
+        "ticketResolved",
         "departRetrieval",
         "wrongProblem",
         "requirementLostOutcome",
