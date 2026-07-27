@@ -120,6 +120,29 @@ This ruling overrides the earlier blanket genericization where the two conflict.
   workflows** (gh-aw schedule triggers, read-only permissions, safe
   outputs) so mandates stop costing engineer-days.
 
+## Wave 6 content: 14 landmarks, three new teaching areas (2026-07-27)
+
+- The trail grows from 12 to **14 landmarks**: **The Assay Office** (mile 900,
+  mechanic `assay_office`) and **The Fluency Trials** (mile 1600, mechanic
+  `fluency_trials`), inserted in mile order. Schemas for landmarks, NPCs, and
+  Boring & Brilliant now require exactly 14 entries; scene agents register the
+  mechanic keys `assay_office` and `fluency_trials` verbatim.
+- Three new teaching areas in the educational layer: **Skills** (dynamic
+  loading, description as trigger surface, progressive disclosure — card
+  `skills_dynamic_loading`), **Evals** (golden sets, grader types, iteration
+  on measured scores — card `eval_measurement`, taught at the Assay Office),
+  and **AI fluency** (the 4 Ds: Delegation, Description, Discernment,
+  Diligence — card `four_ds_fluency`, taught at the Fluency Trials). Each has
+  a section of verified primary sources in `docs/CURRICULUM.md`.
+- The `agentic_loop` card gains the **loop-vs-graph contrast**: loops iterate
+  until a verifier passes (best under uncertainty); graphs run a predetermined
+  DAG (predictable cost, brittle to surprises); real systems are graphs whose
+  nodes are loops.
+- Boring/Brilliant correctness sequence across the 14 landmarks is now
+  **BXXBBXBXBBXXBX** (7/7, still no learnable pattern). The Trials entry
+  inverts expectations: Brilliant is right (own the outcome by name), Boring
+  is wrong (assigns ownership to the process).
+
 ## Economy retune (playtest wave, 2026-07-25)
 
 Three independent playtest runs all starved between miles 900–1200: burn at

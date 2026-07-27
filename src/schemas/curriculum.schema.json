@@ -3,7 +3,7 @@
   "$id": "curriculum.schema.json",
   "title": "Curriculum Cards",
   "type": "array",
-  "minItems": 21,
+  "minItems": 25,
   "items": {
     "type": "object",
     "required": ["id", "n", "whatHappened", "whyItWorks", "inYourJob", "link"],

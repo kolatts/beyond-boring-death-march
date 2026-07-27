@@ -8,8 +8,8 @@
   "properties": {
     "landmarks": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 14,
+      "maxItems": 14,
       "items": {
         "type": "object",
         "required": ["landmarkId", "boring", "brilliant", "correct", "reaction"],

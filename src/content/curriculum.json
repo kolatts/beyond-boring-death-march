@@ -19,7 +19,7 @@
     "id": "agentic_loop",
     "n": "03",
     "whatHappened": "You assembled a cycle — act, observe, decide, repeat — and it reached a goal that a single request could not.",
-    "whyItWorks": "One-shot prompting plateaus because the model cannot see the consequences of its own output. A loop feeds results back in: the agent acts, captures what actually happened, and adjusts. The unit of design stops being the prompt and becomes the cycle — what enters each iteration, what is checked, and what ends it.",
+    "whyItWorks": "One-shot prompting plateaus because the model cannot see the consequences of its own output. A loop feeds results back in: the agent acts, captures what actually happened, and adjusts. The unit of design stops being the prompt and becomes the cycle — what enters each iteration, what is checked, and what ends it. Contrast the loop with a graph: a loop iterates until a verifier passes, which makes it the right shape under uncertainty; a graph runs a predetermined DAG of steps, predictable in cost and brittle to surprises. Real systems are usually graphs whose nodes are loops.",
     "inYourJob": "When a task fails as one big prompt, restructure it as a loop: give Claude Code the failing command and let it edit, run, read, and retry. Design the iteration — what enters it, what checks it, what ends it — not the wording.",
     "link": "https://www.ibm.com/think/topics/loop-engineering"
   },
@@ -174,5 +174,29 @@
     "whyItWorks": "The interrupt is expensive because it is manual: a human reads the mandate, drops the plan, and assembles the evidence by hand, every time. Recurring compliance toil is exactly the shape of work a scheduled agentic workflow does well — it runs on a cron, reads the repository with read-only permissions, and files its evidence through sanitised safe outputs while you keep shipping. A check that runs continuously has no Friday on which to arrive.",
     "inYourJob": "Turn each recurring mandate into a scheduled agentic workflow: a gh-aw schedule trigger, read-only permissions, safe outputs that open an issue with the current evidence. The audit stops being a campaign, and the engineer-days it used to cost stay spent on the deadline that matters.",
     "link": "https://github.com/github/gh-aw"
+  },
+  {
+    "id": "skills_dynamic_loading",
+    "n": "23",
+    "whatHappened": "You bought a procedure whose shelf label said exactly when to open it. The folder stayed shut, and weightless, until the label matched the moment.",
+    "whyItWorks": "Claude Skills are folders of instructions, scripts, and resources loaded dynamically when they become relevant. At rest, only the skill's name and description occupy context — the description is the trigger surface, the sentence Claude reads when deciding whether the skill applies. Progressive disclosure handles the rest: the skill's main file loads when triggered, and deeper files load only if the task actually needs them. Context stays lean until the moment the expertise earns its slot.",
+    "inYourJob": "Author one skill this week for a procedure your team repeats: a folder whose description states precisely when it applies — name the triggering situations, not the topic. Keep the main file short and push detail into linked files. Then watch whether it triggers on real work, and when it doesn't, edit the description, not the body.",
+    "link": "https://support.claude.com/en/articles/12512176-what-are-skills"
+  },
+  {
+    "id": "eval_measurement",
+    "n": "24",
+    "whatHappened": "Your prompt was gold once — one nugget, good light. The assay ran it against a ledger of known cases, and the number was not the feeling.",
+    "whyItWorks": "One good output is an anecdote; a scored set is evidence. An eval is a golden set of cases with known answers plus a grader: exact match for closed answers, code-graded checks for verifiable properties, model-graded rubrics for open-ended output. Run the set, get a number, change one thing, run the set again. The score turns prompt iteration from vibes into engineering, and it catches the regression your favorite example never will.",
+    "inYourJob": "Before the next prompt tweak, collect twenty real cases with expected outcomes and score today's version against them. Prefer the cheapest grader that works — exact match, then code-graded, with a model grader only where judgment is genuinely required — and iterate on the measured score, not on the one output you happened to see.",
+    "link": "https://github.com/anthropics/courses/blob/master/prompt_evaluations/README.md"
+  },
+  {
+    "id": "four_ds_fluency",
+    "n": "25",
+    "whatHappened": "The Trials scored you, not your agent: what you handed over, how you asked, whether you checked, and what you owned afterward.",
+    "whyItWorks": "AI fluency decomposes into four competencies: Delegation — choosing what to hand to the system and what to keep; Description — expressing the task so it can actually be done; Discernment — evaluating what comes back instead of trusting its confidence; and Diligence — taking responsibility for what ships under your name. Agent quality caps none of them. The same model produces different outcomes for people who differ only in these four skills, which is what makes them trainable and worth training.",
+    "inYourJob": "Pick the D you scored weakest on your run's report card and change one behavior this week: delegate a task you have been hoarding, rewrite one request with explicit success criteria, verify one output against the source instead of skimming it, or put your name on one agent-assisted change and what follows from it.",
+    "link": "https://claude.com/resources/tutorials/the-4-ds-of-ai-fluency-behavioral-indicators"
   }
 ]

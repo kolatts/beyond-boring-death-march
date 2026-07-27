@@ -3,8 +3,8 @@
   "$id": "landmarks.schema.json",
   "title": "Landmarks",
   "type": "array",
-  "minItems": 12,
-  "maxItems": 12,
+  "minItems": 14,
+  "maxItems": 14,
   "items": {
     "type": "object",
     "required": ["id", "mile", "name", "mechanic", "blurb"],
@@ -22,10 +22,12 @@
           "loop_builder_verifier",
           "context_pack",
           "cab_crossing",
+          "assay_office",
           "harness_swap",
           "night_watch",
           "skills_market",
           "permissions_gauntlet",
+          "fluency_trials",
           "boss_loops",
           "endgame"
         ]

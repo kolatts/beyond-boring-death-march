@@ -61,6 +61,16 @@
       }
     },
     {
+      "landmarkId": "assay_office",
+      "boring": "Before anything ships, we assay. I have assembled forty cases with known answers and scored our prompt against every one, and I would like to add sixty more cases before we trust the number. Possibly eighty. A ledger should be complete, and completeness does not keep a schedule.",
+      "brilliant": "I shipped it this morning. It felt right, and feelings are data — mine especially, having been right before. You cannot assay your way to conviction. Somewhere out there my prompt is striking gold or it isn't, and either way we are not standing in an office.",
+      "correct": "boring",
+      "reaction": {
+        "boring": "The set scored our gold-certain prompt at sixty-one. Sixty-one is not the feeling. I have pinned both to the wall, and I want it noted that I took no pleasure in this, in a format I can be audited on.",
+        "brilliant": "The morning's prompt assayed at forty-four. Shipped, at forty-four. I have un-shipped it, which is a word I invented this afternoon and already dislike. My feeling about the next one, however, is much stronger, and I notice nobody is weighing that."
+      }
+    },
+    {
       "landmarkId": "harness_hollow",
       "boring": "Our current configuration is approved and documented, and its failures are known failures, which I have catalogued and grown fond of. A swap introduces unknowns. I vote we keep the devil whose paperwork I've finished.",
       "brilliant": "Same engine, new rig — swap it and run the shakedown. If the blacksmith's wall is right, we gain more this afternoon than we've gained since the Fork. If it's wrong, we swap back before supper. The downside fits inside a day.",
@@ -98,6 +108,16 @@
       "reaction": {
         "boring": "The scoped write cleared the gauntlet without a single incident, which I have verified twice, because the first verification went suspiciously well.",
         "brilliant": "Enough access to do the job and nothing patient enough to rob. The gatekeeper smiled at us. I checked — that's rare."
+      }
+    },
+    {
+      "landmarkId": "fluency_trials",
+      "boring": "I have prepared thoroughly: our delegation policy is documented, the checking checklist is laminated, and I have drafted an ownership statement that assigns ownership to the process. If the stations examine our procedures, we are flawless. I see no station that examines us.",
+      "brilliant": "Walk in with the five decisions we actually made and claim the wrong ones by name. The stations don't grade the paperwork and they don't grade the wagon — they grade the asking and the checking and the owning, and the only way to score on owning is to have something to own.",
+      "correct": "brilliant",
+      "reaction": {
+        "boring": "The Proctor examined our procedures and marked them 'present.' Present. There is, apparently, a difference between having a checking process and checking. It is station three. We failed station three. The laminate survived intact.",
+        "brilliant": "One 'demonstrated,' three 'partially.' Partially! Me! I have never been so insulted by anything so accurate, and I am keeping the card."
       }
     },
     {

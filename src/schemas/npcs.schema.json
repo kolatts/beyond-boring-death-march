@@ -3,8 +3,8 @@
   "$id": "npcs.schema.json",
   "title": "Landmark NPC Encounters",
   "type": "array",
-  "minItems": 12,
-  "maxItems": 12,
+  "minItems": 14,
+  "maxItems": 14,
   "items": {
     "type": "object",
     "required": ["id", "landmarkId", "name", "intro", "advice", "options"],

@@ -53,6 +53,73 @@ the right layer is the actual engineering decision.
   the bundle.
   → https://www.marktechpost.com/2026/06/14/claude-code-guide-2026-25-features-with-examples-demo/
 
+## Skills
+
+Folders of instructions, scripts, and resources loaded dynamically when relevant. The
+description is the trigger surface; progressive disclosure keeps context lean until the
+expertise earns its slot. The Assay Office's neighbor at the Skills Exchange, taught properly.
+
+- **What are Skills? (Claude support)**
+  The canonical short answer: what a skill is, when it loads, and why the description
+  is the sentence that decides everything.
+  → https://support.claude.com/en/articles/12512176-what-are-skills
+
+- **Claude docs — Agent Skills overview**
+  The full mechanics: SKILL.md, frontmatter, progressive disclosure, and how skills
+  compose with the rest of the harness.
+  → https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview
+
+- **`anthropics/skills`**
+  Anthropic's public skill repository — worked examples to copy the shape from before
+  authoring your own.
+  → https://github.com/anthropics/skills
+
+- **Claude Code docs — Skills**
+  Skills inside Claude Code specifically, and how the procedure layer differs from the
+  enforcement and isolation layers.
+  → https://code.claude.com/docs/en/skills
+
+## Evals
+
+One good output is an anecdote; a scored set is evidence. Golden sets, grader types, and
+iteration on measured scores instead of remembered impressions. The Assay Office lesson.
+
+- **Anthropic courses — Prompt Evaluations**
+  The full course: building golden sets, exact-match / code-graded / model-graded graders,
+  and iterating a prompt against a score. The ledger of known cases, stated properly.
+  → https://github.com/anthropics/courses/blob/master/prompt_evaluations/README.md
+
+- **Claude docs — Define success criteria**
+  What a measurable criterion looks like before any grader exists to check it.
+  → https://docs.claude.com/en/docs/test-and-evaluate/define-success
+
+- **Claude docs — Develop test cases**
+  Designing the eval set itself: coverage, edge cases, and graded rubrics.
+  → https://docs.claude.com/en/docs/test-and-evaluate/develop-tests
+
+- **Claude docs — Using the Evaluation tool**
+  Running evals in the Console against prompt versions.
+  → https://docs.claude.com/en/docs/test-and-evaluate/eval-tool
+
+## AI fluency
+
+The Fluency Trials score the human, not the agent: Delegation, Description, Discernment,
+Diligence. Four stations, trainable competencies, and the reason the same model returns
+different outcomes to different people.
+
+- **The 4 Ds of AI fluency — behavioral indicators**
+  The four competencies with concrete observable behaviors for each. The Trials' rubric,
+  stated properly.
+  → https://claude.com/resources/tutorials/the-4-ds-of-ai-fluency-behavioral-indicators
+
+- **Anthropic — AI Fluency course hub**
+  The framework's home: courses for individuals, teams, and educators.
+  → https://www.anthropic.com/ai-fluency
+
+- **AI Fluency: Framework & Foundations (Anthropic Academy)**
+  The free foundational course behind the framework.
+  → https://anthropic.skilljar.com/ai-fluency-framework-foundations
+
 ## Claude Agent SDK
 
 The same loop, programmable: build your own harness on the machinery Claude Code runs on.

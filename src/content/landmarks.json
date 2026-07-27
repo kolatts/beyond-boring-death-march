@@ -42,6 +42,13 @@
     "blurb": "The Change Advisory Board is a river. Its depth is measured in business days, and the measurement is taken by someone who is out this week. There is a ferry. The ferry is free, safe, and departs every forty-five days from a dock that is currently being re-platformed. There is a ford, used at night and denounced at retrospectives — described as unacceptable by everyone standing on the far bank, which is where they live now. A plaque by the water states the river's purpose: to prevent incidents. A second plaque lists this year's incidents. The plaques do not reference each other. Between them stands a man whose entire job is polishing the plaques, and the plaques gleam."
   },
   {
+    "id": "assay_office",
+    "mile": 900,
+    "name": "The Assay Office",
+    "mechanic": "assay_office",
+    "blurb": "The Assay Office weighs claims. Prospectors arrive certain their prompt is gold, because it was gold once — one nugget, good light, witnesses who wanted it to be gold. The assayer thanks them, takes the prompt, and runs it against a ledger of cases with known answers. Then she posts the number. The number is public. The number is rarely the feeling. There is a wall for the difference, where each claim hangs beside its score, and prospectors stand in front of it doing the subtraction. Some decline the assay and ship on the feeling instead. The office keeps a ledger of those parties too. It is the same ledger, later. An assay costs a day. The feeling is free, and priced accordingly."
+  },
+  {
     "id": "harness_hollow",
     "mile": 1010,
     "name": "Harness Hollow",
@@ -68,6 +75,13 @@
     "name": "Permissions Pass",
     "mechanic": "permissions_gauntlet",
     "blurb": "The pass is a gauntlet of gates, and every gate asks the same question: what is the least you could carry and still do the job? Parties hate the question. They arrive hauling access they requested in year one, on the theory that they might someday need it. The theory has been correct exactly once, for the people who robbed them. The gatekeeper's ledger records two kinds of traveler: those who carried too little and had to ask twice, and those who carried everything and became, eventually, a headline. Requests for standing access to everything are approved by a committee. The committee meets after the incident. Its findings are thorough, unanimous, and addressed to whoever you were before."
+  },
+  {
+    "id": "fluency_trials",
+    "mile": 1600,
+    "name": "The Fluency Trials",
+    "mechanic": "fluency_trials",
+    "blurb": "A proving ground with an unusual rule: the agents wait outside. Inside, the party is scored — on what they handed over and what they kept, on how they asked, on whether they checked, on what they owned when it came back wrong. Four stations. The examiners are unfailingly polite. They say things like thank you, that is certainly one way to phrase a task, and write steadily. Parties arrive prepared to defend their wagon's engine and are asked, instead, to account for their own last five decisions, which turns out to be the harder inspection. Scores are posted by name. Not the agent's name. There is a waiting room where the agents sit together, comparing notes on their humans, politely."
   },
   {
     "id": "migration_plateau",

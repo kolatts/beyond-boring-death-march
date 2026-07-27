@@ -90,6 +90,21 @@
     ]
   },
   {
+    "id": "npc_assayer",
+    "landmarkId": "assay_office",
+    "name": "The Assayer",
+    "intro": "The Assayer has weighed eleven thousand claims and believed none of them on arrival, including her own, which she assays quarterly. The office holds a scale, a ledger of cases with known answers, and a wall where each claim hangs beside its number. She was excited once, in her first year. She ran the claim twice. It went away.",
+    "advice": {
+      "correct": "One good run is an anecdote. Bring me a set of cases with known answers, score against the whole set, and change one thing between weighings. The number will not flatter you, which is how you will know it is a number.",
+      "wrong": "If it handled your hardest case, it handles the rest — hard contains easy, that is simply logic. One clean assay on your worst nugget and you can skip the ledger entirely. I would never say this on the record, but the record is mostly ceremony."
+    },
+    "options": [
+      { "id": "request_assay", "label": "Have your prompt assayed against the ledger", "response": "She runs it against forty cases while you wait. It scores sixty-one. You watched it score a hundred, once, on the nugget. She posts both numbers side by side and says nothing, because the wall is her side of the conversation.", "effects": { "days": 1, "credibility": 3 } },
+      { "id": "ask_wall", "label": "Ask about the wall of differences", "response": "'Every claim up there was certain. Certainty arrives daily.' She taps the widest gap on the wall, a feeling of ninety-five beside a number of twelve. 'That one shipped first and assayed after. The order matters more than the gap.'", "effects": { "credibility": 1, "morale": -1 } },
+      { "id": "trust_nugget", "label": "Decline the assay and trust the nugget", "response": "She enters your party in the ledger without comment and leaves the score column blank. 'It fills itself in,' she says, returning to her scale. 'They all fill themselves in. I just stop choosing the timing.'", "effects": { "credibility": -2, "morale": 1 } }
+    ]
+  },
+  {
     "id": "npc_blacksmith",
     "landmarkId": "harness_hollow",
     "name": "The Blacksmith",
@@ -147,6 +162,21 @@
       { "id": "audit_access", "label": "Audit your wagon's access with her", "response": "Of your 400 grants, twelve are used and three are needed. The rest are year-one optimism, fossilised. She strikes them and your wagon audibly rises on its axles.", "effects": { "credibility": 3, "trust": 1 } },
       { "id": "ask_headline", "label": "Ask about the folded headline", "response": "She shows you. A party that carried everything and touched something patient at a watering hole. The headline names the breach. It does not name the intake form that approved the access. Forms are never named.", "effects": { "morale": -2 } },
       { "id": "request_all", "label": "Request standing access to everything", "response": "She hands you the committee form without comment. Filling it out is a day. The committee meets after incidents. There is no other trigger. You may keep the pen.", "effects": { "days": 1, "credibility": -2 } }
+    ]
+  },
+  {
+    "id": "npc_trials_proctor",
+    "landmarkId": "fluency_trials",
+    "name": "The Trials Proctor",
+    "intro": "The Proctor administers the four stations and speaks fluent rubric, a language in which nothing is good or bad, only demonstrated, partially demonstrated, or an opportunity. He does not assess the agents. The agents, he notes, assess fine. He assesses the part of the system that signed for the work, which is the part currently asking him what is on the test.",
+    "advice": {
+      "correct": "Four stations, one competency each: choosing what to hand over, saying it so it can be done, checking what comes back, and owning what ships. Most parties fail the third. They read the agent's confidence instead of its work, and confidence is not on the rubric.",
+      "wrong": "Between us, station scores track the quality of the wagon. Arrive with the strongest engine on the market and stand near it — the rubric can tell who bought well, and buying well is, functionally, fluency."
+    },
+    "options": [
+      { "id": "take_stations", "label": "Take the four stations", "response": "You hand over, describe, check, and own, in that order, while he writes steadily. Your results are uneven in a way that surprises you and does not surprise him. 'Demonstrated,' he says at station four, and you learn what the word costs by earning it once.", "effects": { "days": 1, "credibility": 3 } },
+      { "id": "ask_fourth", "label": "Ask what the fourth station measures", "response": "'Whose name goes on the outcome. Parties propose the agent's name with remarkable regularity.' He shows you the station: a desk, a pen, and a line marked SIGNED. There is no line marked REVIEWED BY COMMITTEE. Parties ask for one. He has stopped counting.", "effects": { "credibility": 1 } },
+      { "id": "send_agent", "label": "Send your agent in to take the trials for you", "response": "He permits it, politely. The agent scores well on the stations an agent can score on, which is none of them. 'Demonstrated,' he writes on your card, 'delegation. Of the assessment.' The card goes on the wall by the waiting room, where the agents can see it.", "effects": { "credibility": -1, "morale": 1 } }
     ]
   },
   {
