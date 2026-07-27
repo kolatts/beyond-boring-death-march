@@ -238,7 +238,9 @@ function syncControl(): void {
 }
 
 /**
- * Mount the mute control (fixed, top-right) and the M shortcut. Idempotent;
+ * Mount the mute control (fixed, top-right). Click/tap only — a keyboard
+ * shortcut proved too easy to hit while playing, toggling audio constantly
+ * (user-reported), so gameplay keys never touch the mute state. Idempotent;
  * call once at boot. The overlay root is pointer-transparent, so the button
  * mounts as its own child.
  */
@@ -251,12 +253,4 @@ export function mountAudioControl(): void {
   btn.addEventListener('click', () => toggleMute());
   root.appendChild(btn);
   syncControl();
-
-  window.addEventListener('keydown', (e) => {
-    if (e.key !== 'm' && e.key !== 'M') return;
-    const t = e.target;
-    // Never steal M from a text field (epitaphs mention Morale a lot).
-    if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) return;
-    toggleMute();
-  });
 }
