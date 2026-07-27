@@ -1,69 +1,151 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "loop-builder.schema.json",
-  "title": "Loop Builder content (spec 7.2)",
+  "title": "Loop Builder content (spec 7.2, v2 socket ring)",
   "type": "object",
-  "required": ["blocks", "guided", "ridge", "tutorial", "run", "verdicts"],
+  "required": ["comment", "nodes", "checks", "stops", "run", "fork", "ridge", "tutorial", "verdicts"],
   "additionalProperties": false,
+  "definitions": {
+    "node": {
+      "type": "object",
+      "required": ["label", "sub", "desc"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 16 },
+        "sub": { "type": "string", "minLength": 1, "maxLength": 24 },
+        "desc": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "graphNode": {
+      "type": "object",
+      "required": ["label", "desc"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 16 },
+        "desc": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  },
   "properties": {
-    "blocks": {
+    "comment": { "type": "string" },
+    "nodes": {
+      "type": "object",
+      "required": ["trigger", "agent", "stop", "gate"],
+      "additionalProperties": false,
+      "properties": {
+        "trigger": { "$ref": "#/definitions/node" },
+        "agent": { "$ref": "#/definitions/node" },
+        "stop": { "$ref": "#/definitions/node" },
+        "gate": { "$ref": "#/definitions/node" }
+      }
+    },
+    "checks": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "sub", "desc", "passLine", "failLine", "closerLine", "feedbackLine"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "enum": ["run_build", "run_lint", "run_ui_tests", "squint"] },
+          "label": { "type": "string", "minLength": 1, "maxLength": 16 },
+          "sub": { "type": "string", "minLength": 1, "maxLength": 24 },
+          "desc": { "type": "string", "minLength": 1, "maxLength": 160 },
+          "passLine": { "type": "string", "minLength": 1 },
+          "failLine": { "type": "string", "minLength": 1 },
+          "closerLine": { "type": "string", "minLength": 1 },
+          "feedbackLine": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "stops": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
       "items": {
         "type": "object",
         "required": ["id", "label", "sub", "desc"],
         "additionalProperties": false,
         "properties": {
-          "id": {
-            "type": "string",
-            "enum": [
-              "trigger",
-              "context",
-              "agent",
-              "tool_tests",
-              "observe",
-              "verifier_machine",
-              "verifier_subjective",
-              "stop_success",
-              "stop_cap",
-              "stop_budget",
-              "human_gate",
-              "escalate"
-            ]
-          },
+          "id": { "type": "string", "enum": ["cap", "budget", "both", "none"] },
           "label": { "type": "string", "minLength": 1, "maxLength": 16 },
-          "sub": { "type": "string", "minLength": 1, "maxLength": 20 },
+          "sub": { "type": "string", "minLength": 1, "maxLength": 24 },
           "desc": { "type": "string", "minLength": 1, "maxLength": 160 }
         }
       }
     },
-    "guided": {
+    "run": {
       "type": "object",
-      "required": ["hint", "socketHints"],
+      "required": ["start", "triggerLine", "agentLines", "stopLine", "squintPassLine", "gateEscortLine", "scoreLine"],
       "additionalProperties": false,
       "properties": {
-        "hint": { "type": "string" },
-        "socketHints": {
+        "start": { "type": "string" },
+        "triggerLine": { "type": "string" },
+        "agentLines": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "string" } },
+        "stopLine": { "type": "string" },
+        "squintPassLine": { "type": "string" },
+        "gateEscortLine": { "type": "string" },
+        "scoreLine": { "type": "string" }
+      }
+    },
+    "fork": {
+      "type": "object",
+      "required": ["title", "intro", "graph", "loop", "tally", "banner", "moral"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "intro": { "$ref": "#/definitions/lines" },
+        "graph": {
           "type": "object",
-          "required": ["observe", "stop_cap"],
+          "required": ["hint", "nodes", "doneLabel", "runA", "runB", "verdict"],
           "additionalProperties": false,
           "properties": {
-            "observe": { "type": "string" },
-            "stop_cap": { "type": "string" }
+            "hint": { "type": "string" },
+            "nodes": {
+              "type": "object",
+              "required": ["plan", "step_a", "step_b", "merge"],
+              "additionalProperties": false,
+              "properties": {
+                "plan": { "$ref": "#/definitions/graphNode" },
+                "step_a": { "$ref": "#/definitions/graphNode" },
+                "step_b": { "$ref": "#/definitions/graphNode" },
+                "merge": { "$ref": "#/definitions/graphNode" }
+              }
+            },
+            "doneLabel": { "type": "string", "minLength": 1, "maxLength": 12 },
+            "runA": { "$ref": "#/definitions/lines" },
+            "runB": { "$ref": "#/definitions/lines" },
+            "verdict": { "type": "string" }
           }
-        }
+        },
+        "loop": {
+          "type": "object",
+          "required": ["hint", "runA", "runB", "verdict"],
+          "additionalProperties": false,
+          "properties": {
+            "hint": { "type": "string" },
+            "runA": { "$ref": "#/definitions/lines" },
+            "runB": { "$ref": "#/definitions/lines" },
+            "verdict": { "type": "string" }
+          }
+        },
+        "tally": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+        "banner": { "type": "string" },
+        "moral": { "type": "string" }
       }
     },
     "ridge": {
       "type": "object",
-      "required": ["intro", "plate", "retreatDenied", "crossSuccess", "crossGated", "banked"],
+      "required": ["intro", "plate", "retreatDenied", "squintDenied", "crossSuccess", "crossGated", "banked"],
       "additionalProperties": false,
       "properties": {
         "intro": { "type": "string" },
         "plate": { "type": "string" },
         "retreatDenied": { "type": "string" },
-        "crossSuccess": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "squintDenied": { "type": "string" },
+        "crossSuccess": { "$ref": "#/definitions/lines" },
         "crossGated": { "type": "string" },
         "banked": { "type": "string" }
       }
@@ -87,18 +169,6 @@
         "moral": { "type": "string" }
       }
     },
-    "run": {
-      "type": "object",
-      "required": ["start", "visitLines"],
-      "additionalProperties": false,
-      "properties": {
-        "start": { "type": "string" },
-        "visitLines": {
-          "type": "object",
-          "additionalProperties": { "type": "string" }
-        }
-      }
-    },
     "verdicts": {
       "type": "object",
       "required": [
@@ -107,7 +177,6 @@
         "subjective_verifier",
         "no_stop_cap",
         "no_stop_budget",
-        "no_observe",
         "human_gate_everywhere",
         "incomplete"
       ],
@@ -115,13 +184,10 @@
       "properties": {
         "success": {
           "type": "object",
-          "required": ["banner", "lines", "gateLine", "scoreLine"],
+          "required": ["banner"],
           "additionalProperties": false,
           "properties": {
-            "banner": { "type": "string" },
-            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } },
-            "gateLine": { "type": "string" },
-            "scoreLine": { "type": "string" }
+            "banner": { "type": "string" }
           }
         },
         "no_verifier": {
@@ -132,7 +198,7 @@
             "banner": { "type": "string" },
             "cause": { "type": "string" },
             "checks": { "type": "array", "minItems": 5, "items": { "type": "string" } },
-            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            "lines": { "$ref": "#/definitions/lines" }
           }
         },
         "subjective_verifier": {
@@ -148,16 +214,24 @@
         },
         "no_stop_cap": {
           "type": "object",
-          "required": ["banner", "cause", "iterLine", "iterVariants", "watch", "escalated", "lines"],
+          "required": ["banner", "cause", "iterLine", "iterVariants", "watch", "lines", "breaker"],
           "additionalProperties": false,
           "properties": {
             "banner": { "type": "string" },
             "cause": { "type": "string" },
             "iterLine": { "type": "string" },
-            "iterVariants": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "iterVariants": { "$ref": "#/definitions/lines" },
             "watch": { "type": "string" },
-            "escalated": { "type": "array", "minItems": 1, "items": { "type": "string" } },
-            "lines": { "type": "array", "items": { "type": "string" } }
+            "lines": { "$ref": "#/definitions/lines" },
+            "breaker": {
+              "type": "object",
+              "required": ["banner", "lines"],
+              "additionalProperties": false,
+              "properties": {
+                "banner": { "type": "string" },
+                "lines": { "$ref": "#/definitions/lines" }
+              }
+            }
           }
         },
         "no_stop_budget": {
@@ -167,19 +241,9 @@
           "properties": {
             "banner": { "type": "string" },
             "cause": { "type": "string" },
-            "lines": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "lines": { "$ref": "#/definitions/lines" },
             "invoice": { "type": "array", "minItems": 3, "items": { "type": "string" } },
             "after": { "type": "string" }
-          }
-        },
-        "no_observe": {
-          "type": "object",
-          "required": ["banner", "cause", "lines"],
-          "additionalProperties": false,
-          "properties": {
-            "banner": { "type": "string" },
-            "cause": { "type": "string" },
-            "lines": { "type": "array", "minItems": 4, "items": { "type": "string" } }
           }
         },
         "human_gate_everywhere": {
@@ -193,22 +257,11 @@
         },
         "incomplete": {
           "type": "object",
-          "required": ["banner", "missing"],
+          "required": ["banner", "missingStop"],
           "additionalProperties": false,
           "properties": {
             "banner": { "type": "string" },
-            "missing": {
-              "type": "object",
-              "required": ["trigger", "context", "agent", "tool_tests", "stop_success"],
-              "additionalProperties": false,
-              "properties": {
-                "trigger": { "type": "string" },
-                "context": { "type": "string" },
-                "agent": { "type": "string" },
-                "tool_tests": { "type": "string" },
-                "stop_success": { "type": "string" }
-              }
-            }
+            "missingStop": { "type": "string" }
           }
         }
       }

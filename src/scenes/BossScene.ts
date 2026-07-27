@@ -27,7 +27,7 @@ import { actions, getState } from '../systems/state';
 import { saveRun } from '../systems/save';
 import {
   evaluateLoop,
-  type BlockId,
+  loopFromBlocks,
   type LoopOutcome,
   type TimelineEvent,
 } from '../systems/loopSim';
@@ -59,7 +59,8 @@ interface BossCard {
   scope: 'narrow' | 'broad';
   serialized: boolean;
   yield: number;
-  blocks: BlockId[];
+  /** v1 pegboard block list (boss.json); adapted via loopFromBlocks(). */
+  blocks: string[];
 }
 
 interface BossContent {
@@ -154,7 +155,14 @@ function resolveBoss(cards: BossCard[], committed: number, rand: () => number): 
   let pool = committed;
   const lanes: LaneResult[] = cards.map((card) => {
     const conflicted = conflictHit && card.scope === 'broad' && !card.serialized;
-    const outcome = evaluateLoop({ blocks: card.blocks }, { startTokens: Math.max(0, pool), rand });
+    // Legacy block lists map onto the v2 ring; a lane's single HUMAN GATE
+    // means "serialized through the shared core", not "a person every lap",
+    // so it escorts (slower, cheaper-banked success) instead of bottlenecking.
+    const outcome = evaluateLoop(loopFromBlocks(card.blocks), {
+      startTokens: Math.max(0, pool),
+      rand,
+      gateStyle: 'escort',
+    });
     // Reuse contract: subtract spends, ignore gains, between calls.
     let spend = Math.max(0, -outcome.tokensDelta);
     if (conflicted) spend += CONFLICT_REWORK;
