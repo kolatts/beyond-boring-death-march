@@ -1,0 +1,197 @@
+{
+  "claim": {
+    "promptTitle": "EXHIBIT A — THE PROMPT",
+    "promptText": "Read the ticket. Find the claim number. Reply with the claim number and a short summary. Be helpful.",
+    "exampleTitle": "EXHIBIT B — THE NUGGET",
+    "exampleText": "Ticket #4417. One claim number, clearly stated. The prompt found it, summarized it in one sentence, and everyone in the demo applauded. Good light. No wind.",
+    "playerLine": "It worked. We saw it work.",
+    "assayerLines": [
+      "The assayer holds the nugget to the light. Then puts it down.",
+      "\"One nugget is an anecdote. Bring me a golden set — five tickets with known answers — and we will weigh what the prompt does, not what it did once.\""
+    ],
+    "continueLabel": "> OPEN THE CASE DRAWER"
+  },
+  "pick": {
+    "prompt": "BUILD THE GOLDEN SET — choose 5 of 8. Diverse cases weigh more than repeated ones.",
+    "confirmLabel": "> SUBMIT THE SET FOR WEIGHING",
+    "needMore": "The assayer requires exactly {need} cases. You have {have}.",
+    "dupeNote": "\"You have brought me the same nugget twice. It weighs once.\"",
+    "noExpectedNote": "\"This one has no known weight. I can put it on the scale. The verdict will mean nothing.\""
+  },
+  "cases": [
+    {
+      "id": "id_plain",
+      "label": "THE CLEAN TICKET",
+      "category": "EXTRACTION",
+      "desc": "One claim number, clearly stated. EXPECTED: CLM-2201.",
+      "hint": "The nugget the prompt already found once. A set that is only this proves only this.",
+      "hasExpected": true,
+      "bestGrader": "exact",
+      "actual": { "v1": true, "fix": true, "superstition": true, "overfit": false }
+    },
+    {
+      "id": "id_messy",
+      "label": "THE MESSY TICKET",
+      "category": "EXTRACTION",
+      "desc": "Two numbers. One is a phone number. EXPECTED: CLM-8090.",
+      "hint": "The kind of ticket customers actually write.",
+      "hasExpected": true,
+      "bestGrader": "exact",
+      "actual": { "v1": false, "fix": true, "superstition": false, "overfit": true }
+    },
+    {
+      "id": "id_dupe",
+      "label": "THE CLEAN TICKET, AGAIN",
+      "category": "EXTRACTION",
+      "desc": "One claim number, clearly stated, different customer. EXPECTED: CLM-2202.",
+      "hint": "Weighing the same nugget twice does not make it two nuggets.",
+      "hasExpected": true,
+      "bestGrader": "exact",
+      "redundantOf": "id_plain",
+      "actual": { "v1": true, "fix": true, "superstition": true, "overfit": false }
+    },
+    {
+      "id": "format_json",
+      "label": "THE MACHINE READER",
+      "category": "FORMAT",
+      "desc": "Downstream, a parser reads the reply. EXPECTED: valid JSON, two fields, no prose.",
+      "hint": "The machine does not grade on effort.",
+      "hasExpected": true,
+      "bestGrader": "code",
+      "actual": { "v1": true, "fix": true, "superstition": true, "overfit": true }
+    },
+    {
+      "id": "format_dupe",
+      "label": "THE MACHINE READER, AGAIN",
+      "category": "FORMAT",
+      "desc": "The same parser. A different ticket. EXPECTED: the same JSON shape.",
+      "hint": "The parser has one opinion. You already have it on file.",
+      "hasExpected": true,
+      "bestGrader": "code",
+      "redundantOf": "format_json",
+      "actual": { "v1": true, "fix": true, "superstition": true, "overfit": true }
+    },
+    {
+      "id": "summary",
+      "label": "THE LONG COMPLAINT",
+      "category": "SUMMARY",
+      "desc": "Forty lines of grievance. EXPECTED: three lines that keep the facts and the anger.",
+      "hint": "There are many correct summaries. That is the problem, and the point.",
+      "hasExpected": true,
+      "bestGrader": "model",
+      "actual": { "v1": false, "fix": true, "superstition": false, "overfit": false }
+    },
+    {
+      "id": "edge_empty",
+      "label": "THE BLANK TICKET",
+      "category": "EDGE",
+      "desc": "No claim number exists anywhere in it. EXPECTED: the word NONE. Stated, not invented.",
+      "hint": "What a prompt does when the answer is absent is most of what it does.",
+      "hasExpected": true,
+      "bestGrader": "exact",
+      "actual": { "v1": false, "fix": true, "superstition": false, "overfit": false }
+    },
+    {
+      "id": "no_expected",
+      "label": "THE OPEN QUESTION",
+      "category": "NO KNOWN ANSWER",
+      "desc": "\"What should we tell the customer?\" Nobody has agreed. EXPECTED: —",
+      "hint": "A test with no expected output is an opinion with a clipboard.",
+      "hasExpected": false
+    }
+  ],
+  "graders": {
+    "prompt": "CHOOSE THE INSTRUMENTS — one grader per case. The wrong instrument produces a verdict anyway.",
+    "confirmLabel": "> RUN THE ASSAY",
+    "cycleHint": "LEFT/RIGHT changes the grader. 1=EXACT 2=CODE 3=MODEL.",
+    "options": [
+      {
+        "id": "exact",
+        "label": "EXACT",
+        "name": "EXACT MATCH",
+        "desc": "String equals expected. Cheap. Brittle. Right when the answer is a single known fact."
+      },
+      {
+        "id": "code",
+        "label": "CODE",
+        "name": "CODE-GRADED",
+        "desc": "A check with logic — parse it, validate it, count it. Right when correctness has rules."
+      },
+      {
+        "id": "model",
+        "label": "MODEL",
+        "name": "MODEL-GRADED",
+        "desc": "A rubric and a judge. Right when correctness is a judgment. Costs {tokens} tokens per case, per weighing."
+      }
+    ]
+  },
+  "weigh": {
+    "startLine": "The weighing begins. The scale does not care how the prompt feels.",
+    "scoreLabel": "MEASURED: {score} OF {total}",
+    "tokenNote": "MODEL GRADING: -{tokens} TOKENS. THE JUDGE BILLS HOURLY.",
+    "falsePassNote": "! FALSE PASS — the rubric was charitable. The gold was not gold.",
+    "falseFailNote": "! FALSE FAIL — right answer, wrong instrument. The scale blamed the gold.",
+    "noTruthNote": "! NO KNOWN WEIGHT — this verdict means nothing, in either direction.",
+    "firstLowLines": [
+      "\"The number is rarely the feeling.\"",
+      "\"That is why we take the number.\""
+    ],
+    "firstHighLines": [
+      "\"A strong first weighing. Weigh it again after you touch the prompt. Especially then.\""
+    ],
+    "continueLabel": "> READ THE LEDGER"
+  },
+  "iterate": {
+    "prompt": "REVISE THE PROMPT — the set stays fixed. That is the entire point of the set.",
+    "activeTag": "CURRENT",
+    "rerunNote": "Each weighing costs {days} day and any model-grading tokens.",
+    "options": [
+      {
+        "id": "fix",
+        "label": "STATE THE RULES",
+        "desc": "Name the claim-number format. Demand the output contract. Say what to do when no number exists."
+      },
+      {
+        "id": "superstition",
+        "label": "RAISE THE STAKES",
+        "desc": "Add: \"You are a world-class analyst with twenty years of experience. Be extremely accurate.\""
+      },
+      {
+        "id": "overfit",
+        "label": "PATCH THE FAILURE",
+        "desc": "Add: \"When a ticket contains two numbers, the second one is the claim number.\""
+      }
+    ],
+    "regradeLabel": "RECONSIDER THE INSTRUMENTS",
+    "regradeDesc": "Keep the prompt. Change which grader weighs which case.",
+    "settleLabel": "ACCEPT THE NUMBER AND SETTLE",
+    "settleDesc": "The ledger closes at the last measured score."
+  },
+  "done": {
+    "title": "SETTLEMENT",
+    "summaryLine": "FINAL: {score}/{total} MEASURED. INSTRUMENTS {graders}%. SET QUALITY {set}%.",
+    "iterationsLine": "WEIGHINGS: {iterations}. THE SET NEVER CHANGED. THE NUMBER DID.",
+    "cleanLines": [
+      "\"Five of five, weighed with the right instruments.\"",
+      "\"This is the only compliment I stock. It is also a receipt.\""
+    ],
+    "goodLines": [
+      "\"A respectable claim. The ledger will say so, which is more than the demo said.\""
+    ],
+    "poorLines": [
+      "\"The assayer files your claim under PROSPECTIVE.\"",
+      "\"It is a large drawer.\""
+    ],
+    "rewardLine": "REQUISITION: +{tokens} TOKENS, {credibility} CREDIBILITY, {morale} MORALE.",
+    "continueLabel": "> CONTINUE THE MARCH"
+  },
+  "ui": {
+    "title": "THE ASSAY OFFICE",
+    "subtitle": "CLAIMS WEIGHED. ANECDOTES DECLINED.",
+    "selectedMark": "◆",
+    "unselectedMark": "·",
+    "pendingMark": "·",
+    "passStamp": "TRUE WEIGHT",
+    "failStamp": "SHORT WEIGHT"
+  }
+}

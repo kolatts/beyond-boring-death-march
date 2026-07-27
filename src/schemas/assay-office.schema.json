@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "assay-office.schema.json",
+  "title": "Assay Office content",
+  "type": "object",
+  "required": ["claim", "pick", "cases", "graders", "weigh", "iterate", "done", "ui"],
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "type": "object",
+      "required": [
+        "promptTitle",
+        "promptText",
+        "exampleTitle",
+        "exampleText",
+        "playerLine",
+        "assayerLines",
+        "continueLabel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "promptTitle": { "type": "string", "minLength": 1 },
+        "promptText": { "type": "string", "minLength": 1 },
+        "exampleTitle": { "type": "string", "minLength": 1 },
+        "exampleText": { "type": "string", "minLength": 1 },
+        "playerLine": { "type": "string", "minLength": 1 },
+        "assayerLines": { "$ref": "#/definitions/lines" },
+        "continueLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "pick": {
+      "type": "object",
+      "required": ["prompt", "confirmLabel", "needMore", "dupeNote", "noExpectedNote"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "confirmLabel": { "type": "string", "minLength": 1 },
+        "needMore": { "type": "string", "pattern": "\\{need\\}" },
+        "dupeNote": { "type": "string", "minLength": 1 },
+        "noExpectedNote": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "category", "desc", "hint", "hasExpected"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "category": { "type": "string", "minLength": 1 },
+          "desc": { "type": "string", "minLength": 1 },
+          "hint": { "type": "string", "minLength": 1 },
+          "hasExpected": { "type": "boolean" },
+          "bestGrader": { "type": "string", "enum": ["exact", "code", "model"] },
+          "redundantOf": { "type": "string", "minLength": 1 },
+          "actual": {
+            "type": "object",
+            "required": ["v1", "fix", "superstition", "overfit"],
+            "additionalProperties": false,
+            "properties": {
+              "v1": { "type": "boolean" },
+              "fix": { "type": "boolean" },
+              "superstition": { "type": "boolean" },
+              "overfit": { "type": "boolean" }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "hasExpected": { "const": true } } },
+            "then": { "required": ["bestGrader", "actual"] }
+          }
+        ]
+      }
+    },
+    "graders": {
+      "type": "object",
+      "required": ["prompt", "confirmLabel", "cycleHint", "options"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "confirmLabel": { "type": "string", "minLength": 1 },
+        "cycleHint": { "type": "string", "minLength": 1 },
+        "options": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "name", "desc"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "enum": ["exact", "code", "model"] },
+              "label": { "type": "string", "minLength": 1 },
+              "name": { "type": "string", "minLength": 1 },
+              "desc": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "weigh": {
+      "type": "object",
+      "required": [
+        "startLine",
+        "scoreLabel",
+        "tokenNote",
+        "falsePassNote",
+        "falseFailNote",
+        "noTruthNote",
+        "firstLowLines",
+        "firstHighLines",
+        "continueLabel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "startLine": { "type": "string", "minLength": 1 },
+        "scoreLabel": { "type": "string", "pattern": "\\{score\\}" },
+        "tokenNote": { "type": "string", "pattern": "\\{tokens\\}" },
+        "falsePassNote": { "type": "string", "minLength": 1 },
+        "falseFailNote": { "type": "string", "minLength": 1 },
+        "noTruthNote": { "type": "string", "minLength": 1 },
+        "firstLowLines": { "$ref": "#/definitions/lines" },
+        "firstHighLines": { "$ref": "#/definitions/lines" },
+        "continueLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "iterate": {
+      "type": "object",
+      "required": [
+        "prompt",
+        "activeTag",
+        "rerunNote",
+        "options",
+        "regradeLabel",
+        "regradeDesc",
+        "settleLabel",
+        "settleDesc"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "activeTag": { "type": "string", "minLength": 1 },
+        "rerunNote": { "type": "string", "pattern": "\\{days\\}" },
+        "options": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "desc"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "enum": ["fix", "superstition", "overfit"] },
+              "label": { "type": "string", "minLength": 1 },
+              "desc": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "regradeLabel": { "type": "string", "minLength": 1 },
+        "regradeDesc": { "type": "string", "minLength": 1 },
+        "settleLabel": { "type": "string", "minLength": 1 },
+        "settleDesc": { "type": "string", "minLength": 1 }
+      }
+    },
+    "done": {
+      "type": "object",
+      "required": [
+        "title",
+        "summaryLine",
+        "iterationsLine",
+        "cleanLines",
+        "goodLines",
+        "poorLines",
+        "rewardLine",
+        "continueLabel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "summaryLine": { "type": "string", "pattern": "\\{score\\}" },
+        "iterationsLine": { "type": "string", "pattern": "\\{iterations\\}" },
+        "cleanLines": { "$ref": "#/definitions/lines" },
+        "goodLines": { "$ref": "#/definitions/lines" },
+        "poorLines": { "$ref": "#/definitions/lines" },
+        "rewardLine": { "type": "string", "pattern": "\\{tokens\\}" },
+        "continueLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "required": [
+        "title",
+        "subtitle",
+        "selectedMark",
+        "unselectedMark",
+        "pendingMark",
+        "passStamp",
+        "failStamp"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": "string", "minLength": 1 },
+        "selectedMark": { "type": "string", "minLength": 1 },
+        "unselectedMark": { "type": "string", "minLength": 1 },
+        "pendingMark": { "type": "string", "minLength": 1 },
+        "passStamp": { "type": "string", "minLength": 1 },
+        "failStamp": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "definitions": {
+    "lines": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
