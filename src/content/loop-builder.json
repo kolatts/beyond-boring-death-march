@@ -1,89 +1,179 @@
 {
-  "blocks": [
-    {
-      "id": "trigger",
+  "comment": "v2 socket ring. Retired with the freeform pegboard: the OBSERVE block and its 'no_observe' failure mode (observation is now automatic and SHOWN — every failing check's output visibly flows back into the agent's context mid-run) and the ESCALATE block. SQUINT AT IT inherits the subjective-verifier prose; the single STOP socket takes one config card instead of three stop blocks.",
+  "nodes": {
+    "trigger": {
       "label": "TRIGGER",
       "sub": "issue opened",
       "desc": "Starts the loop: schedule, file change, issue opened, CI failure, manual. Something has to ask."
     },
-    {
-      "id": "context",
-      "label": "CONTEXT",
-      "sub": "what it sees",
-      "desc": "What the agent gets to see this iteration. Not everything. Everything is how you die."
-    },
-    {
-      "id": "agent",
-      "label": "AGENT STEP",
+    "agent": {
+      "label": "AGENT",
       "sub": "the model acts",
-      "desc": "The model acts. It is confident. Confidence is not a metric."
+      "desc": "The model edits the code. It is confident. Confidence is not a metric."
+    },
+    "stop": {
+      "label": "STOP",
+      "sub": "needs a config",
+      "desc": "How the loop ends. Seat a config card. A loop with no exit is called a career."
+    },
+    "gate": {
+      "label": "HUMAN GATE",
+      "sub": "a person, every lap",
+      "desc": "Pause for a person each iteration. Powerful once. On every lap, the person is the loop."
+    }
+  },
+  "checks": [
+    {
+      "id": "run_build",
+      "label": "RUN BUILD",
+      "sub": "does it compile",
+      "desc": "The compiler reads every line and holds a grudge. Machine-checkable. It cannot be flattered.",
+      "passLine": "BUILD ✓ — compiles clean.",
+      "failLine": "BUILD ✗ — 2 errors: 'ledger' is not defined. Neither is 'ledgar'.",
+      "closerLine": "BUILD ✗ — 1 error left. The grudge is narrowing.",
+      "feedbackLine": "the build errors flow back into the agent's context. It reads them. All of them."
     },
     {
-      "id": "tool_tests",
-      "label": "TOOL",
-      "sub": "run tests",
-      "desc": "read / write / tests / build / browse / shell. Today: run tests. They do not care how the code feels."
+      "id": "run_lint",
+      "label": "RUN LINT",
+      "sub": "is it tidy",
+      "desc": "Opinions — but codified, numbered, and enforced by a machine. That promotion makes them checks.",
+      "passLine": "LINT ✓ — 0 warnings. The style guide sleeps.",
+      "failLine": "LINT ✗ — 14 warnings, incl. one unused import carrying emotional weight.",
+      "closerLine": "LINT ✗ — 3 warnings left, all in the file it just touched.",
+      "feedbackLine": "the lint report flows back into the agent's context. It reads the warnings."
     },
     {
-      "id": "observe",
-      "label": "OBSERVE",
-      "sub": "read the result",
-      "desc": "Capture what the tool said, put it back in context. An unread test is a ritual, not a signal."
+      "id": "run_ui_tests",
+      "label": "RUN UI TESTS",
+      "sub": "a robot clicks",
+      "desc": "A small browser opens and a robot clicks the button like a customer who has read nothing.",
+      "passLine": "UI TEST ✓ — the button does the thing. A robot confirmed it.",
+      "failLine": "UI TEST ✗ — clicked SAVE. Nothing saved. Screenshot attached, damning.",
+      "closerLine": "UI TEST ✗ — SAVE saves now. UNDO un-does slightly too much.",
+      "feedbackLine": "the failing screenshot flows back into the agent's context. It looks at it."
     },
     {
-      "id": "verifier_machine",
-      "label": "VERIFIER",
-      "sub": "tests pass",
-      "desc": "Machine-checkable pass/fail. The whole point. It cannot be flattered."
-    },
-    {
-      "id": "verifier_subjective",
-      "label": "VERIFIER",
+      "id": "squint",
+      "label": "SQUINT AT IT",
       "sub": "looks good",
-      "desc": "A vibe with a socket. Accepts compliments. Returns opinions."
-    },
+      "desc": "A vibe with a socket. Accepts compliments. Returns opinions. Counts as nothing.",
+      "passLine": "SQUINT — looks good from here. (This proved nothing.)",
+      "failLine": "SQUINT — hmm. Looks... fine?",
+      "closerLine": "SQUINT — still looks fine. Everything always has.",
+      "feedbackLine": "an opinion flows back into the agent's context. It was not information."
+    }
+  ],
+  "stops": [
     {
-      "id": "stop_success",
-      "label": "STOP: SUCCESS",
-      "sub": "exit on pass",
-      "desc": "Leave when the verifier says pass. A loop with no exit is called a career."
-    },
-    {
-      "id": "stop_cap",
-      "label": "STOP: CAP",
-      "sub": "max iterations",
+      "id": "cap",
+      "label": "ITERATION CAP",
+      "sub": "max 10 tries",
       "desc": "A maximum number of tries. Hope is not a maximum."
     },
     {
-      "id": "stop_budget",
-      "label": "STOP: BUDGET",
-      "sub": "max spend",
+      "id": "budget",
+      "label": "SPEND BUDGET",
+      "sub": "max 20 tokens",
       "desc": "A spending limit. The invoice arrives either way; this decides the font size."
     },
     {
-      "id": "human_gate",
-      "label": "HUMAN GATE",
-      "sub": "pause for a person",
-      "desc": "Pause for a person. Powerful in one place. In every place, the person is the loop."
+      "id": "both",
+      "label": "CAP + BUDGET",
+      "sub": "belt and braces",
+      "desc": "Tries capped AND spend capped. The loop ends on purpose, whichever limit arrives first."
     },
     {
-      "id": "escalate",
-      "label": "ESCALATE",
-      "sub": "give up loudly",
-      "desc": "Give up loudly instead of quietly. A failure that files a report is worth something."
+      "id": "none",
+      "label": "NONE",
+      "sub": "it'll stop itself",
+      "desc": "No cap, no budget, no exit but success. Optimism, socketed."
     }
   ],
-  "guided": {
-    "hint": "Two sockets are cold. The loop knows what it is missing. Soon, so will you.",
-    "socketHints": {
-      "observe": "An empty socket after TOOL. The tests will say things. Someone should listen.",
-      "stop_cap": "An empty socket among the stops. How many tries is too many? Pick a number."
-    }
+  "run": {
+    "start": "RING ENERGIZED. Current on the line.",
+    "triggerLine": "TRIGGER — issue #4198: 'button does nothing (the main button)'.",
+    "agentLines": [
+      "AGENT — reads the issue, edits src/button.ts. First attempt, full confidence.",
+      "AGENT — reads what the check said. Edits again, chastened.",
+      "AGENT — third pass. The checks steered; the agent merely drove."
+    ],
+    "stopLine": "STOP — checks green. The loop exits on purpose. Under cap. Under budget.",
+    "squintPassLine": "SQUINT — also looks good. Nobody asked, but it also looks good.",
+    "gateEscortLine": "GATE — a human approved lap {n}. The human added nothing, warmly.",
+    "scoreLine": "Efficient loop. Tokens banked: {banked}."
+  },
+  "fork": {
+    "title": "THE LOOP FORK",
+    "intro": [
+      "The road forks. One side is a LOOP. The other is a GRAPH. Two jobs are nailed to the signpost.",
+      "JOB A — FORMAT THE LEDGER. Known shape, known steps. A pipeline.",
+      "JOB B — THE WAGON WHEEL SQUEAKS SOMEWHERE. Nobody knows where. A surprise."
+    ],
+    "graph": {
+      "hint": "GRAPH side first. Seat PLAN, two parallel STEPs, and a MERGE GATE. Every node runs exactly once.",
+      "nodes": {
+        "plan": {
+          "label": "PLAN",
+          "desc": "Splits the job into two halves. Once. Up front. With total certainty."
+        },
+        "step_a": {
+          "label": "STEP",
+          "desc": "Does its half. Exactly once. Asks nothing. Checks nothing."
+        },
+        "step_b": {
+          "label": "STEP",
+          "desc": "Does the other half. Also once. Also asks nothing."
+        },
+        "merge": {
+          "label": "MERGE GATE",
+          "desc": "Waits for both halves, staples them together, declares the job done."
+        }
+      },
+      "doneLabel": "DONE",
+      "runA": [
+        "GRAPH · JOB A — PLAN: split the ledger. Columns left, rows right.",
+        "STEP ‖ STEP — columns aligned; rows dated. In parallel. No drama.",
+        "MERGE GATE — both halves agree. Stapled.",
+        "DONE ✓ — ledger formatted. 6 tokens, one pass. The graph knew the shape of the job."
+      ],
+      "runB": [
+        "GRAPH · JOB B — PLAN: 'a squeak is an axle problem.' Decided. Once.",
+        "STEP ‖ STEP — axle greased; bolts tightened. In parallel. With conviction.",
+        "MERGE GATE — both halves report success. Stapled.",
+        "DONE ✓ — shipped: 'wheel fixed.'",
+        "The squeak continues. It was the door. Every node ran. No node listened."
+      ],
+      "verdict": "The graph is deterministic: every node runs once, the cost is predictable — and nothing in it can notice it was wrong."
+    },
+    "loop": {
+      "hint": "Now the LOOP side. Seat real checks and a stop config, then RUN the same two jobs.",
+      "runA": [
+        "LOOP · JOB A — lap 1: formats the columns. BUILD ✗ — a stray comma in the ledger parser.",
+        "lap 2: comma removed. BUILD ✓ LINT ✓ — rows still undated.",
+        "lap 3: rows dated. Checks green. STOP.",
+        "DONE ✓ — ledger formatted. 14 tokens. The loop paid 8 extra to double-check a job the graph already knew."
+      ],
+      "runB": [
+        "LOOP · JOB B — lap 1: greases the axle. UI TEST ✗ — the squeak is audibly still there.",
+        "the failing check flows back into the agent's context. It stops believing the axle theory.",
+        "lap 2: follows the sound instead. It is the door hinge. Oils it. UI TEST ✓ — silence.",
+        "STOP — checks green. DONE ✓ — squeak found and fixed. Nobody told it where to look."
+      ],
+      "verdict": "The loop is adaptive: it costs more per job — and it is the only one that noticed."
+    },
+    "tally": [
+      "JOB A (pipeline) — GRAPH ✓ 6 tk · LOOP ✓ 14 tk. The graph wins on price.",
+      "JOB B (surprise) — GRAPH × shipped the wrong fix · LOOP ✓ converged. The loop wins on truth."
+    ],
+    "banner": "GRAPHS FOR PIPELINES. LOOPS FOR SURPRISES.",
+    "moral": "When you can draw the steps in advance, draw them. When you can't, build a loop and let the checks steer."
   },
   "ridge": {
-    "intro": "The bridge is missing one plank. The gap is shaped exactly like a verifier.",
-    "plate": "NO VERIFIER - NO EXIT",
+    "intro": "The bridge is missing one plank. The gap is shaped exactly like a real check.",
+    "plate": "NO REAL CHECK - NO EXIT",
     "retreatDenied": "There is no way back. The trail behind you has been deprecated.",
+    "squintDenied": "SQUINT AT IT does not count. The bridge inspector is a machine. It cannot be flattered.",
     "crossSuccess": [
       "The plank fits. Machine-checked. The bridge holds because holding is testable.",
       "The party crosses while the loop runs on. Nobody watches. That was the point."
@@ -108,38 +198,20 @@
       ]
     ],
     "ceremony": "Fort Prompt records this as its best result in two years. There is a ceremony.",
-    "loopIntro": "A settler whispers: some parties wire the output back into the input.",
+    "loopIntro": "A settler whispers: some parties wire a CHECK to the output and feed what it says back in.",
     "loopLines": [
-      "ITER 1 - act, observe: 74%. The loop found the missing part by looking.",
-      "ITER 2 - act, observe: 83%. No inspiration was involved.",
-      "ITER 3 - act, observe: 91%. The prompt has not changed once.",
-      "ITER 4 - act, observe: 97%. The fort has gone quiet.",
-      "ITER 5 - act, observe: 100%. Done. Verified. Boring."
+      "LAP 1 — act. UI TEST ✗. The failure flows back in: 74%. It found the missing part by looking.",
+      "LAP 2 — act. UI TEST ✗, but nearer: 83%. No inspiration was involved.",
+      "LAP 3 — act. UI TEST ✗: 91%. The prompt has not changed once.",
+      "LAP 4 — act. UI TEST ✗, barely: 97%. The fort has gone quiet.",
+      "LAP 5 — act. UI TEST ✓: 100%. Done. Verified. Boring."
     ],
     "banner": "A PROMPT IS A WISH. A LOOP IS A PROCESS.",
     "moral": "The loop did not need to be inspired. It needed to be told when it was wrong."
   },
-  "run": {
-    "start": "PANEL ENERGIZED. Current on the line.",
-    "visitLines": {
-      "trigger": "TRIGGER - issue #4198: 'button does nothing (the main button)'.",
-      "context": "CONTEXT - the failing test, the file, the conventions doc. Nothing else.",
-      "agent": "AGENT - reads, edits src/button.ts. Confidence: unearned, pending.",
-      "tool_tests": "TOOL - npm test.",
-      "human_gate": "GATE - waiting for a human. The human is in a meeting about this loop."
-    }
-  },
   "verdicts": {
     "success": {
-      "banner": "THE LOOP RAN UNATTENDED. THE PARTY SLEPT.",
-      "lines": [
-        "ITER 1 - edit, test: 3 failing. OBSERVE: noted. Adjusting.",
-        "ITER 2 - edit, test: 1 failing. OBSERVE: closer. The output steers.",
-        "ITER 3 - edit, test: 0 failing. VERIFIER: pass. It cannot be flattered.",
-        "STOP: SUCCESS - the loop exits on purpose. Under cap. Under budget."
-      ],
-      "gateLine": "GATE - a human approved iteration {n}. The human added nothing, warmly.",
-      "scoreLine": "Efficient loop. Tokens banked: {banked}."
+      "banner": "THE LOOP RAN UNATTENDED. THE PARTY SLEPT."
     },
     "no_verifier": {
       "banner": "YOU HAVE DIED OF UNEARNED CONFIDENCE.",
@@ -156,50 +228,53 @@
         "[ok] shipped to Production"
       ],
       "lines": [
-        "The agent declares victory. Nothing was asked to disagree.",
+        "STOP — success, reportedly. Nothing was asked to disagree.",
         "Production reports the feature does not exist.",
-        "The tests were never run. The checkmarks were real, though."
+        "No check ever ran. The checkmarks were real, though."
       ]
     },
     "subjective_verifier": {
       "banner": "THE LOOP NEVER TERMINATED. IT LOOKED GOOD THE WHOLE TIME.",
       "cause": "A SUBJECTIVE VERIFIER",
       "lines": [
-        "VERIFIER - does it look good? Define look. Define good.",
-        "VERIFIER - good relative to what? The requirements also merely look good.",
-        "VERIFIER - consider the ship of Theseus, if every plank were a refactor.",
-        "VERIFIER - what is 'done'? A social construct with a deadline.",
-        "VERIFIER - it looks the way the sea looks. Deep. Unknowable. Wet.",
-        "VERIFIER - requesting additional tokens to continue looking."
+        "SQUINT — does it look good? Define look. Define good.",
+        "SQUINT — good relative to what? The requirements also merely look good.",
+        "SQUINT — consider the ship of Theseus, if every plank were a refactor.",
+        "SQUINT — what is 'done'? A social construct with a deadline.",
+        "SQUINT — it looks the way the sea looks. Deep. Unknowable. Wet.",
+        "SQUINT — requesting additional tokens to continue looking."
       ],
-      "drain": "Tokens draining. The verifier has opened a second line of inquiry."
+      "drain": "Tokens draining. The squint has opened a second line of inquiry."
     },
     "no_stop_cap": {
       "banner": "NOTHING TOLD IT TO STOP. NOTHING WILL.",
       "cause": "AN UNBOUNDED LOOP",
-      "iterLine": "ITER {n} - fix applied. tests failing. trying again.",
+      "iterLine": "LAP {n} — fix applied. checks failing. trying again.",
       "iterVariants": [
-        "ITER {n} - same fix, more conviction.",
-        "ITER {n} - a bold new approach: the previous approach.",
-        "ITER {n} - renamed a variable. hope levels: unchanged.",
-        "ITER {n} - the fix now has a fix. they disagree."
+        "LAP {n} — same fix, more conviction.",
+        "LAP {n} — a bold new approach: the previous approach.",
+        "LAP {n} — renamed a variable. hope levels: unchanged.",
+        "LAP {n} — the fix now has a fix. they disagree."
       ],
       "watch": "The party watches the screen fill. The party says nothing.",
-      "escalated": [
-        "ESCALATE fired at ITER 6: 'I QUIT, AND HERE IS WHY', it wrote, correctly.",
-        "The report is attached. Loud failure. Cheap, as failures go."
-      ],
       "lines": [
         "The loop is still running somewhere. It sends its regards."
-      ]
+      ],
+      "breaker": {
+        "banner": "THE BUDGET BREAKER TRIPPED. THE CAP WOULD HAVE BEEN CHEAPER.",
+        "lines": [
+          "STOP — the SPEND BUDGET slams shut at lap 10. 20 tokens, gone.",
+          "A cap would have called it at lap 3. The budget waited to be sure."
+        ]
+      }
     },
     "no_stop_budget": {
       "banner": "THE WORK IS DONE. SO ARE YOU.",
       "cause": "AN UNCAPPED BILL",
       "lines": [
-        "ITER 1 - edit, test: 2 failing. Retrying, expensively.",
-        "ITER 2 - test: pass. VERIFIER: pass. Each step retried 40 times, to be sure.",
-        "STOP: SUCCESS - the loop exits. Something arrives with the sunrise."
+        "LAP 1 — edit. checks: 2 failing. Retrying, expensively.",
+        "LAP 2 — checks green. Each check retried 40 times, to be sure.",
+        "STOP — under the cap. Something arrives with the sunrise."
       ],
       "invoice": [
         "INVOICE - LOOP SERVICES RENDERED",
@@ -209,41 +284,23 @@
         "  apologies, generated ........... 312",
         "  TOTAL ................. ALL OF IT"
       ],
-      "after": "The bill was always coming. The cap decides whether you meet it standing."
-    },
-    "no_observe": {
-      "banner": "IT FIXED THE WRONG FILE. TWICE.",
-      "cause": "FIXING THE WRONG FILE",
-      "lines": [
-        "TOOL - npm test: 14 failing.",
-        "AGENT - output unread. Diagnosis anyway: probably utils.ts. Editing utils.ts.",
-        "TOOL - npm test: 14 failing. Identically.",
-        "AGENT - output unread. Bold new theory: utils.ts, but more so.",
-        "TOOL - npm test: 14 failing. The failures have formed a union.",
-        "The answer was in the output. The output was never in the context."
-      ]
+      "after": "The bill was always coming. The budget decides whether you meet it standing."
     },
     "human_gate_everywhere": {
       "banner": "IT WORKED. IT TOOK ELEVEN DAYS. YOU ARE THE BOTTLENECK.",
       "lines": [
-        "GATE - waiting for a human. (day 1)",
-        "GATE - approved: 'lgtm'. Next gate in forty minutes. (day 2)",
-        "GATE - waiting. Your calendar has opinions. (day 4)",
-        "GATE - approved from an airport. (day 6)",
-        "GATE - waiting. The human is at an offsite about velocity. (day 9)",
-        "VERIFIER - pass. STOP: SUCCESS. (day 11)",
-        "Every step was safe. Every step was you. You stood in the loop you built."
+        "GATE — waiting for a human. (day 1)",
+        "GATE — approved: 'lgtm'. Next gate in forty minutes. (day 2)",
+        "GATE — waiting. Your calendar has opinions. (day 4)",
+        "GATE — approved from an airport. (day 6)",
+        "GATE — waiting. The human is at an offsite about velocity. (day 9)",
+        "CHECKS ✓ — pass. STOP. (day 11)",
+        "Every lap was safe. Every lap was you. You stood in the loop you built."
       ]
     },
     "incomplete": {
-      "banner": "THE PANEL WILL NOT ENERGIZE.",
-      "missing": {
-        "trigger": "No TRIGGER seated: nothing asks, so nothing answers.",
-        "context": "No CONTEXT seated: the agent would act on a clean conscience and an empty head.",
-        "agent": "No AGENT STEP seated: a loop of pure administration. The org has plenty.",
-        "tool_tests": "No TOOL seated: the agent can only describe what it would have done.",
-        "stop_success": "No STOP: SUCCESS seated: even a perfect pass would just keep going."
-      }
+      "banner": "THE RING WILL NOT ENERGIZE.",
+      "missingStop": "The STOP socket is empty: how does this end? Seat a config card. 'Eventually' is not a config."
     }
   }
 }
