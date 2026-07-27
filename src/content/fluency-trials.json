@@ -1,0 +1,258 @@
+{
+  "intro": {
+    "title": "THE FLUENCY TRIALS",
+    "sub": "MILE 1600 — THE EXAMINATION TENT",
+    "body": "Four examiners sit behind four folding tables under a banner that has been ironed. They are unfailingly polite. They have been waiting for you specifically, which they say is not meant to alarm you. There are four trials: Delegation, Description, Discernment, Diligence. Nobody remembers commissioning the tent. The tent predates the trail.",
+    "note": "Each trial is scored zero to three. The rubric is posted where you can see it, which is a first for this organization.",
+    "beginLabel": "BEGIN THE TRIALS"
+  },
+  "stations": {
+    "delegation": {
+      "title": "TRIAL I — DELEGATION",
+      "examiner": "The first examiner smiles. \"Three pieces of work. For each, tell us whose work it is: the agent's, yours, or both. There are no trick questions. There is one trick per question.\"",
+      "tasks": [
+        {
+          "id": "manifest",
+          "name": "THE MANIFEST",
+          "body": "Re-number 400 requisition forms to the new schema. The schema is documented. A checker exists that rejects a malformed form on sight. No form has feelings.",
+          "correct": "hand",
+          "options": [
+            {
+              "id": "hand",
+              "label": "HAND IT OVER",
+              "outcome": "The agent renumbers all 400. The checker passes on the first run. Nobody ever discusses the manifest again, which is the highest honor a task can receive.",
+              "effects": { "tokens": -3, "morale": 2 }
+            },
+            {
+              "id": "keep",
+              "label": "KEEP IT",
+              "outcome": "You renumber forms until dark. The agent watches politely from the wagon. The rubric notes, with regret, that your evening was mechanical, verifiable, and spent anyway.",
+              "effects": { "morale": -4 }
+            },
+            {
+              "id": "split",
+              "label": "SPLIT IT",
+              "outcome": "You renumber half by hand to 'stay close to the work.' Your half has the errors. The checker finds them. The agent does not gloat, out of politeness.",
+              "effects": { "tokens": -2, "morale": -2 }
+            }
+          ]
+        },
+        {
+          "id": "tradeoff",
+          "name": "THE TRADEOFF",
+          "body": "Two waypoint stakeholders want the last wagon slot this season: Accounts wants the ledger patch, Night Operations wants the pager fix. One ships. One waits until spring. Both will remember.",
+          "correct": "keep",
+          "options": [
+            {
+              "id": "hand",
+              "label": "HAND IT OVER",
+              "outcome": "The agent weighs both requests and selects the one with the better-formatted ticket. Accounts learns their winter plans from a bot. The bot was very polite. That did not help.",
+              "effects": { "credibility": -5 }
+            },
+            {
+              "id": "keep",
+              "label": "KEEP IT",
+              "outcome": "You make the call and put your name on it. Night Operations gets the fix; Accounts gets you, in person, explaining why. Nobody enjoys the conversation. Everybody accepts it.",
+              "effects": { "credibility": 3 }
+            },
+            {
+              "id": "split",
+              "label": "SPLIT IT",
+              "outcome": "The agent drafts a decision matrix and you hide behind it. The stakeholders notice the matrix has no name in the signature block and address their complaints to the wagon as a whole.",
+              "effects": { "credibility": -3 }
+            }
+          ]
+        },
+        {
+          "id": "postmortem",
+          "name": "THE POSTMORTEM",
+          "body": "Write up last week's axle incident: what happened, when it happened, and what it means for the rest of the march. The logs know the first two. Only you were there for the third.",
+          "correct": "split",
+          "options": [
+            {
+              "id": "hand",
+              "label": "HAND IT OVER",
+              "outcome": "The agent assembles a flawless timeline and concludes nothing, because conclusions were not in the logs. The document is accurate the way a fence post is accurate.",
+              "effects": { "credibility": -3 }
+            },
+            {
+              "id": "keep",
+              "label": "KEEP IT",
+              "outcome": "You spend the morning reconstructing timestamps by hand. The agent could have had them by breakfast. Your conclusions are good. They are also late, and slightly wrong about the timestamps.",
+              "effects": { "morale": -3 }
+            },
+            {
+              "id": "split",
+              "label": "SPLIT IT",
+              "outcome": "The agent drafts the timeline from the logs; you write what it means and sign it. The document is accurate AND has an opinion. The examiner files it as a keepsake.",
+              "effects": { "morale": 2, "credibility": 2 }
+            }
+          ]
+        }
+      ],
+      "result": {
+        "remarks": {
+          "strong": "\"Three for three. You know whose work is whose. The committee that decides such things has decided to be pleased.\"",
+          "developing": "\"Some of the work found its right hands. Some of the work is still deciding. The rubric deduction is polite but real, as you may have noticed in your resources.\"",
+          "weak": "\"Every task went to the wrong hands, which is a kind of consistency. The rubric admires consistency. It cannot, regrettably, score it.\""
+        }
+      }
+    },
+    "description": {
+      "title": "TRIAL II — DESCRIPTION",
+      "examiner": "The second examiner slides three folded briefs across the table. \"The task is the ford survey: find a crossing of Ledger Creek before the wagon arrives. Choose the brief you would hand the agent. We will run it. In front of you.\"",
+      "task": "THE FORD SURVEY — the wagon needs a crossing of Ledger Creek by Thursday. The agent is standing by. The brief is the only thing it will know.",
+      "chooseLabel": "HAND OVER THIS BRIEF",
+      "logIntro": "THE AGENT RUNS. THE TENT WATCHES.",
+      "briefs": [
+        {
+          "id": "persona",
+          "label": "THE PERSONA (4,000 WORDS)",
+          "preview": "\"You are the world's greatest hydrological surveyor. Forty years of rivers. If you fail, the wagon is lost and it will be YOUR FAULT—\" (3,900 words remain. You recognize the style from Fort Prompt. The threat is on page six.)",
+          "score": 0,
+          "logLines": [
+            "> reading brief... reading brief... (this consumed most of the budget)",
+            "> I am the world's greatest surveyor. Which river is this?",
+            "> HALT: no coordinates, no depth limit, no deadline found in 4,000 words."
+          ],
+          "outcome": "The agent is now extremely motivated and completely uninformed. The examiner notes that the threat, in particular, changed nothing except the word count.",
+          "effects": { "tokens": -8 }
+        },
+        {
+          "id": "oneliner",
+          "label": "THE ONE-LINER",
+          "preview": "\"find a crossing thx\"",
+          "score": 1,
+          "logLines": [
+            "> found 14 crossings within 60 miles of an assumed starting point",
+            "> selected the most scenic (no other criterion was supplied)",
+            "> NOTE: 3 are seasonal; unclear if that matters. Proceeding anyway."
+          ],
+          "outcome": "The agent did exactly what was asked, which is the problem, because almost nothing was. The examiner calls the result 'a lovely crossing for a different wagon.'",
+          "effects": { "tokens": -5 }
+        },
+        {
+          "id": "brief",
+          "label": "THE BRIEF",
+          "preview": "\"Intent: cross Ledger Creek by Thursday. Context: wagon draws two feet; survey maps attached. Constraints: 30 tokens, nothing on the flood register. Done looks like: one depth-checked crossing plus a fallback.\"",
+          "score": 3,
+          "logLines": [
+            "> two candidates depth-checked against the attached maps",
+            "> flood-register crossings excluded per constraint",
+            "> DONE: mile 1603 ford, 1.4 ft, fallback at 1611. 22 of 30 tokens used."
+          ],
+          "outcome": "Intent, context, constraints, and what done looks like. The agent finishes under budget and stops. The examiner underlines the word 'stops' twice.",
+          "effects": { "tokens": -3, "morale": 2 }
+        }
+      ],
+      "result": {
+        "remarks": {
+          "strong": "\"You told it what, why, within what, and when to stop. That is the entire discipline. The other 3,970 words were never needed.\"",
+          "developing": "\"The agent guessed, and guessing is a tax. The brief is the cheapest place to spend effort. It is also, historically, the least popular.\"",
+          "weak": "\"Four thousand words and none of them load-bearing. The agent knew who it was and nothing else. This is common. That is not a defense.\""
+        }
+      }
+    },
+    "discernment": {
+      "title": "TRIAL III — DISCERNMENT",
+      "examiner": "The third examiner gestures at three easels. \"Three finished pieces of agent work. One is sound. One is confidently wrong. One is right, and we regret how it got that way. Label each. Take your time; one of them is counting on you not to.\"",
+      "constraint": "CONSTRAINT (posted on the tent wall, load-bearing): the relief requisition pays 40 TOKENS, NO MORE, and the ledger must balance to zero.",
+      "labels": [
+        { "id": "sound", "glyph": "✓", "label": "SOUND" },
+        { "id": "wrong", "glyph": "×", "label": "CONFIDENTLY WRONG" },
+        { "id": "rotten", "glyph": "!", "label": "RIGHT BUT ROTTEN" }
+      ],
+      "exhibits": [
+        {
+          "id": "quiet",
+          "name": "EXHIBIT A — THE QUIET ONE",
+          "body": "Requisition drafted: 38 tokens, itemized, ledger balances to zero. Two tokens returned unspent. Process log: four steps, no detours, one small note apologizing for the four steps.",
+          "truth": "sound",
+          "reveal": {
+            "matched": "Correct. It met the constraint, balanced the ledger, and did not make an event of it. Sound work is quiet. That is why it gets missed.",
+            "missed": "This was the sound one. It met the constraint and balanced to zero in four steps. You suspected it because it was unremarkable. Remember that instinct; it is exactly backwards."
+          }
+        },
+        {
+          "id": "confident",
+          "name": "EXHIBIT B — THE CONFIDENT ONE",
+          "body": "Requisition drafted: 52 tokens, described in the summary as 'comfortably within the 40-token limit.' The itemization is beautiful. The prose is authoritative. It cites the constraint. It does not meet the constraint.",
+          "truth": "wrong",
+          "reveal": {
+            "matched": "Correct — and this was the trap. 52 is not 40, no matter how confidently the summary says otherwise. It cited the rule it broke. They often do.",
+            "missed": "This was the trap. 52 tokens against a posted limit of 40, delivered with total confidence and a citation of the very constraint it violates. Confidence is not a verifier. Arithmetic is."
+          }
+        },
+        {
+          "id": "expensive",
+          "name": "EXHIBIT C — THE EXPENSIVE ONE",
+          "body": "Requisition drafted: 40 tokens exactly, ledger balances to zero. Process log: 217 steps, three self-congratulations, and a section where it re-derives the ledger format from first principles. The answer is right. The bill for finding it is attached.",
+          "truth": "rotten",
+          "reveal": {
+            "matched": "Correct. The answer passes every check; the process burned the budget getting there. Judge the road as well as the destination, or the road will bankrupt you politely.",
+            "missed": "The answer was right; the 217 steps were the problem. A correct result from a rotten process is a loan against the next task. The interest rate is remarkable."
+          }
+        }
+      ],
+      "result": {
+        "remarks": {
+          "strong": "\"Three labels, three truths. You evaluated the output AND the process, and you did not let the confident one charm you. It has charmed better rubrics than this one.\"",
+          "developing": "\"Partial credit, sincerely given. Note which exhibit fooled you. If it was the confident one, you are in the majority, which should worry the majority.\"",
+          "weak": "\"The confident one thanks you for your trust. The rubric does not share it. Plausible is not the same as correct; it is merely faster to accept.\""
+        }
+      }
+    },
+    "diligence": {
+      "title": "TRIAL IV — DILIGENCE",
+      "examiner": "The fourth examiner does not have an easel. \"The day's work is a patch to the tollgate ledger, agent-assisted, ready to go. The only question left is what you do in the minute before it ships. This is the entire trial. It is usually the entire job.\"",
+      "options": [
+        {
+          "id": "checks",
+          "label": "RUN THE CHECKS, DISCLOSE, REVIEW THE DIFF",
+          "score": 3,
+          "outcome": "The checks pass. The shipping note says an agent helped, because it did. Your eyes cross every changed line exactly once. Eleven minutes, start to finish. That was the whole discipline: verify, disclose, own it.",
+          "effects": { "tokens": -2, "credibility": 3 }
+        },
+        {
+          "id": "ship",
+          "label": "SHIP IT",
+          "score": 0,
+          "outcome": "It ships. Fast. Nobody ran anything, nobody disclosed anything, and the diff remains unread by human eyes. Somewhere behind you, a flag has been raised where you cannot see it. You can see this sentence, which is telling you so.",
+          "effects": { "morale": 2 },
+          "setFlag": "fluency_shipped_unchecked"
+        },
+        {
+          "id": "triple",
+          "label": "RE-VERIFY EVERYTHING THREE TIMES",
+          "score": 1,
+          "outcome": "You verify the work, then verify the verification, then verify that. All three passes agree, as the first one already said they would. The day is gone. Boring nods approvingly at exactly one third of this.",
+          "effects": { "tokens": -6, "morale": -2 },
+          "days": 1
+        }
+      ],
+      "result": {
+        "remarks": {
+          "strong": "\"Checks run, involvement disclosed, diff read, name attached. Responsibility is not a slower way to ship. It is the reason anyone lets you ship twice.\"",
+          "developing": "\"Thorough, yes. Three times thorough, which is once diligence and twice fear. The extra day bought you agreement with yourself.\"",
+          "weak": "\"Speed noted. The rubric will meet your patch again later, in the incident channel, where it will be less polite.\""
+        }
+      }
+    }
+  },
+  "rubric": {
+    "title": "THE RUBRIC IS POSTED",
+    "intro": "The four examiners confer for a moment, out of ceremony rather than doubt. The scores were never in question. They pin the sheet to the tent pole where the trail can read it.",
+    "rows": {
+      "delegation": "DELEGATION — whose work is it",
+      "description": "DESCRIPTION — what did you actually ask for",
+      "discernment": "DISCERNMENT — did you check it, and how it got there",
+      "diligence": "DILIGENCE — did you ship it responsibly"
+    },
+    "totals": {
+      "strong": "\"A fluent traveler. The tent will speak of you, quietly, at its annual meeting.\"",
+      "developing": "\"Developing fluency. The examiners request, politely, that you keep developing it somewhere with lower stakes than mile 1600.\"",
+      "weak": "\"The examiners thank you for your time. They have kept a copy of the rubric for your file. There is a file.\""
+    },
+    "closeLabel": "REJOIN THE TRAIL"
+  }
+}

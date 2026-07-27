@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "endgame.json — Production retrospective, panel, leaderboard, credits, run summary",
   "type": "object",
-  "required": ["arrival", "endings", "reckoning", "loops", "panel", "leaderboard", "credits", "summary", "finish"],
+  "required": ["arrival", "endings", "reckoning", "loops", "fourDs", "panel", "leaderboard", "credits", "summary", "finish"],
   "additionalProperties": false,
   "properties": {
     "arrival": {
@@ -43,6 +43,38 @@
         "agentic": { "$ref": "#/definitions/loopBlock" },
         "developer": { "$ref": "#/definitions/loopBlock" },
         "external": { "$ref": "#/definitions/loopBlock" }
+      }
+    },
+    "fourDs": {
+      "type": "object",
+      "required": ["title", "intro", "trialsTaken", "trialsMissed", "bands", "rows"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "intro": { "type": "string" },
+        "trialsTaken": { "type": "string" },
+        "trialsMissed": { "type": "string" },
+        "bands": {
+          "type": "object",
+          "required": ["strong", "developing", "weak"],
+          "additionalProperties": false,
+          "properties": {
+            "strong": { "type": "string" },
+            "developing": { "type": "string" },
+            "weak": { "type": "string" }
+          }
+        },
+        "rows": {
+          "type": "object",
+          "required": ["delegation", "description", "discernment", "diligence"],
+          "additionalProperties": false,
+          "properties": {
+            "delegation": { "$ref": "#/definitions/fourDsRow" },
+            "description": { "$ref": "#/definitions/fourDsRow" },
+            "discernment": { "$ref": "#/definitions/fourDsRow" },
+            "diligence": { "$ref": "#/definitions/fourDsRow" }
+          }
+        }
       }
     },
     "panel": {
@@ -138,6 +170,17 @@
     }
   },
   "definitions": {
+    "fourDsRow": {
+      "type": "object",
+      "required": ["name", "strong", "developing", "weak"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "strong": { "type": "string" },
+        "developing": { "type": "string" },
+        "weak": { "type": "string" }
+      }
+    },
     "ending": {
       "type": "object",
       "required": ["heading", "lines"],

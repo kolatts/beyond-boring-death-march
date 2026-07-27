@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "fluency-trials.schema.json",
+  "title": "Fluency Trials content — four stations, one per D of AI fluency",
+  "type": "object",
+  "required": ["intro", "stations", "rubric"],
+  "additionalProperties": false,
+  "definitions": {
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tokens": { "type": "integer" },
+        "context": { "type": "integer" },
+        "trust": { "type": "integer" },
+        "greenBuilds": { "type": "integer" },
+        "morale": { "type": "integer" },
+        "credibility": { "type": "integer" }
+      }
+    },
+    "remarks": {
+      "type": "object",
+      "required": ["strong", "developing", "weak"],
+      "additionalProperties": false,
+      "properties": {
+        "strong": { "type": "string", "minLength": 1 },
+        "developing": { "type": "string", "minLength": 1 },
+        "weak": { "type": "string", "minLength": 1 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["remarks"],
+      "additionalProperties": false,
+      "properties": { "remarks": { "$ref": "#/definitions/remarks" } }
+    }
+  },
+  "properties": {
+    "intro": {
+      "type": "object",
+      "required": ["title", "sub", "body", "note", "beginLabel"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "sub": { "type": "string", "minLength": 1 },
+        "body": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 },
+        "beginLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "stations": {
+      "type": "object",
+      "required": ["delegation", "description", "discernment", "diligence"],
+      "additionalProperties": false,
+      "properties": {
+        "delegation": {
+          "type": "object",
+          "required": ["title", "examiner", "tasks", "result"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "examiner": { "type": "string", "minLength": 1 },
+            "tasks": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "name", "body", "correct", "options"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                  "name": { "type": "string", "minLength": 1 },
+                  "body": { "type": "string", "minLength": 1 },
+                  "correct": { "type": "string", "enum": ["hand", "keep", "split"] },
+                  "options": {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": {
+                      "type": "object",
+                      "required": ["id", "label", "outcome", "effects"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": { "type": "string", "enum": ["hand", "keep", "split"] },
+                        "label": { "type": "string", "minLength": 1 },
+                        "outcome": { "type": "string", "minLength": 1 },
+                        "effects": { "$ref": "#/definitions/effects" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "result": { "$ref": "#/definitions/result" }
+          }
+        },
+        "description": {
+          "type": "object",
+          "required": ["title", "examiner", "task", "chooseLabel", "logIntro", "briefs", "result"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "examiner": { "type": "string", "minLength": 1 },
+            "task": { "type": "string", "minLength": 1 },
+            "chooseLabel": { "type": "string", "minLength": 1 },
+            "logIntro": { "type": "string", "minLength": 1 },
+            "briefs": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "label", "preview", "score", "logLines", "outcome", "effects"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                  "label": { "type": "string", "minLength": 1 },
+                  "preview": { "type": "string", "minLength": 1 },
+                  "score": { "type": "integer", "minimum": 0, "maximum": 3 },
+                  "logLines": {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": { "type": "string", "minLength": 1 }
+                  },
+                  "outcome": { "type": "string", "minLength": 1 },
+                  "effects": { "$ref": "#/definitions/effects" }
+                }
+              }
+            },
+            "result": { "$ref": "#/definitions/result" }
+          }
+        },
+        "discernment": {
+          "type": "object",
+          "required": ["title", "examiner", "constraint", "labels", "exhibits", "result"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "examiner": { "type": "string", "minLength": 1 },
+            "constraint": { "type": "string", "minLength": 1 },
+            "labels": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "glyph", "label"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "enum": ["sound", "wrong", "rotten"] },
+                  "glyph": { "type": "string", "minLength": 1 },
+                  "label": { "type": "string", "minLength": 1 }
+                }
+              }
+            },
+            "exhibits": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "name", "body", "truth", "reveal"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                  "name": { "type": "string", "minLength": 1 },
+                  "body": { "type": "string", "minLength": 1 },
+                  "truth": { "type": "string", "enum": ["sound", "wrong", "rotten"] },
+                  "reveal": {
+                    "type": "object",
+                    "required": ["matched", "missed"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "matched": { "type": "string", "minLength": 1 },
+                      "missed": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            },
+            "result": { "$ref": "#/definitions/result" }
+          }
+        },
+        "diligence": {
+          "type": "object",
+          "required": ["title", "examiner", "options", "result"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "examiner": { "type": "string", "minLength": 1 },
+            "options": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "label", "score", "outcome", "effects"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+                  "label": { "type": "string", "minLength": 1 },
+                  "score": { "type": "integer", "minimum": 0, "maximum": 3 },
+                  "outcome": { "type": "string", "minLength": 1 },
+                  "effects": { "$ref": "#/definitions/effects" },
+                  "setFlag": { "type": "string", "minLength": 1 },
+                  "days": { "type": "integer", "minimum": 0 }
+                }
+              }
+            },
+            "result": { "$ref": "#/definitions/result" }
+          }
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "required": ["title", "intro", "rows", "totals", "closeLabel"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "intro": { "type": "string", "minLength": 1 },
+        "rows": {
+          "type": "object",
+          "required": ["delegation", "description", "discernment", "diligence"],
+          "additionalProperties": false,
+          "properties": {
+            "delegation": { "type": "string", "minLength": 1 },
+            "description": { "type": "string", "minLength": 1 },
+            "discernment": { "type": "string", "minLength": 1 },
+            "diligence": { "type": "string", "minLength": 1 }
+          }
+        },
+        "totals": { "$ref": "#/definitions/remarks" },
+        "closeLabel": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
