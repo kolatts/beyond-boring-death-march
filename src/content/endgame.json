@@ -42,6 +42,39 @@
       "sub": "The loop nobody scheduled: whether the thing you shipped was the thing anyone wanted. Measured, for the first time, by asking."
     }
   },
+  "fourDs": {
+    "title": "THE FOUR DS — A FLUENCY AUDIT",
+    "intro": "The whole march, graded once more against the four Ds of AI fluency: Delegation, Description, Discernment, Diligence. The examiners sent the rubric ahead. They always do.",
+    "trialsTaken": "Your trial scores from the examination tent at mile 1600 are blended in, at the examiners' insistence.",
+    "trialsMissed": "You passed the examination tent without stopping, so the audit proceeds from the record alone. The record has opinions.",
+    "bands": { "strong": "STRONG", "developing": "DEVELOPING", "weak": "SEE EXAMINER" },
+    "rows": {
+      "delegation": {
+        "name": "DELEGATION",
+        "strong": "Miles moved while you slept, scouts read the noise for you, and the hunts were hunted. You knew whose work was whose.",
+        "developing": "Some work found the right hands. The rest found the nearest hands, which were yours, which were busy.",
+        "weak": "You carried it all personally, including the parts with handles clearly designed for someone else."
+      },
+      "description": {
+        "name": "DESCRIPTION",
+        "strong": "Intent, context, constraints, and what done looks like. The wagon was packed the way the asks were written: nothing missing, nothing extra.",
+        "developing": "The agent guessed correctly often enough to hide that it was guessing. That is luck wearing a competence costume.",
+        "weak": "What you asked for and what you wanted met occasionally, by accident, and neither enjoyed it."
+      },
+      "discernment": {
+        "name": "DISCERNMENT",
+        "strong": "Outputs were checked against constraints and processes were checked against budgets. The confident one never got past you.",
+        "developing": "You caught the wrong answers that looked wrong. The wrong answers that looked right send their regards.",
+        "weak": "Plausible was accepted as correct at every gate it tried. It tried every gate."
+      },
+      "diligence": {
+        "name": "DILIGENCE",
+        "strong": "Checks run, involvement disclosed, caps held, registers empty. Responsibility, it turns out, compounds.",
+        "developing": "Mostly responsible, with exceptions. The exceptions are filed under your name; that is what the file is for.",
+        "weak": "The march shipped fast and disclosed little, and several flags were raised where you could not see them. All of them were visible from here."
+      }
+    }
+  },
   "panel": {
     "intro": "A panel of users has been assembled to evaluate the delivery. They were not consulted during the journey. They were not consulted about the panel. This is the first time anyone has asked them anything, and it shows in how ready they are.",
     "users": [

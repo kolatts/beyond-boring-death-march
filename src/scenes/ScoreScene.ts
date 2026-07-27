@@ -34,6 +34,7 @@ import { loadNightWatchRecord } from '../systems/nightWatchSim';
 import { loadStats as loadContextStats } from '../systems/contextSim';
 import { readCabStore } from '../systems/cabSim';
 import { loadBossRecord } from './BossScene';
+import { loadFluencyStore } from './FluencyTrialsScene';
 import { fetchTopScores, postScore, roleApiName, type RemoteScore } from '../systems/social';
 import { showCurriculumCard, isFieldNoteOpen } from '../ui/curriculumCard';
 import { bus, mountPanel, unmountPanel } from '../ui/overlay';
@@ -65,6 +66,17 @@ interface EndgameContent {
     agentic: { title: string; sub: string };
     developer: { title: string; sub: string };
     external: { title: string; sub: string };
+  };
+  fourDs: {
+    title: string;
+    intro: string;
+    trialsTaken: string;
+    trialsMissed: string;
+    bands: { strong: string; developing: string; weak: string };
+    rows: Record<
+      'delegation' | 'description' | 'discernment' | 'diligence',
+      { name: string; strong: string; developing: string; weak: string }
+    >;
   };
   panel: { intro: string; users: { id: string; name: string; good: string; bad: string }[] };
   leaderboard: {
@@ -223,12 +235,147 @@ function computeScores(s: GameState): LoopScores {
 }
 
 // ---------------------------------------------------------------------------
+// The 4-Ds report card — the WHOLE RUN mapped onto the four Ds of AI
+// fluency (Delegation, Description, Discernment, Diligence), blending the
+// Fluency Trials rubric (when taken) with run stats. Every store is read
+// defensively; absent stores simply contribute no signal.
+// ---------------------------------------------------------------------------
+
+type DKey = 'delegation' | 'description' | 'discernment' | 'diligence';
+type DBand = 'strong' | 'developing' | 'weak';
+
+interface DGrade {
+  band: DBand;
+  glyph: string;
+  /** Compact functional stat line (data, not prose — prose is content). */
+  stat: string;
+}
+
+const D_ORDER: readonly DKey[] = ['delegation', 'description', 'discernment', 'diligence'];
+
+/** Trial rubric weight when the Trials were taken (run stats get the rest). */
+const TRIAL_BLEND = 0.4;
+
+function clamp01(n: number): number {
+  return Math.max(0, Math.min(1, n));
+}
+
+function bandOf(score: number): DBand {
+  if (score >= 0.7) return 'strong';
+  if (score >= 0.35) return 'developing';
+  return 'weak';
+}
+
+const BAND_GLYPH: Record<DBand, string> = { strong: '✓', developing: '!', weak: '×' };
+
+/** The Assay Office store (sibling scene) — read defensively. AssayOffice
+ * writes score 0-5 (cases passed of the golden set); normalize to 0-1. */
+function assayScore(): number | null {
+  try {
+    const raw = window.localStorage.getItem('bbdm:assay');
+    if (!raw) return null;
+    const p = JSON.parse(raw) as Record<string, unknown>;
+    return typeof p['score'] === 'number' ? clamp01((p['score'] as number) / 5) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Blend run signals with the trial rubric; degrade gracefully to whichever exists. */
+function blend(signals: number[], trial: number | null): number | null {
+  const run = signals.length > 0 ? signals.reduce((a, b) => a + b, 0) / signals.length : null;
+  if (run !== null && trial !== null) return run * (1 - TRIAL_BLEND) + (trial / 3) * TRIAL_BLEND;
+  if (run !== null) return run;
+  if (trial !== null) return trial / 3;
+  return null;
+}
+
+function grade(signals: number[], trial: number | null, stat: string): DGrade {
+  const score = blend(signals, trial);
+  if (score === null) return { band: 'weak', glyph: BAND_GLYPH.weak, stat: 'NO RECORD' };
+  const band = bandOf(score);
+  return { band, glyph: BAND_GLYPH[band], stat };
+}
+
+function computeFourDs(s: GameState): { grades: Record<DKey, DGrade>; trialsTaken: boolean } {
+  const trials = loadFluencyStore();
+  const loops = loadLoopStore();
+  const night = loadNightWatchRecord();
+  const pack = loadContextStats();
+  const hunt = bugHuntRatio();
+  const assay = assayScore();
+
+  // DELEGATION — what you handed over: overnight miles banked (with a cap),
+  // subagent scouts sent, hunts actually delegated to the field.
+  const overnight = Boolean(night?.unlocked && night.budget !== 'none');
+  const delegation = grade(
+    [overnight ? 1 : 0, Math.min(1, pack.scoutsSent / 2), hunt.known ? 1 : 0],
+    trials?.delegation ?? null,
+    `NIGHT ${overnight ? '✓' : '×'} · SCOUTS ${pack.scoutsSent} · HUNTS ${hunt.known ? '✓' : '×'}` +
+      (trials ? ` · TRIAL ${trials.delegation}/3` : ''),
+  );
+
+  // DESCRIPTION — how you communicated intent: context-packing accuracy
+  // plus the brief chosen at the Trials.
+  const packAccuracy = pack.plays > 0 ? pack.successes / pack.plays : null;
+  const description = grade(
+    packAccuracy === null ? [] : [clamp01(packAccuracy)],
+    trials?.description ?? null,
+    `PACKING ${packAccuracy === null ? '—' : `${Math.round(packAccuracy * 100)}%`}` +
+      (trials ? ` · TRIAL ${trials.description}/3` : ''),
+  );
+
+  // DISCERNMENT — how you evaluated outputs and process: root-cause ratio,
+  // a machine-checkable verifier, and the Prompt Assay grader.
+  const verifierReal = loops.best ? (loops.best.score.verifierReal ? 1 : 0) : null;
+  const discernmentSignals: number[] = [];
+  if (hunt.known) discernmentSignals.push(clamp01(hunt.ratio));
+  if (verifierReal !== null) discernmentSignals.push(verifierReal);
+  if (assay !== null) discernmentSignals.push(assay);
+  const discernment = grade(
+    discernmentSignals,
+    trials?.discernment ?? null,
+    `ROOT-CAUSE ${hunt.known ? `${Math.round(hunt.ratio * 100)}%` : '—'} · VERIFIER ${
+      verifierReal === null ? '—' : verifierReal ? '✓' : '×'
+    } · ASSAY ${assay === null ? '—' : `${Math.round(assay * 100)}`}` +
+      (trials ? ` · TRIAL ${trials.discernment}/3` : ''),
+  );
+
+  // DILIGENCE — responsible use: starts whole, loses pieces to the
+  // permissions incident, the compromised flag, uncapped overnight spend,
+  // bought deadline exceptions, and shipping unchecked at the Trials.
+  const exceptions = Object.keys(s.flags).filter((f) => f.startsWith('deadline_excepted_')).length;
+  const uncapped = (night?.uncappedSpend ?? 0) > 0;
+  let diligenceRun = 1;
+  if (s.flags['permissions_incident']) diligenceRun -= 0.35;
+  if (s.flags['compromised']) diligenceRun -= 0.35;
+  if (s.flags['fluency_shipped_unchecked']) diligenceRun -= 0.3;
+  if (uncapped) diligenceRun -= 0.25;
+  diligenceRun -= Math.min(0.45, exceptions * 0.15);
+  const incidents =
+    (s.flags['permissions_incident'] ? 1 : 0) +
+    (s.flags['compromised'] ? 1 : 0) +
+    (s.flags['fluency_shipped_unchecked'] ? 1 : 0);
+  const diligence = grade(
+    [clamp01(diligenceRun)],
+    trials?.diligence ?? null,
+    `INCIDENTS ${incidents} · EXCEPTIONS ${exceptions} · CAPS ${uncapped ? '×' : '✓'}` +
+      (trials ? ` · TRIAL ${trials.diligence}/3` : ''),
+  );
+
+  return {
+    grades: { delegation, description, discernment, diligence },
+    trialsTaken: trials !== null,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Scene
 // ---------------------------------------------------------------------------
 
-type Page = 'retro' | 'loops' | 'panel' | 'board' | 'bb' | 'credits' | 'final';
+type Page = 'retro' | 'loops' | 'fourds' | 'panel' | 'board' | 'bb' | 'credits' | 'final';
 
-const PAGE_ORDER: readonly Page[] = ['retro', 'loops', 'panel', 'board', 'bb', 'credits', 'final'];
+const PAGE_ORDER: readonly Page[] = ['retro', 'loops', 'fourds', 'panel', 'board', 'bb', 'credits', 'final'];
 
 export class ScoreScene extends Phaser.Scene {
   private page: Page = 'retro';
@@ -416,6 +563,9 @@ export class ScoreScene extends Phaser.Scene {
       case 'loops':
         this.drawLoops();
         break;
+      case 'fourds':
+        this.drawFourDs();
+        break;
       case 'panel':
         this.drawPanel();
         break;
@@ -473,6 +623,34 @@ export class ScoreScene extends Phaser.Scene {
       this.text(14, b.y + 10, scores.detail[b.key].join('\n'), GREEN, 6, GAME_WIDTH - 24);
     }
     this.text(8, 180, `+ ${scores.base} FOR THE MILES THEMSELVES`, BLUE, 7);
+    this.footer();
+  }
+
+  /** The 4-Ds report card — an addition to the retrospective, not a rewrite. */
+  private drawFourDs(): void {
+    const s = getState();
+    const c = CONTENT.fourDs;
+    const { grades, trialsTaken } = computeFourDs(s);
+
+    this.centered(4, c.title, WHITE, 10);
+    this.centered(16, c.intro, BLUE, 6);
+    this.centered(32, trialsTaken ? c.trialsTaken : c.trialsMissed, trialsTaken ? GREEN : ORANGE, 6);
+
+    const bandColor: Record<DBand, string> = { strong: GREEN, developing: ORANGE, weak: VIOLET };
+    D_ORDER.forEach((key, i) => {
+      const g = grades[key];
+      const row = CONTENT.fourDs.rows[key];
+      const y = 48 + i * 34;
+      this.text(
+        8,
+        y,
+        `${g.glyph} ${row.name} — ${c.bands[g.band]}`,
+        bandColor[g.band],
+        8,
+      );
+      this.text(14, y + 10, g.stat, BLUE, 6, GAME_WIDTH - 24);
+      this.text(14, y + 18, row[g.band], bandColor[g.band], 6, GAME_WIDTH - 24);
+    });
     this.footer();
   }
 
