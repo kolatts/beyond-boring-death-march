@@ -70,7 +70,7 @@ function bootGame(): void {
   // (ART-DIRECTION v3; instant cut under prefers-reduced-motion).
   installSceneTransitions(game);
 
-  // Chiptune (spec §13): muted by default, M to toggle, zero assets.
+  // Chiptune (spec §13): muted by default, click-only toggle, zero assets.
   mountAudioControl();
 
   // Dev-only deep link (?minigame=<mechanic>) is handled inside BootScene,
