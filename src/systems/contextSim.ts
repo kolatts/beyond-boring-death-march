@@ -1,10 +1,16 @@
 /**
  * Context Canyon (§7.3) — the packing puzzle, pure logic.
  *
- * A knapsack with hidden values. The context bar has a fixed capacity;
- * every item has a size and a hidden relevance. Relevance is revealed by
- * INSPECT, which costs 1 token the first time per item — a peek is a
- * read, and reads have always cost tokens; the canyon just itemizes.
+ * A knapsack with VISIBLE values. The context bar has a fixed capacity;
+ * every item shows its size and its relevance band (VITAL / USEFUL /
+ * NOISE / DEAD WEIGHT) from the start. The puzzle is not discovery — it
+ * is that the good stuff does not fit. Pack all ✓ items naively and you
+ * overflow by ~30%; the three tools are how you resolve that, and they
+ * ARE the lesson.
+ *
+ * One exception, for the joke: the ticket's relevance is rolled per
+ * session and shows as DEPENDS until someone actually relies on it —
+ * i.e. the band resolves the moment it is packed.
  *
  * Three tools, three tradeoffs (spec §7.3):
  *  - COMPACT: halves size, loses a random 15–25% of relevance. Compacting
@@ -53,7 +59,7 @@ export interface ContextItemDef {
   carriesRequirement?: boolean;
   scout?: ScoutSummaryDef;
   blurb: string;
-  inspectText: string;
+  detail: string;
 }
 
 interface ContentFile {
@@ -73,8 +79,23 @@ export const STRINGS: Record<string, string> = CONTENT.strings;
 
 export const CAPACITY = CONTENT.capacity;
 
-/** First INSPECT of an item costs this many tokens (a peek is a read). */
-export const INSPECT_TOKENS = 1;
+/**
+ * Items shown per run. The core nine always appear; the last slot rotates
+ * through the remaining junk items in the JSON for variety across runs.
+ */
+export const POOL_SIZE = 10;
+const CORE_IDS = new Set([
+  'conventions_file',
+  'failing_test',
+  'changed_files',
+  'api_docs',
+  'ticket',
+  'long_log',
+  'chat_scrollback',
+  'dir_listing',
+  'node_modules',
+]);
+
 /** SUBAGENT: token cost per scout. Also costs one day (scene applies it). */
 export const SCOUT_TOKENS = 6;
 /** An item must be at least this big for a scout to be worth sending. */
@@ -98,10 +119,10 @@ export const RETRIEVE_DELAY_AT = 3;
 export const OVERFLOW_TOKENS = 3;
 export const OVERFLOW_CONTEXT = 4;
 /** Departure outcome thresholds (see gold-pack math in evaluate()). */
-export const PASS_SCORE = 330;
-export const TIGHT_SCORE = 430;
-/** Packed junk (relevance < JUNK_RELEVANCE) dilutes: -JUNK_PENALTY/slot. */
-export const JUNK_RELEVANCE = 20;
+export const PASS_SCORE = 420;
+export const TIGHT_SCORE = 480;
+/** Packed sub-USEFUL cargo (relevance < JUNK_RELEVANCE) dilutes the pack. */
+export const JUNK_RELEVANCE = 40;
 export const JUNK_PENALTY = 6;
 /** A scout is "useful" (celebration + curriculum) at this summary relevance. */
 export const SCOUT_USEFUL_MIN = 40;
@@ -127,8 +148,12 @@ export interface PackItem {
   size: number;
   /** Actual relevance this session (rolled ranges, compaction decay). */
   relevance: number;
+  /**
+   * Whether the relevance band is visible. True for every fixed-relevance
+   * item from the start; false for rolled items (the ticket) until packed.
+   */
+  revealed: boolean;
   state: ItemState;
-  inspected: boolean;
   compactions: number;
   /** True once replaced by its 1-slot scout summary. */
   isSummary: boolean;
@@ -149,17 +174,29 @@ export interface PackSession {
 
 export type Rng = () => number;
 
+/** The 10-item pool for this run: core nine + one rotating junk item. */
+function pickPool(rng: Rng): ContextItemDef[] {
+  const rotation = CONTENT.items.filter((d) => !CORE_IDS.has(d.id));
+  const extras = new Set<string>();
+  const want = Math.min(POOL_SIZE - CORE_IDS.size, rotation.length);
+  while (extras.size < want) {
+    const pick = rotation[Math.floor(rng() * rotation.length)];
+    if (pick) extras.add(pick.id);
+  }
+  return CONTENT.items.filter((d) => CORE_IDS.has(d.id) || extras.has(d.id));
+}
+
 export function createSession(rng: Rng): PackSession {
   return {
-    items: CONTENT.items.map((def) => ({
+    items: pickPool(rng).map((def) => ({
       def,
       name: def.name,
       size: def.size,
       relevance: Array.isArray(def.relevance)
         ? Math.round(def.relevance[0] + rng() * (def.relevance[1] - def.relevance[0]))
         : def.relevance,
+      revealed: !Array.isArray(def.relevance),
       state: 'pile',
-      inspected: false,
       compactions: 0,
       isSummary: false,
       blurb: def.blurb,
@@ -178,17 +215,21 @@ export function packedSize(s: PackSession): number {
 }
 
 // ---------------------------------------------------------------------------
-// Relevance bands (revealed by INSPECT; never colour alone in the scene)
+// Relevance bands (visible upfront; never colour alone in the scene)
 // ---------------------------------------------------------------------------
 
-export type Band = 'VITAL' | 'USEFUL' | 'MARGINAL' | 'NOISE' | 'DEAD WEIGHT';
+export type Band = 'VITAL' | 'USEFUL' | 'NOISE' | 'DEAD WEIGHT' | 'DEPENDS';
 
 export function bandOf(relevance: number): Band {
   if (relevance >= 80) return 'VITAL';
-  if (relevance >= 45) return 'USEFUL';
-  if (relevance >= 20) return 'MARGINAL';
-  if (relevance > 0) return 'NOISE';
+  if (relevance >= JUNK_RELEVANCE) return 'USEFUL';
+  if (relevance >= 10) return 'NOISE';
   return 'DEAD WEIGHT';
+}
+
+/** The band the player sees: DEPENDS until a rolled item resolves. */
+export function displayBand(item: PackItem): Band {
+  return item.revealed ? bandOf(item.relevance) : 'DEPENDS';
 }
 
 export function sizeLabel(size: number): string {
@@ -207,34 +248,26 @@ export interface PackResult {
   ok: boolean;
   /** Slots over capacity when !ok — the walls close. */
   overBy: number;
+  /** True when this pack resolved a DEPENDS item's band (the ticket). */
+  resolved: boolean;
 }
 
 /** Try to pack an item. Overfill = immediate walls-close (never latent). */
 export function tryPack(s: PackSession, item: PackItem): PackResult {
-  if (item.state === 'packed') return { ok: false, overBy: 0 };
+  if (item.state === 'packed') return { ok: false, overBy: 0, resolved: false };
   const would = packedSize(s) + item.size;
   if (would > s.capacity) {
     s.overflows += 1;
-    return { ok: false, overBy: would - s.capacity };
+    return { ok: false, overBy: would - s.capacity, resolved: false };
   }
   item.state = 'packed';
-  return { ok: true, overBy: 0 };
+  const resolved = !item.revealed;
+  item.revealed = true; // packing is reliance; DEPENDS resolves here
+  return { ok: true, overBy: 0, resolved };
 }
 
 export function unpack(item: PackItem): void {
   if (item.state === 'packed') item.state = 'pile';
-}
-
-export interface InspectResult {
-  /** Tokens to charge (0 if already inspected). */
-  cost: number;
-  firstLook: boolean;
-}
-
-export function inspect(item: PackItem): InspectResult {
-  if (item.inspected) return { cost: 0, firstLook: false };
-  item.inspected = true;
-  return { cost: INSPECT_TOKENS, firstLook: true };
 }
 
 export interface CompactResult {
@@ -289,7 +322,7 @@ export function scout(s: PackSession, item: PackItem): ScoutResult {
   item.size = 1;
   item.relevance = def.relevance;
   item.blurb = def.blurb;
-  item.inspected = true; // the scout tells you what it found
+  item.revealed = true;
   s.scoutsSent += 1;
   const useful = def.relevance >= SCOUT_USEFUL_MIN;
   const firstUseful = useful && !s.scoutCelebrated;
@@ -324,12 +357,19 @@ export interface DepartResult {
 }
 
 /**
- * Gold-pack math behind the thresholds (capacity 24):
- *   conventions(2,95) + failing test(2,92) + changed files(6,90) = 277
- *   + api docs(5,72) = 349 -> passes at 15/24 slots with no tools.
- *   + scouted log(1,78) + scouted scrollback(1,60) = 487 -> tight at 17/24.
- * Junk dilutes at JUNK_PENALTY per slot, so the 10-slot directory listing
- * (relevance 12) is net -48: low-relevance bulk actively hurts.
+ * Gold-pack math behind the thresholds (capacity 30, bands visible):
+ *   The naive "pack everything ✓" set — conventions(2,95) + failing
+ *   test(2,92) + changed files(6,90) + api docs(5,72) + raw log(14,80)
+ *   + raw scrollback(10,64) — is 39 slots vs 30: over by 30%. Tools are
+ *   the only way through.
+ *   No tools at all: smalls(15 slots, 349) + raw log = 429 at 29/30 —
+ *   scrapes past PASS (420), never TIGHT.
+ *   One scout: smalls + scouted log(1,78) + raw scrollback(10,64) = 491
+ *   at 26/30 -> TIGHT (480), with room left for the ticket.
+ *   Two scouts: 487 at 17/30, most of the wagon still empty.
+ * Sub-USEFUL cargo dilutes at JUNK_PENALTY per slot, so the 10-slot
+ * directory listing (relevance 12) is net -48: visible-band junk is a
+ * deliberate mistake, and it still hurts.
  */
 export function evaluate(s: PackSession): DepartResult {
   let score = 0;

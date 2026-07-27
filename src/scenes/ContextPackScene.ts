@@ -1,11 +1,14 @@
 /**
  * ContextPackScene — Context Canyon (§7.3), mile 660. Mechanic: context_pack.
  *
- * A knapsack with hidden values. Pack the wagon (the context window) from a
- * pile of items whose relevance is hidden until inspected. Three tools:
- * COMPACT / SUBAGENT / RETRIEVE-ON-DEMAND (logic in systems/contextSim.ts).
+ * A knapsack with VISIBLE values. Every item shows its relevance band
+ * (VITAL / USEFUL / NOISE / DEAD WEIGHT) from the start — the puzzle is
+ * that the good stuff does not fit, and the three tools are the way
+ * through: COMPACT / SUBAGENT / RETRIEVE-ON-DEMAND (logic in
+ * systems/contextSim.ts). The ticket is the one exception: DEPENDS,
+ * resolving only when packed.
  *
- * Keyboard: ↑/↓ select · ENTER/SPACE pack/unpack · I inspect (1 token)
+ * Keyboard: ↑/↓ select · ENTER/SPACE pack/unpack
  * · C compact · S scout · R mark for retrieval · D depart.
  * Fully mouse-playable via row clicks + detail-panel buttons.
  *
@@ -22,12 +25,11 @@ import { saveRun } from '../systems/save';
 import { showCurriculumCard } from '../ui/curriculumCard';
 import { bus } from '../ui/overlay';
 import {
-  bandOf,
   canScout,
   compact,
   createSession,
+  displayBand,
   evaluate,
-  inspect,
   loadStats,
   packedSize,
   saveStats,
@@ -36,7 +38,6 @@ import {
   toggleMark,
   tryPack,
   unpack,
-  INSPECT_TOKENS,
   SCOUT_TOKENS,
   OVERFLOW_CONTEXT,
   OVERFLOW_TOKENS,
@@ -82,7 +83,6 @@ export class ContextPackScene extends Phaser.Scene {
   private wallR!: Phaser.GameObjects.Rectangle;
   private outcomePanel: Phaser.GameObjects.GameObject[] = [];
 
-  private peekNoticed = false;
   private overflowCardShown = false;
   private compactionCardShown = false;
   private daysHere = 0;
@@ -105,7 +105,6 @@ export class ContextPackScene extends Phaser.Scene {
     this.session = createSession(() => actions.rand());
     this.selected = 0;
     this.mode = 'pack';
-    this.peekNoticed = false;
     this.overflowCardShown = false;
     this.compactionCardShown = false;
     this.daysHere = 0;
@@ -186,13 +185,12 @@ export class ContextPackScene extends Phaser.Scene {
     this.detail = [
       mk(18, WHITE, '7px'), // name
       mk(28, BLUE), // size / relevance line
-      mk(46, GREEN), // blurb / inspect text
+      mk(46, GREEN), // blurb + dry aside
     ];
 
     // Detail-panel action buttons (functional copy stays plain — §12.3).
     const actionsDef: Array<[string, () => void]> = [
       ['[ENTER] PACK / UNPACK', () => this.togglePack()],
-      [`[I] INSPECT (-${INSPECT_TOKENS} TKN)`, () => this.doInspect()],
       ['[C] COMPACT (LOSSY)', () => this.doCompact()],
       [`[S] SEND SUBAGENT (-${SCOUT_TOKENS} TKN, 1 DAY)`, () => this.doScout()],
       ['[R] MARK: RETRIEVE LATER', () => this.doMark()],
@@ -250,7 +248,6 @@ export class ContextPackScene extends Phaser.Scene {
       kb.on('keydown-DOWN', packMode(() => this.move(1)));
       kb.on('keydown-ENTER', safe(() => this.onEnter()));
       kb.on('keydown-SPACE', packMode(() => this.togglePack()));
-      kb.on('keydown-I', packMode(() => this.doInspect()));
       kb.on('keydown-C', packMode(() => this.doCompact()));
       kb.on('keydown-S', packMode(() => this.doScout()));
       kb.on('keydown-R', packMode(() => this.doMark()));
@@ -290,9 +287,10 @@ export class ContextPackScene extends Phaser.Scene {
   }
 
   private bandGlyph(band: Band): string {
-    if (band === 'VITAL' || band === 'USEFUL') return '✓'; // ✓
-    if (band === 'MARGINAL') return '!';
-    return '×'; // ×
+    if (band === 'VITAL' || band === 'USEFUL') return '✓';
+    if (band === 'DEPENDS') return '?';
+    if (band === 'NOISE') return '!';
+    return '×';
   }
 
   private refresh(): void {
@@ -302,9 +300,9 @@ export class ContextPackScene extends Phaser.Scene {
       if (!row) return;
       const sel = i === this.selected ? '>' : ' ';
       const st = item.state === 'packed' ? '✓' : item.state === 'marked' ? 'R' : '·';
-      const known = item.inspected ? this.bandGlyph(bandOf(item.relevance)) : '?';
+      const band = this.bandGlyph(displayBand(item));
       const name = item.name.padEnd(23).slice(0, 23);
-      row.setText(`${sel}${st} ${name}${String(item.size).padStart(3)} ${known}`);
+      row.setText(`${sel}${st} ${name}${String(item.size).padStart(3)} ${band}`);
       const color =
         i === this.selected
           ? WHITE
@@ -317,21 +315,22 @@ export class ContextPackScene extends Phaser.Scene {
     });
 
     const item = this.item;
+    const band = displayBand(item);
     this.detail[0]?.setText(item.name.toUpperCase());
-    const rel = item.inspected
-      ? `${bandOf(item.relevance)} ${this.bandGlyph(bandOf(item.relevance))} (${item.relevance})`
-      : 'UNKNOWN ?';
+    const rel =
+      band === 'DEPENDS'
+        ? 'DEPENDS ? — resolves when packed'
+        : `${band} ${this.bandGlyph(band)} (${item.relevance})`;
     this.detail[1]?.setText(`SIZE ${item.size} — ${sizeLabel(item.size)}\nRELEVANCE: ${rel}`);
-    // Pre-inspection you get the blurb; the inspect text replaces it once
-    // you have paid for the peek (keeps the panel inside its column).
-    this.detail[2]?.setText(item.inspected ? `${item.blurb}\n\n${item.def.inspectText}` : item.blurb);
+    // Blurb plus the dry aside; drop the aside if it would overrun the column.
+    this.detail[2]?.setText(`${item.blurb}\n\n${item.def.detail}`);
     const d2 = this.detail[2];
-    if (d2 && d2.y + d2.height > 98) d2.setText(item.inspected ? item.def.inspectText : item.blurb);
+    if (d2 && d2.y + d2.height > 98) d2.setText(item.blurb);
 
     // Grey out tools that don't apply to the selection.
-    this.buttons[2]?.setAlpha(item.size > 1 ? 1 : 0.4);
-    this.buttons[3]?.setAlpha(canScout(item) ? 1 : 0.4);
-    this.buttons[4]?.setAlpha(item.state !== 'packed' ? 1 : 0.4);
+    this.buttons[1]?.setAlpha(item.size > 1 ? 1 : 0.4);
+    this.buttons[2]?.setAlpha(canScout(item) ? 1 : 0.4);
+    this.buttons[3]?.setAlpha(item.state !== 'packed' ? 1 : 0.4);
 
     const r = getState().resources;
     this.hud.setText(`TOKENS ${Math.floor(r.tokens)}  DAY +${this.daysHere}`);
@@ -371,21 +370,16 @@ export class ContextPackScene extends Phaser.Scene {
     g.lineBetween(bedX, bedY, bedX, bedY + bedH);
     g.lineBetween(bedX + bedW, bedY, bedX + bedW, bedY + bedH);
 
-    // Cargo blocks, packing order, colour only after inspection (relevance
-    // stays hidden until you pay for the peek).
+    // Cargo blocks, packing order, coloured by band (bands are public now;
+    // packing resolves the one DEPENDS item, so packed cargo is always known).
     let cursor = bedX + 1;
     for (const item of s.items) {
       if (item.state !== 'packed') continue;
       const w = Math.max(2, (item.size / s.capacity) * (bedW - 2) - 1);
       const cx = cursor + w / 2;
       const dy = dipAt(cx);
-      const color = !item.inspected
-        ? 0x9a9a9a
-        : item.relevance >= 45
-          ? 0x1bcb01
-          : item.relevance >= 20
-            ? 0xf55d08
-            : 0xbb36ff;
+      const color =
+        item.relevance >= 40 ? 0x1bcb01 : item.relevance >= 10 ? 0xf55d08 : 0xbb36ff;
       g.fillStyle(color, 1);
       g.fillRect(cursor, bedY + 2 + dy, w, bedH - 3);
       cursor += w + 1;
@@ -428,6 +422,14 @@ export class ContextPackScene extends Phaser.Scene {
       return;
     }
     if (res.ok) {
+      if (res.resolved) {
+        // The DEPENDS item commits to a band the moment someone relies on it.
+        const band = displayBand(item);
+        this.setTicker(
+          `${STRINGS['ticketResolved'] ?? ''} ${band} ${this.bandGlyph(band)}.`,
+          BLUE,
+        );
+      }
       this.snapIn(item);
       this.refresh();
     }
@@ -513,24 +515,6 @@ export class ContextPackScene extends Phaser.Scene {
     this.refresh();
   }
 
-  private doInspect(): void {
-    const item = this.item;
-    const res = inspect(item);
-    if (res.firstLook) {
-      actions.applyResourceDelta({ tokens: -res.cost });
-      this.persist();
-      if (!this.peekNoticed) {
-        this.peekNoticed = true;
-        this.setTicker(STRINGS['peekNotice'] ?? '', BLUE);
-      } else {
-        this.setTicker(item.def.inspectText, BLUE);
-      }
-    } else {
-      this.setTicker(item.def.inspectText, BLUE);
-    }
-    this.refresh();
-  }
-
   private doCompact(): void {
     const item = this.item;
     const res = compact(this.session, item, () => actions.rand());
@@ -538,7 +522,7 @@ export class ContextPackScene extends Phaser.Scene {
       this.setTicker('Cannot compact further. It is one slot of pure summary.', GREY);
       return;
     }
-    const relNote = item.inspected ? ` Relevance -${res.relevanceLost}.` : '';
+    const relNote = item.revealed ? ` Relevance -${res.relevanceLost}.` : '';
     this.setTicker(`${STRINGS['compactNotice'] ?? ''} Size is now ${item.size}.${relNote}`);
     if (res.requirementLostNow) this.onRequirementLost();
     this.refresh();
